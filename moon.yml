@@ -1,0 +1,107 @@
+id: aether-ui
+fileGroups:
+  sources:
+    - "src/**/*.ts"
+    - "src/**/*.svelte"
+    - "!src/**/*.test.ts"
+    - "!node_modules/**"
+    - "!dist/**"
+  tests:
+    - "src/**/*.test.ts"
+    - "src/**/*.spec.ts"
+  configs:
+    - "tsconfig.json"
+    - "package.json"
+    - "svelte.config.js"
+    - "vite.config.ts"
+    - "components.json"
+
+tasks:
+  dev:
+    command: "bun run dev"
+    inputs:
+      - "@group(sources)"
+      - "@group(configs)"
+    options:
+      persistent: true
+      runInCI: false
+      cache: false
+
+  package:
+    command: "bun run package"
+    inputs:
+      - "@group(sources)"
+      - "@group(configs)"
+    deps:
+      - "~:typecheck"
+    options:
+      cache: true
+
+  build:
+    command: "noop"
+    deps:
+      - "~:package"
+    options:
+      cache: false
+
+  test:
+    command: "bun test"
+    inputs:
+      - "@group(sources)"
+      - "@group(tests)"
+    options:
+      cache: true
+
+  typecheck:
+    command: "bun run check"
+    inputs:
+      - "@group(sources)"
+      - "@group(tests)"
+      - "tsconfig.json"
+    options:
+      cache: true
+
+  lint:
+    command: "bunx oxlint src/"
+    inputs:
+      - "@group(sources)"
+      - "@group(tests)"
+    options:
+      cache: true
+
+  lint-fix:
+    command: "bunx oxlint --fix src/"
+    options:
+      cache: false
+      runInCI: false
+
+  format:
+    command: "bunx @biomejs/biome format src/"
+    inputs:
+      - "@group(sources)"
+      - "@group(tests)"
+    options:
+      cache: true
+
+  format-fix:
+    command: "bunx @biomejs/biome format --write src/"
+    options:
+      cache: false
+      runInCI: false
+
+  check:
+    command: "noop"
+    deps:
+      - "~:typecheck"
+      - "~:lint"
+      - "~:format"
+      - "~:test"
+    options:
+      cache: false
+
+  watch-package:
+    command: "bun run watch-package"
+    options:
+      persistent: true
+      runInCI: false
+      cache: false
