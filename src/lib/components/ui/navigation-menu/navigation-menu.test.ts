@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { navigationMenuVariants } from "./navigation-menu-variants.js";
 
 describe("navigationMenuVariants", () => {

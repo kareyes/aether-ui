@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { numberSpinnerVariants } from "./number-spinner-variants.js";
 
 describe("numberSpinnerVariants", () => {
