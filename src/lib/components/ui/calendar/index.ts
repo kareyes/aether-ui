@@ -17,6 +17,7 @@ import Month from "./calendar-month.svelte";
 import Nav from "./calendar-nav.svelte";
 import Caption from "./calendar-caption.svelte";
 import EventMarker from "./calendar-event-marker.svelte";
+import Week from "./calendar-week.svelte";
 
 export {
 	Day,
@@ -39,6 +40,7 @@ export {
 	EventMarker,
 	//
 	Root as Calendar,
+	Week as CalendarWeek,
 };
 
 export {

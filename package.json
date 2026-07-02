@@ -19,7 +19,8 @@
 		"preview": "bunx --bun vite preview",
 		"prepare": "bunx --bun svelte-kit sync || echo ''",
 		"check": "bunx --bun svelte-kit sync && bunx --bun svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "bunx --bun svelte-kit sync && bunx --bun svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "bunx --bun svelte-kit sync && bunx --bun svelte-check --tsconfig ./tsconfig.json --watch",
+		"storybook": "bunx --bun storybook dev -p 6006"
 	},
 	"files": [
 		"dist",

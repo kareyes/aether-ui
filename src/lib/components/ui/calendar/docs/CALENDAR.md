@@ -180,6 +180,83 @@ Display multiple months side by side.
 <Calendar numberOfMonths={2} />
 ```
 
+## Week View (`CalendarWeek`)
+
+A compact variant that shows a **single week** at a time with previous/next
+**week** navigation (the standard `Calendar` navigates by month). Useful for
+weekly schedulers, timesheets, and day pickers where a full month is too much.
+
+```svelte
+<script>
+  import { CalendarWeek } from "aether-ui";
+  import type { DateValue } from "@internationalized/date";
+
+  let value = $state<DateValue | undefined>();
+</script>
+
+<CalendarWeek type="single" bind:value={value} />
+```
+
+`CalendarWeek` is composed from the same `bits-ui` Calendar primitive and shared
+`Calendar.*` sub-components as `Calendar` (so day selection, `today`, disabled
+states and event markers behave identically). It simply renders the single week
+that contains the `placeholder`, wraps it in a `Card`, and swaps the month
+navigation for **week** navigation — the header shows the week's date range
+(e.g. `May 19 – May 25, 2024`). Because it wraps `bits-ui`, it accepts the full
+`Calendar` prop surface (`type`, `minValue`, `maxValue`, `isDateDisabled`,
+`isDateUnavailable`, `readonly`, `disabled`, `onValueChange`, `locale`, …).
+
+### `CalendarWeek` Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `"single" \| "multiple"` | — | Selection mode (required, as with `Calendar`) |
+| `value` | `DateValue` | `undefined` | The selected date (bindable). Clicking the selected day again clears it |
+| `placeholder` | `DateValue` | `undefined` | Anchor date the visible week is derived from (bindable). Falls back to `value`, then today |
+| `weekStartsOn` | `0-6` | `0` | Day the week starts on (0 = Sunday) |
+| `weekdayFormat` | `"narrow" \| "short" \| "long"` | `"short"` | Format for weekday headers |
+| `locale` | `string` | `"en-US"` | Locale for date/range formatting |
+| `buttonVariant` | `ButtonVariant` | `"ghost"` | Variant for the prev/next navigation buttons |
+| `size` | `"sm" \| "default" \| "lg" \| "xl" \| "full"` | `"default"` | Size variant (shares sizing with `Calendar`) |
+| `fluid` | `boolean` | `false` | Stretch to the container width, distributing the seven day columns evenly (instead of the compact `w-fit` width) while keeping the compact cells |
+| `fontSize` | `string` | `undefined` | Any CSS `font-size` value that overrides the calendar's text size — day numbers, weekday headers and the week range label. When omitted, text scales with `size` |
+| `events` | `CalendarEvent[]` | `[]` | Events to display as markers (dots on compact sizes, cards on `full`) |
+| `day` | `Snippet<[{ day: DateValue; outsideMonth: boolean }]>` | `undefined` | Custom day cell rendering (same signature as `Calendar`) |
+| `class` | `string` | `undefined` | Additional CSS classes |
+
+All other `Calendar` props (`minValue`, `maxValue`, `isDateDisabled`,
+`isDateUnavailable`, `readonly`, `disabled`, `onValueChange`, `preventDeselect`,
+…) are forwarded to the underlying primitive.
+
+### Custom Font Size
+
+Override the text size independently of the `size` variant (which controls the
+cell dimensions). `fontSize` accepts any CSS `font-size` value and applies to the
+day numbers, weekday headers and the range label:
+
+```svelte
+<CalendarWeek type="single" fontSize="1.25rem" />
+<CalendarWeek type="single" size="lg" fontSize="14px" />
+```
+
+### Controlling the visible week
+
+Bind `placeholder` to drive which week is shown from the parent:
+
+```svelte
+<script>
+  import { CalendarWeek } from "aether-ui";
+  import { today, getLocalTimeZone } from "@internationalized/date";
+
+  let placeholder = $state(today(getLocalTimeZone()));
+</script>
+
+<CalendarWeek type="single" bind:placeholder={placeholder} />
+<button onclick={() => (placeholder = placeholder.add({ weeks: 4 }))}>
+  Jump 4 weeks ahead
+</button>
+```
+
 ## Date Constraints
 
 ### Min/Max Dates

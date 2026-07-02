@@ -13,6 +13,7 @@
 		error?: string;
 		required?: boolean;
 		disabled?: boolean;
+		for?: string;
 		orientation?: FieldOrientation;
 		/**
 		 * Position of the label relative to the form control
@@ -48,6 +49,7 @@
 		labelPosition = "before",
 		descriptionPosition = "before",
 		class: className,
+		for: fieldFor,
 		children,
 		beforeLabel
 	}: FieldImplProps = $props();
@@ -67,7 +69,7 @@
 {#snippet labelPart()}
 	{#if useContent}
 		<Content>
-			<Label>
+			<Label for={fieldFor}>
 				{label}
 				{#if required}<span class="text-destructive">*</span>{/if}
 			</Label>
@@ -76,7 +78,7 @@
 			{/if}
 		</Content>
 	{:else}
-		<Label>
+		<Label for={fieldFor}>
 			{label}
 			{#if required}<span class="text-destructive">*</span>{/if}
 		</Label>

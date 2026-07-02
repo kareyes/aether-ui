@@ -70,7 +70,7 @@ import { Badge } from "./components/ui/badge/index.js";
 import { Breadcrumb } from "./components/ui/breadcrumb/index.js";
 import { Button } from "./components/ui/button/index.js";
 import { ButtonGroup } from "./components/ui/button-group/index.js";
-import { Calendar } from "./components/ui/calendar/index.js";
+import { Calendar, CalendarWeek } from "./components/ui/calendar/index.js";
 import { Card } from "./components/ui/card/index.js";
 import { Chatbox } from "./components/ui/chatbox/index.js";
 import { CodeBlock } from "./components/ui/code-block/index.js";
@@ -136,6 +136,7 @@ export {
 	Button,
 	ButtonGroup,
 	Calendar,
+	CalendarWeek,
 	Card,
 	Chatbox,
 	CodeBlock,
