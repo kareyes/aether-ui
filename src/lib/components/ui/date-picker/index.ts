@@ -10,6 +10,8 @@ type DatePickerProps = {
 	placeholder?: DateValue;
 	disabled?: boolean;
 	class?: string;
+	name?: string;
+	id?: string;
 	buttonVariant?: ButtonVariant;
 	buttonClass?: string;
 	calendarProps?: Record<string, any>;
