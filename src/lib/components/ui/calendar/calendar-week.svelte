@@ -38,6 +38,7 @@
 		events = [],
 		fontSize,
 		day,
+		headerAction,
 		...restProps
 	}: WithoutChildrenOrChild<CalendarPrimitive.RootProps> & {
 		buttonVariant?: ButtonVariant;
@@ -57,10 +58,32 @@
 		 */
 		fontSize?: string;
 		day?: Snippet<[{ day: DateValue; outsideMonth: boolean }]>;
+		/**
+		 * Trailing content for the header row, rendered after the next-week
+		 * button (e.g. a "Today" jump). Receives the visible week so the caller
+		 * can act on it; `goToWeek` re-anchors the strip on any date.
+		 */
+		headerAction?: Snippet<
+			[{ week: DateValue[]; goToWeek: (date: DateValue) => void }]
+		>;
 	} = $props();
 
 	const timeZone = getLocalTimeZone();
 	const isFullSize = $derived(size === "full");
+
+	// `fluid` stretches each cell across its share of the row, but the day
+	// button keeps its fixed `--cell-size`. The cell is not a flex container,
+	// and the button is block-level, so `text-center` (which centers the
+	// weekday headers) can't center it — it hugs the left edge and the numbers
+	// drift out of line with their headers. Make the cell center its own child.
+	// Full size opts out: its days deliberately fill the cell and align left.
+	const cellClass = $derived(
+		fluid
+			? isFullSize
+				? "flex-1"
+				: "flex flex-1 items-center justify-center"
+			: undefined,
+	);
 
 	// `fontSize` overrides the size variant's `--cell-text` / `--head-text`
 	// tokens (weekday headers read `--head-text` directly; the day-number span
@@ -116,6 +139,11 @@
 
 	function goToNextWeek(week: DateValue[]) {
 		if (week.length > 0) placeholder = week[0].add({ weeks: 1 });
+	}
+
+	/** Re-anchor the strip on the week containing `date`. */
+	function goToWeek(date: DateValue) {
+		placeholder = date;
 	}
 
 	function formatDate(
@@ -208,6 +236,10 @@ so we cast `value` to `never` to quiet TypeScript — same trick as `Calendar`.
 			>
 				<ChevronRightIcon class="size-4" />
 			</button>
+
+			{#if headerAction}
+				{@render headerAction({ week, goToWeek })}
+			{/if}
 		</Calendar.Header>
 
 		<Card class="mt-2 ">
@@ -239,7 +271,7 @@ so we cast `value` to `never` to quiet TypeScript — same trick as `Calendar`.
 							<Calendar.Cell
 								{date}
 								month={referenceMonth}
-								class={fluid ? "flex-1" : undefined}
+								class={cellClass}
 							>
 								{#if day}
 									{@render day({

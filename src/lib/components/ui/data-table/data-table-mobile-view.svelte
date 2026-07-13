@@ -9,6 +9,8 @@
 		showRowSelection?: boolean;
 		selectionMode?: "multi" | "single" | "none";
 		renderSubComponent?: import("svelte").Snippet<[{ row: Row<TData> }]>;
+		/** Replaces the default label/value stack in each card body. */
+		mobileCard?: import("svelte").Snippet<[{ row: Row<TData> }]>;
 		variant?: TableVariant;
 	};
 
@@ -18,6 +20,7 @@
 		showRowSelection = true,
 		selectionMode = "multi",
 		renderSubComponent,
+		mobileCard,
 		variant = "default",
 	}: Props = $props();
 
@@ -33,6 +36,7 @@
 				{showRowSelection}
 				{selectionMode}
 				{renderSubComponent}
+				{mobileCard}
 				{variant}
 				{index}
 			/>

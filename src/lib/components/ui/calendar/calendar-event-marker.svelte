@@ -18,6 +18,20 @@
 	const maxDots = $derived(size === "sm" ? 2 : 3);
 	const maxFullEvents = 3; // Max events to show in full size
 
+	// Dots scale with the calendar: a `size-1` dot that reads fine in a
+	// `--spacing(7)` cell disappears in an `xl` one. `sm`/`default` keep their
+	// existing dot so current calendars are unchanged.
+	const dotSize = $derived(
+		size === "xl" ? "size-2" : size === "lg" ? "size-1.5" : "size-1",
+	);
+	const dotRow = $derived(
+		size === "xl"
+			? "bottom-1.5 gap-1"
+			: size === "lg"
+				? "bottom-1 gap-1"
+				: "bottom-0.5 gap-0.5",
+	);
+
 	// Get unique colors from events (for dots display)
 	const eventColors = $derived.by(() => {
 		const colors = events
@@ -47,7 +61,7 @@
 				className,
 			)}
 		>
-			{#each eventColors as color}
+			{#each eventColors as color, i (i)}
 				<span
 					class="size-1.5 rounded-full"
 					style:background-color={color}
@@ -66,7 +80,7 @@
 				className,
 			)}
 		>
-			{#each displayEvents as event}
+			{#each displayEvents as event, i (i)}
 				<div
 					class="flex items-center gap-1 rounded px-1.5 py-0.5 text-[0.65rem] leading-tight text-white truncate cursor-pointer hover:opacity-90 transition-opacity"
 					style:background-color={event.color ||
@@ -83,15 +97,18 @@
 			{/if}
 		</div>
 	{:else}
-		<!-- Dots display for sm/default sizes -->
+		<!-- Dots display for sm/default/lg/xl sizes -->
 		<span
 			class={cn(
-				"absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-0.5",
+				"absolute left-1/2 -translate-x-1/2 flex",
+				dotRow,
 				className,
 			)}
 		>
-			{#each eventColors as color}
-				<span class="size-1 rounded-full" style:background-color={color}
+			{#each eventColors as color, i (i)}
+				<span
+					class={cn("rounded-full", dotSize)}
+					style:background-color={color}
 				></span>
 			{/each}
 			{#if events.length > maxDots}

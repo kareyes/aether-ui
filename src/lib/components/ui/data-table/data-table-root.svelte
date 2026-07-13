@@ -40,6 +40,13 @@
 		selectionMode?: "multi" | "single" | "none";
 		getRowCanExpand?: (row: Row<TData>) => boolean;
 		renderSubComponent?: import("svelte").Snippet<[{ row: Row<TData> }]>;
+		/**
+		 * Replaces the default label/value stack in the mobile card body. The
+		 * card shell (selection / expand / actions header, expanded content)
+		 * still renders around it. Use when the card needs a bespoke layout the
+		 * generic field list can't express.
+		 */
+		mobileCard?: import("svelte").Snippet<[{ row: Row<TData> }]>;
 		onPageChange?: (page: number, action?: "next" | "previous") => void;
 		onPageSizeChange?: (pageSize: number) => void;
 		onRowSelectionChange?: (selectedRows: TData[]) => void;
@@ -65,6 +72,7 @@
 		selectionMode = "multi",
 		getRowCanExpand = () => true,
 		renderSubComponent,
+		mobileCard,
 		onPageChange,
 		onPageSizeChange,
 		onRowSelectionChange,
@@ -195,6 +203,7 @@ $effect(() => {
 		{showRowSelection}
 		{selectionMode}
 		{renderSubComponent}
+		{mobileCard}
 		{variant}
 	/>
 {:else}

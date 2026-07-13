@@ -49,8 +49,9 @@
 		error = false,
 		onError,
 		onValueChange,
+		name,
 		presets = [
-			{ 
+			{
 				label: "Today", 
 				value: { start: today(getLocalTimeZone()), end: today(getLocalTimeZone()) } 
 			},
@@ -158,4 +159,23 @@
 			/>
 		</Popover.Content>
 	</Popover.Root>
+	<!--
+		The trigger is a button, not a form control, so the selected range is not
+		submitted on its own. When a `name` is given, mirror each endpoint into a
+		hidden input (`{name}.start` / `{name}.end`, ISO `YYYY-MM-DD` via
+		DateValue.toString()) so the picker participates in native form /
+		SvelteKit `enhance` submissions.
+	-->
+	{#if name}
+		<input
+			type="hidden"
+			name={`${name}.start`}
+			value={value?.start ? value.start.toString() : ""}
+		/>
+		<input
+			type="hidden"
+			name={`${name}.end`}
+			value={value?.end ? value.end.toString() : ""}
+		/>
+	{/if}
 </div>

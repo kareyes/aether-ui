@@ -53,11 +53,17 @@ pnpm add aether-ui
 ### With Colors
 
 ```svelte
+<Badge text="Primary" color="primary" />
 <Badge text="Red" color="red" />
 <Badge text="Blue" color="blue" />
 <Badge text="Green" color="green" />
 <Badge text="Purple" color="purple" />
 ```
+
+`primary` resolves to the theme's `--primary` token, so it re-colors with the
+active theme; the named hues (`red`, `blue`, …) are fixed palette values. It
+works across every variant: solid on `default`, tinted on `secondary` / `flat`,
+and text + border on `outline` / `dashed`.
 
 ## Props Reference
 
@@ -93,6 +99,7 @@ pnpm add aether-ui
 
 | Color | Use Case |
 |-------|----------|
+| `primary` | Brand emphasis — follows the active theme, unlike the fixed hues below |
 | `red` | Errors, urgent |
 | `orange` | Warnings, attention |
 | `yellow` | Caution, pending |

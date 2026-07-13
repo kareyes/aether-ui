@@ -1,5 +1,6 @@
 import DatePicker from "./date-picker.svelte";
 import DateRangePicker from "./date-range-picker.svelte";
+import DateRangePickerSplit from "./date-range-picker-split.svelte";
 import DatePickerWithPresets from "./date-picker-with-presets.svelte";
 import DateRangePickerWithPresets from "./date-range-picker-with-presets.svelte";
 import type { DateValue } from "@internationalized/date";
@@ -30,6 +31,7 @@ export {
 	type DatePickerProps,
 	DatePicker,
 	DateRangePicker,
+	DateRangePickerSplit,
 	DatePickerWithPresets,
 	DateRangePickerWithPresets,
 };

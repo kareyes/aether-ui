@@ -18,6 +18,8 @@
 		showRowSelection?: boolean;
 		selectionMode?: "multi" | "single" | "none";
 		renderSubComponent?: import("svelte").Snippet<[{ row: Row<TData> }]>;
+		/** Replaces the default label/value stack in the card body. */
+		mobileCard?: import("svelte").Snippet<[{ row: Row<TData> }]>;
 		variant?: TableVariant;
 		index?: number;
 	};
@@ -28,6 +30,7 @@
 		showRowSelection = true,
 		selectionMode = "multi",
 		renderSubComponent,
+		mobileCard,
 		variant = "default",
 		index = 0,
 	}: Props = $props();
@@ -103,37 +106,41 @@
 		</div>
 	{/if}
 
-	<!-- Card Body: Data Fields -->
-	<div class="space-y-2">
-		{#each visibleColumns as column (column.id)}
-			{@const cell = row
-				.getAllCells()
-				.find((c) => c.column.id === column.id)}
-			{#if cell}
-				{@const meta = column.columnDef.meta as
-					| DataTableColumnMeta
-					| undefined}
-				<div
-					class={cn(
-						"flex flex-col gap-0.5",
-						meta?.alwaysVisible && "font-medium",
-					)}
-				>
-					<span
-						class="text-xs text-muted-foreground uppercase tracking-wide"
+	<!-- Card Body: caller-supplied layout, else the default field list -->
+	{#if mobileCard}
+		{@render mobileCard({ row })}
+	{:else}
+		<div class="space-y-2">
+			{#each visibleColumns as column (column.id)}
+				{@const cell = row
+					.getAllCells()
+					.find((c) => c.column.id === column.id)}
+				{#if cell}
+					{@const meta = column.columnDef.meta as
+						| DataTableColumnMeta
+						| undefined}
+					<div
+						class={cn(
+							"flex flex-col gap-0.5",
+							meta?.alwaysVisible && "font-medium",
+						)}
 					>
-						{getColumnMobileLabel(column)}
-					</span>
-					<div class="text-sm">
-						<FlexRender
-							content={cell.column.columnDef.cell}
-							context={cell.getContext()}
-						/>
+						<span
+							class="text-xs text-muted-foreground uppercase tracking-wide"
+						>
+							{getColumnMobileLabel(column)}
+						</span>
+						<div class="text-sm">
+							<FlexRender
+								content={cell.column.columnDef.cell}
+								context={cell.getContext()}
+							/>
+						</div>
 					</div>
-				</div>
-			{/if}
-		{/each}
-	</div>
+				{/if}
+			{/each}
+		</div>
+	{/if}
 
 	<!-- Expanded Content -->
 	{#if expandable && row.getIsExpanded() && renderSubComponent}

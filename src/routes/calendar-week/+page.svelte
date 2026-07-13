@@ -154,6 +154,23 @@
 		</p>
 	</section>
 
+	<!-- Full width at each size: day numbers stay centered under their headers -->
+	<section class="space-y-4" id="fluid-sizes">
+		<h2 class="text-2xl font-semibold">Full Width (sizes)</h2>
+		<p class="text-muted-foreground text-sm">
+			<code>fluid</code> stretches each cell across its column; the day button
+			keeps its fixed <code>--cell-size</code> and is centered within it, so the
+			numbers stay aligned with the weekday headers at every size. Event dots
+			scale with the calendar.
+		</p>
+		{#each ["lg", "xl"] as const as size (size)}
+			<div class="space-y-1">
+				<p class="text-muted-foreground text-xs uppercase">{size}</p>
+				<CalendarWeek type="single" {size} fluid events={sampleEvents} />
+			</div>
+		{/each}
+	</section>
+
 	<!-- Date constraints -->
 	<section class="space-y-4">
 		<h2 class="text-2xl font-semibold">Date Constraints</h2>

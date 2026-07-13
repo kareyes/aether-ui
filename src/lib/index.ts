@@ -19,6 +19,20 @@ export * as CheckboxPrimitives from "./components/ui/checkbox/index.js";
 export * as ComboBoxPrimitives from "./components/ui/combobox/index.js";
 export * as CommandPrimitives from "./components/ui/command/index.js";
 export * as DataTablePrimitives from "./components/ui/data-table/index.js";
+// A DataTable is unusable without these — surface them alongside the component
+// rather than making callers reach into the primitives namespace.
+export {
+	renderComponent,
+	renderSnippet,
+} from "./components/ui/data-table/index.js";
+export type {
+	ColumnDef,
+	CellContext,
+	HeaderContext,
+	Row as DataTableRow,
+	DataTableColumnMeta,
+	ResponsiveMode,
+} from "./components/ui/data-table/index.js";
 export * as DatePickerPrimitives from "./components/ui/date-picker/index.js";
 export * as DialogPrimitives from "./components/ui/dialog/index.js";
 export * as DropdownMenuPrimitives from "./components/ui/dropdown-menu/index.js";
@@ -61,6 +75,11 @@ export {
 	resetMode,
 } from "./components/ui/dark-mode/index.js";
 
+// Reactive breakpoint hook — consumers need it to pick a component variant per
+// screen size (e.g. a Calendar `size`), which Tailwind breakpoints can't do
+// because the variant is a prop, not a class.
+export { IsMobile } from "./hooks/is-mobile.svelte.js";
+
 // Shorthand component imports
 import { Root as Accordion } from "./components/ui/accordion/index.js";
 import { Alert } from "./components/ui/alert/index.js";
@@ -83,6 +102,7 @@ import {
 	DatePicker,
 	DatePickerWithPresets,
 	DateRangePicker,
+	DateRangePickerSplit,
 	DateRangePickerWithPresets,
 } from "./components/ui/date-picker/index.js";
 import { Root as Dialog } from "./components/ui/dialog/index.js";
@@ -148,6 +168,7 @@ export {
 	DatePicker,
 	DatePickerWithPresets,
 	DateRangePicker,
+	DateRangePickerSplit,
 	DateRangePickerWithPresets,
 	Dialog,
 	DropdownMenu,

@@ -44,6 +44,7 @@
 		error = false,
 		onError,
 		onValueChange,
+		name,
 		presets = [
 			{ label: "Today", value: today(getLocalTimeZone()) },
 			{ label: "Tomorrow", value: today(getLocalTimeZone()).add({ days: 1 }) },
@@ -132,4 +133,13 @@
 			/>
 		</Popover.Content>
 	</Popover.Root>
+	<!--
+		The trigger is a button, not a form control, so the selected date is not
+		submitted on its own. When a `name` is given, mirror the value into a
+		hidden input (ISO `YYYY-MM-DD` via DateValue.toString()) so the picker
+		participates in native form / SvelteKit `enhance` submissions.
+	-->
+	{#if name}
+		<input type="hidden" {name} value={value ? value.toString() : ""} />
+	{/if}
 </div>

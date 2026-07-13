@@ -30,7 +30,7 @@
       },
       color: {
         control: { type: 'select' },
-        options: ['default', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'],
+        options: ['default', 'primary', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'],
         description: 'Color theme of the badge',
         table: {
           type: { summary: 'string' },
@@ -132,6 +132,7 @@
     {#snippet template()}
 				<div class="flex flex-wrap gap-2">
 					<Badge text="Default" variant="default" />
+					<Badge text="Primary" variant="default" color="primary" />
 					<Badge text="Red" variant="default" color="red" />
 					<Badge text="Orange" variant="default" color="orange" />
           <Badge text="Yellow" variant="default" color="yellow" />
@@ -149,6 +150,7 @@
     {#snippet template()}
 				<div class="flex flex-wrap gap-2">
 					<Badge text="Default" variant="secondary" />
+					<Badge text="Primary" variant="secondary" color="primary" />
 					<Badge text="Red" variant="secondary" color="red" />
 					<Badge text="Orange" variant="secondary" color="orange" />
           <Badge text="Yellow" variant="secondary" color="yellow" />
@@ -165,6 +167,7 @@
     {#snippet template()}
 				<div class="flex flex-wrap gap-2">
 					<Badge text="Default" variant="flat" />
+					<Badge text="Primary" variant="flat" color="primary" />
 					<Badge text="Red" variant="flat" color="red" />
 					<Badge text="Orange" variant="flat" color="orange" />
 					<Badge text="Yellow" variant="flat" color="yellow" />
@@ -182,6 +185,7 @@
     {#snippet template()}
         <div class="flex flex-wrap gap-2">
           <Badge text="Default" variant="outline" />
+          <Badge text="Primary" variant="outline" color="primary" />
           <Badge text="Red" variant="outline" color="red" />
           <Badge text="Orange" variant="outline" color="orange" />
           <Badge text="Yellow" variant="outline" color="yellow" />
@@ -197,6 +201,7 @@
     {#snippet template()}
         <div class="flex flex-wrap gap-2">
           <Badge text="Default" variant="dashed" />
+          <Badge text="Primary" variant="dashed" color="primary" />
           <Badge text="Red" variant="dashed" color="red" />
           <Badge text="Orange" variant="dashed" color="orange" />
           <Badge text="Yellow" variant="dashed" color="yellow" />

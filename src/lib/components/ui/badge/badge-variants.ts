@@ -23,6 +23,9 @@ export const badgeVariants = tv({
 		},
 		color: {
 			default: "",
+			// The theme's primary token, as opposed to a fixed palette hue — it
+			// follows the active theme where `blue` etc. do not.
+			primary: "",
 			red: "",
 			orange: "",
 			yellow: "",
@@ -47,6 +50,11 @@ export const badgeVariants = tv({
 		{
 			variant: "default",
 			color: "default",
+			class: "bg-primary text-primary-foreground",
+		},
+		{
+			variant: "default",
+			color: "primary",
 			class: "bg-primary text-primary-foreground",
 		},
 		{
@@ -95,6 +103,11 @@ export const badgeVariants = tv({
 			variant: "secondary",
 			color: "default",
 			class: "bg-secondary text-secondary-foreground",
+		},
+		{
+			variant: "secondary",
+			color: "primary",
+			class: "bg-primary/20 text-primary dark:bg-primary/25",
 		},
 		{
 			variant: "secondary",
@@ -149,6 +162,11 @@ export const badgeVariants = tv({
 		},
 		{
 			variant: "flat",
+			color: "primary",
+			class: "bg-primary/10 text-primary dark:bg-primary/20",
+		},
+		{
+			variant: "flat",
 			color: "red",
 			class: "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400",
 		},
@@ -197,6 +215,11 @@ export const badgeVariants = tv({
 			variant: "outline",
 			color: "default",
 			class: "text-foreground border-border",
+		},
+		{
+			variant: "outline",
+			color: "primary",
+			class: "text-primary border-primary/40 dark:border-primary/60",
 		},
 		{
 			variant: "outline",
@@ -255,6 +278,11 @@ export const badgeVariants = tv({
 		},
 		{
 			variant: "dashed",
+			color: "primary",
+			class: "text-primary border-primary/40 dark:border-primary/60",
+		},
+		{
+			variant: "dashed",
 			color: "red",
 			class:
 				"text-red-600 border-red-300 dark:text-red-400 dark:border-red-700",
@@ -307,6 +335,12 @@ export const badgeVariants = tv({
 			variant: "default",
 			clickable: true,
 			color: "default",
+			class: "hover:bg-primary/90",
+		},
+		{
+			variant: "default",
+			clickable: true,
+			color: "primary",
 			class: "hover:bg-primary/90",
 		},
 		{

@@ -99,6 +99,48 @@ describe("badgeVariants", () => {
 		});
 	});
 
+	describe("primary color", () => {
+		it("should fill with the primary token on the default variant", () => {
+			const result = badgeVariants({ variant: "default", color: "primary" });
+			expect(result).toContain("bg-primary");
+			expect(result).toContain("text-primary-foreground");
+		});
+
+		it("should tint on the secondary variant", () => {
+			const result = badgeVariants({ variant: "secondary", color: "primary" });
+			expect(result).toContain("bg-primary/20");
+			expect(result).toContain("text-primary");
+		});
+
+		it("should tint more lightly on the flat variant", () => {
+			const result = badgeVariants({ variant: "flat", color: "primary" });
+			expect(result).toContain("bg-primary/10");
+			expect(result).toContain("text-primary");
+		});
+
+		it("should color the text and border on the outline variant", () => {
+			const result = badgeVariants({ variant: "outline", color: "primary" });
+			expect(result).toContain("text-primary");
+			expect(result).toContain("border-primary/40");
+		});
+
+		it("should color the text and border on the dashed variant", () => {
+			const result = badgeVariants({ variant: "dashed", color: "primary" });
+			expect(result).toContain("text-primary");
+			expect(result).toContain("border-primary/40");
+			expect(result).toContain("border-dashed");
+		});
+
+		it("should dim on hover when clickable", () => {
+			const result = badgeVariants({
+				variant: "default",
+				color: "primary",
+				clickable: true,
+			});
+			expect(result).toContain("hover:bg-primary/90");
+		});
+	});
+
 	describe("size styles", () => {
 		it("should apply sm size", () => {
 			const result = badgeVariants({ size: "sm" });
