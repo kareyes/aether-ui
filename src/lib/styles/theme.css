@@ -52,6 +52,26 @@
   --warning-foreground: oklch(0.421 0.095 57.708);
   --success: oklch(0.648 0.2 131.684);
   --success-foreground: oklch(0.986 0.031 120.757);
+
+  /* Illustration state accents (Aether UI illustration library) — resolved
+     live against the base tokens above, so a single declaration here
+     already tracks .dark overrides without redeclaring per-theme. Used only
+     for the semantic Success/Error/Offline accent color; the illustrations'
+     structural palette is fixed — see --illustration-* below. */
+  --aether-success: var(--success);
+  --aether-warning: var(--warning);
+  --aether-danger: var(--danger);
+
+  /* Illustration accent palette (Aether UI illustration library) — fixed
+     brand blue, deliberately not theme-reactive so the accent identity stays
+     the same in light/dark app mode. The card itself (surface/outline) is
+     theme-reactive — see the .dark override below. */
+  --illustration-primary: #3b82f6;
+  --illustration-secondary: #6ea8fe;
+  --illustration-surface: #f4f7fc;
+  --illustration-outline: #d7e2f3;
+  --illustration-glow: rgba(59, 130, 246, 0.22);
+  --illustration-shadow: rgba(0, 0, 0, 0.35);
 }
 
 .dark {
@@ -104,6 +124,11 @@
   --warning-foreground: oklch(0.02 0.1472 86.047);
   --success: oklch(0.648 0.2 131.684);
   --success-foreground: oklch(0.02 0.16000000000000003 131.684);
+
+  /* Illustration card — dark-navy in dark mode; see :root above for the
+     light-mode default and the fixed accent tokens. */
+  --illustration-surface: #181c24;
+  --illustration-outline: #2b3442;
 }
 
 @theme inline {

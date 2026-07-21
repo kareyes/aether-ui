@@ -3,6 +3,7 @@
 
 // Re-export primitives using `export * as` for better bundler compatibility
 export * as EmptyPrimitives from "./components/ui/empty/index.js";
+export * as Illustrations from "./components/ui/illustrations/index.js";
 export * as AccordionPrimitives from "./components/ui/accordion/index.js";
 export * as AlertPrimitives from "./components/ui/alert/index.js";
 export * as AlertDialogPrimitives from "./components/ui/alert-dialog/index.js";
@@ -60,6 +61,7 @@ export * as SwitchPrimitives from "./components/ui/switch/index.js";
 export * as TablePrimitives from "./components/ui/table/index.js";
 export * as TabsPrimitives from "./components/ui/tabs/index.js";
 export * as TextareaPrimitives from "./components/ui/textarea/index.js";
+export * as TimelinePrimitives from "./components/ui/timeline/index.js";
 export * as TooltipPrimitives from "./components/ui/tooltip/index.js";
 export * as NavigationMenuPrimitives from "./components/ui/navigation-menu/index.js";
 export * as DarkModePrimitives from "./components/ui/dark-mode/index.js";
@@ -137,6 +139,7 @@ import { Switch } from "./components/ui/switch/index.js";
 import { Root as Table } from "./components/ui/table/index.js";
 import { Root as Tabs } from "./components/ui/tabs/index.js";
 import { Textarea } from "./components/ui/textarea/index.js";
+import { Timeline } from "./components/ui/timeline/index.js";
 import { Root as Tooltip } from "./components/ui/tooltip/index.js";
 import { Root as NavigationMenu } from "./components/ui/navigation-menu/index.js";
 import {
@@ -200,6 +203,7 @@ export {
 	Table,
 	Tabs,
 	Textarea,
+	Timeline,
 	Tooltip,
 	NavigationMenu,
 	DarkModeToggle,
