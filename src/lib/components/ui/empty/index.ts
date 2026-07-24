@@ -8,8 +8,8 @@ import EmptyImpl from "./empty-impl.svelte";
 
 export { emptyVariants } from "./empty.svelte";
 export type { EmptyVariant, EmptySize } from "./empty.svelte";
-export { emptyMediaVariants } from "./empty-media.svelte";
-export type { EmptyMediaVariant } from "./empty-media.svelte";
+export { emptyMediaVariants } from "./empty-media-variants.js";
+export type { EmptyMediaVariant } from "./empty-media-variants.js";
 
 export {
 	Root,

@@ -130,14 +130,26 @@
 			{#each emptyStates as state (state.name)}
 				{#if state.action}
 					{@const buttonAction = state.action}
-					<Empty title={state.title} description={state.description} variant="outline" size="lg">
+					<Empty
+						title={state.title}
+						description={state.description}
+						variant="outline"
+						size="lg"
+						iconVariant="illustration"
+					>
 						{#snippet icon()}<state.component size={140} />{/snippet}
 						{#snippet action()}
 							<Button text={buttonAction.text} variant={buttonAction.variant} size="sm" />
 						{/snippet}
 					</Empty>
 				{:else}
-					<Empty title={state.title} description={state.description} variant="outline" size="lg">
+					<Empty
+						title={state.title}
+						description={state.description}
+						variant="outline"
+						size="lg"
+						iconVariant="illustration"
+					>
 						{#snippet icon()}<state.component size={140} />{/snippet}
 					</Empty>
 				{/if}

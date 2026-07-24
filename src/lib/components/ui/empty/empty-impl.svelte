@@ -6,7 +6,7 @@
 	import Description from "./empty-description.svelte";
 	import Content from "./empty-content.svelte";
 	import type { EmptyVariant, EmptySize } from "./empty.svelte";
-	import type { EmptyMediaVariant } from "./empty-media.svelte";
+	import type { EmptyMediaVariant } from "./empty-media-variants.js";
 	import type { Snippet } from "svelte";
 
 	type Props = {
@@ -18,7 +18,11 @@
 		variant?: EmptyVariant;
 		/** Padding / spacing size */
 		size?: EmptySize;
-		/** Style of the icon wrapper — "icon" adds a rounded box, "default" is transparent */
+		/**
+		 * Style of the media wrapper — "icon" adds a rounded muted box (best for
+		 * small line icons), "default" is a transparent wrapper, "illustration"
+		 * is transparent and renders rich SVG illustrations at their natural size.
+		 */
 		iconVariant?: EmptyMediaVariant;
 		/** Icon or image to display — renders inside the media wrapper */
 		icon?: Snippet;

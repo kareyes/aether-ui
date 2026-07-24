@@ -84,7 +84,7 @@ Import the single `Empty` component:
 | `description` | `string` | — | Supporting text below the title |
 | `variant` | `'default' \| 'outline' \| 'filled' \| 'ghost'` | `'default'` | Visual style of the container |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Padding and gap size |
-| `iconVariant` | `'icon' \| 'default'` | `'icon'` | Icon wrapper style — `'icon'` adds a rounded muted box, `'default'` is transparent |
+| `iconVariant` | `'icon' \| 'default' \| 'illustration'` | `'icon'` | Media wrapper style — `'icon'` adds a rounded muted box, `'default'` is transparent, `'illustration'` renders a rich SVG at its natural size |
 | `class` | `string` | — | Additional CSS classes applied to the root element |
 
 ### Snippets
@@ -140,20 +140,32 @@ All snippets are optional. Sections are omitted entirely when no snippet is prov
 The `iconVariant` prop controls how the icon is wrapped inside `Empty.Media`:
 
 ```svelte
-<!-- "icon" (default): icon sits in a small rounded muted box -->
+<!-- "icon" (default): icon sits in a small rounded muted box, forced to size-6 -->
 <Empty iconVariant="icon" ...>
   {#snippet icon()}<SearchIcon />{/snippet}
 </Empty>
 
-<!-- "default": icon renders without a wrapper -->
+<!-- "default": bare transparent wrapper — you control the size -->
 <Empty iconVariant="default" ...>
   {#snippet icon()}
     <SearchIcon class="size-12 text-muted-foreground" />
   {/snippet}
 </Empty>
+
+<!-- "illustration": transparent wrapper for a rich SVG at its natural size -->
+<Empty iconVariant="illustration" ...>
+  {#snippet icon()}<Illustrations.NoTimeEntries size={140} />{/snippet}
+</Empty>
 ```
 
-Use `iconVariant="default"` when passing a larger illustration, an Avatar, or a custom-sized SVG.
+> **Important:** the default `iconVariant="icon"` forces any un-sized SVG to
+> `size-6` (24px) inside a `size-10` (40px) box — this crushes rich
+> illustrations to an unrecognizable size. When passing an
+> `aether-ui` illustration, an Avatar, or any large/custom-sized SVG, use
+> `iconVariant="illustration"` (respects the illustration's own `size` prop
+> and scales down responsively) or `iconVariant="default"` (bare wrapper where
+> you size the SVG yourself). Never leave a full illustration on the default
+> `icon` variant.
 
 ---
 
@@ -259,7 +271,8 @@ Extend any variant with the `class` prop:
 | Situation | Recommendation |
 |-----------|----------------|
 | Standard icon + title + description + CTA | `Empty` declarative |
-| Custom media (avatar, avatar group, illustration) | `EmptyPrimitives.Root` + `EmptyPrimitives.Media variant="default"` |
+| Rich SVG illustration | `Empty iconVariant="illustration"` (or `EmptyPrimitives.Media variant="illustration"`) |
+| Custom media (avatar, avatar group) | `EmptyPrimitives.Root` + `EmptyPrimitives.Media variant="default"` |
 | Multiple separate action rows | `EmptyPrimitives.Content` with manual layout |
 | Inline / sidebar state, minimal text | `Empty size="sm" variant="ghost"` |
 | Full-page dashboard empty state | `Empty size="lg" variant="outline"` |
