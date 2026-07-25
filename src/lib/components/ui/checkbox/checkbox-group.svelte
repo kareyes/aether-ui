@@ -47,6 +47,12 @@
 		description?: string;
 		required?: boolean;
 		/**
+		 * Form field name — applied to every checkbox in the group so each
+		 * checked option's `value` is submitted under this name natively
+		 * (retrievable via `FormData.getAll(name)`).
+		 */
+		name?: string;
+		/**
 		 * Error state - when true, applies error styling via aria-invalid
 		 */
 		error?: boolean;
@@ -74,6 +80,7 @@
 		label,
 		description,
 		required = false,
+		name,
 		error = false,
 		onError,
 		onValuesChange,
@@ -149,6 +156,8 @@
 				{variant}
 				{lineThrough}
 				{error}
+				{name}
+				value={option.value}
 				disabled={disabled || option.disabled}
 				label={option.label}
 				description={option.description}

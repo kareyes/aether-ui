@@ -7,6 +7,9 @@ export * as Illustrations from "./components/ui/illustrations/index.js";
 export * as AccordionPrimitives from "./components/ui/accordion/index.js";
 export * as AlertPrimitives from "./components/ui/alert/index.js";
 export * as AlertDialogPrimitives from "./components/ui/alert-dialog/index.js";
+export * as AutocompletePrimitives from "./components/ui/autocomplete/index.js";
+// The default item shape is needed to type any consumer's local dataset.
+export type { AutocompleteItem } from "./components/ui/autocomplete/index.js";
 export * as AvatarPrimitives from "./components/ui/avatar/index.js";
 export * as BadgePrimitives from "./components/ui/badge/index.js";
 export * as BreadcrumbPrimitives from "./components/ui/breadcrumb/index.js";
@@ -86,6 +89,7 @@ export { IsMobile } from "./hooks/is-mobile.svelte.js";
 import { Root as Accordion } from "./components/ui/accordion/index.js";
 import { Alert } from "./components/ui/alert/index.js";
 import { Root as AlertDialog } from "./components/ui/alert-dialog/index.js";
+import { Autocomplete } from "./components/ui/autocomplete/index.js";
 import { Avatar } from "./components/ui/avatar/index.js";
 import { Badge } from "./components/ui/badge/index.js";
 import { Breadcrumb } from "./components/ui/breadcrumb/index.js";
@@ -153,6 +157,7 @@ export {
 	Accordion,
 	Alert,
 	AlertDialog,
+	Autocomplete,
 	Avatar,
 	Badge,
 	Breadcrumb,

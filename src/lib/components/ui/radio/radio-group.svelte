@@ -46,6 +46,8 @@
 		label?: string;
 		description?: string;
 		required?: boolean;
+		/** Form field name — renders a hidden input for native form submission. */
+		name?: string;
 		/**
 		 * Error state - when true, applies error styling via aria-invalid
 		 */
@@ -75,6 +77,7 @@
 		label,
 		description,
 		required = false,
+		name,
 		error = false,
 		onError,
 		onValueChange,
@@ -134,6 +137,8 @@
 			isCard ? "space-y-3" : radioGroupVariants({ orientation, size })
 		)}
 		{disabled}
+		{required}
+		{name}
 	>
 		{#each options as option (option.id)}
 			{#if isCard}

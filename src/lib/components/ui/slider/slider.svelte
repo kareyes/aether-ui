@@ -41,6 +41,13 @@
 		 * Additional CSS classes for the root element
 		 */
 		class?: string;
+		/**
+		 * Form field name. bits-ui's Slider has no native form participation,
+		 * so when given, this mirrors `value` into hidden input(s) — one per
+		 * thumb for a range slider, all sharing `name` (retrievable via
+		 * `FormData.getAll(name)`, mirroring a native multi-value field).
+		 */
+		name?: string;
 	};
 
 	let {
@@ -57,10 +64,17 @@
 		max = 100,
 		step = 1,
 		class: className,
+		name,
 		...restProps
 	}: SliderProps = $props();
 
 	const styles = $derived(sliderVariants({ variant, size }));
+
+	// Normalized to an array so both the single-thumb and range cases render
+	// through the same hidden-input loop below.
+	const hiddenValues = $derived(
+		value === undefined ? [] : Array.isArray(value) ? value : [value],
+	);
 
 	// Calculate step positions
 	const stepPositions = $derived.by(() => {
@@ -200,3 +214,8 @@ get along, so we shut typescript up by casting `value` to `never`.
 		{/if}
 	{/snippet}
 </SliderPrimitive.Root>
+{#if name}
+	{#each hiddenValues as v, i (i)}
+		<input type="hidden" {name} value={v} />
+	{/each}
+{/if}

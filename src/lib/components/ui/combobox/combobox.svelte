@@ -20,7 +20,9 @@
 		// Value
 		value?: string;
 		onValueChange?: (value: string) => void;
-		
+		/** Form field name — when given, mirrors `value` into a hidden input. */
+		name?: string;
+
 		// Trigger props
 		placeholder?: string;
 		triggerVariant?: ButtonProps["variant"];
@@ -47,6 +49,7 @@
 		items = [],
 		value = $bindable(""),
 		onValueChange,
+		name,
 		placeholder = "Select an item...",
 		triggerVariant = "outline",
 		triggerSize = "default",
@@ -129,3 +132,12 @@
 		</Command.Root>
 	</Popover.Content>
 </Popover.Root>
+<!--
+	Combobox has no native form element of its own — the trigger is a button,
+	not the submitted control. When a `name` is given, mirror `value` into a
+	hidden input so this participates in native form / SvelteKit `enhance`
+	submissions.
+-->
+{#if name}
+	<input type="hidden" {name} {value} />
+{/if}

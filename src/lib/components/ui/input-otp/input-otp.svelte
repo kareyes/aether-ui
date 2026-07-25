@@ -33,6 +33,12 @@
 		 */
 		pattern?: string;
 		/**
+		 * Form field name. bits-ui's PinInput has no native form
+		 * participation, so when given, this mirrors `value` into a hidden
+		 * input for native form / SvelteKit `enhance` submissions.
+		 */
+		name?: string;
+		/**
 		 * Show separator between groups
 		 * @default true when groups > 1
 		 */
@@ -72,6 +78,7 @@
 		groups = 1,
 		disabled = false,
 		pattern,
+		name,
 		showSeparator,
 		error = false,
 		invalid = false,
@@ -145,4 +152,7 @@
 		{/each}
 	{/snippet}
 </InputOTPPrimitive.Root>
+{#if name}
+	<input type="hidden" {name} {value} />
+{/if}
 
