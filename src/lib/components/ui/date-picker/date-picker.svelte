@@ -6,6 +6,7 @@
     import { Calendar } from "$lib/components/ui/calendar/index.js";
     import * as Popover from "$lib/components/ui/popover/index.js";
     import type { DatePickerProps } from ".";
+    import { dialogPopover } from "./dialog-popover.svelte.js";
     import type { ComponentProps } from "svelte";
 
     type Props = DatePickerProps & {
@@ -33,6 +34,10 @@
     let dropdown = $state<ComponentProps<typeof Calendar>["captionLayout"]>("dropdown");
 
     let open = $state(false);
+
+    // Renders correctly inside a native <dialog>; see dialogPopover's docs.
+    let rootEl = $state<HTMLDivElement | null>(null);
+    const dialogPop = dialogPopover(() => rootEl);
 
     function defaultFormat(date: DateValue | undefined): string {
         if (!date?.toDate) return "Pick a date";
@@ -68,7 +73,7 @@
     });
 </script>
 
-<div class={cn("grid gap-2", className)} {...restProps}>
+<div bind:this={rootEl} class={cn("grid gap-2", className)} {...restProps}>
     <Popover.Root bind:open>
         <Popover.Trigger>
             {#snippet child({ props })}
@@ -89,7 +94,12 @@
                 </Button>
             {/snippet}
         </Popover.Trigger>
-        <Popover.Content class="w-auto p-0" align="start">
+        <Popover.Content
+            class="w-auto p-0"
+            align="start"
+            portalProps={dialogPop.portalProps}
+            strategy={dialogPop.strategy}
+        >
             <Calendar
                 type="single"
                 bind:value

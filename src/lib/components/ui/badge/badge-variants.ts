@@ -107,7 +107,8 @@ export const badgeVariants = tv({
 		{
 			variant: "secondary",
 			color: "primary",
-			class: "bg-primary/20 text-primary dark:bg-primary/25",
+			class:
+				"bg-primary/20 text-primary dark:text-primary-light dark:bg-primary/25",
 		},
 		{
 			variant: "secondary",
@@ -163,7 +164,8 @@ export const badgeVariants = tv({
 		{
 			variant: "flat",
 			color: "primary",
-			class: "bg-primary/10 text-primary dark:bg-primary/20",
+			class:
+				"bg-primary/10 text-primary dark:text-primary-light dark:bg-primary/20",
 		},
 		{
 			variant: "flat",

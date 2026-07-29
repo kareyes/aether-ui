@@ -52,6 +52,19 @@ A date range picker with preset ranges (Last 7 days, Last 30 days, This month, e
 <DateRangePickerWithPresets bind:value={range} />
 ```
 
+### DateTimePicker
+A date picker with an attached time-of-day input for selecting both a date and a time in one control.
+
+```svelte
+<script>
+  import { DateTimePicker } from "aether-ui";
+  import type { CalendarDateTime } from "@internationalized/date";
+  let dateTime = $state<CalendarDateTime | undefined>();
+</script>
+
+<DateTimePicker bind:value={dateTime} />
+```
+
 ## Props
 
 ### Common Props (All Components)
@@ -74,6 +87,14 @@ A date range picker with preset ranges (Last 7 days, Last 30 days, This month, e
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `presets` | `Preset[]` | Default presets | Array of preset options |
+
+### DateTimePicker Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `CalendarDateTime` | `undefined` | The selected date and time (bindable) |
+| `placeholder` | `CalendarDateTime` | `undefined` | Placeholder date-time for the calendar (bindable) |
+| `hourCycle` | `12 \| 24` | `12` | Whether the trigger label formats the time as 12-hour (AM/PM) or 24-hour |
 
 ## Button Variants
 
@@ -179,6 +200,20 @@ The date picker uses `@internationalized/date` for date handling:
 <DatePickerWithPresets bind:value={date} />
 ```
 
+### Date and Time
+```svelte
+<script>
+  import { DateTimePicker } from "aether-ui";
+  import type { CalendarDateTime } from "@internationalized/date";
+  let dateTime = $state<CalendarDateTime | undefined>();
+</script>
+
+<DateTimePicker bind:value={dateTime} />
+
+<!-- 24-hour trigger label instead of AM/PM -->
+<DateTimePicker bind:value={dateTime} hourCycle={24} />
+```
+
 ### Custom Button Style
 ```svelte
 <DatePicker buttonVariant="default" buttonClass="w-64" />
@@ -243,6 +278,7 @@ The date picker uses `@internationalized/date` for date handling:
 ## Features
 
 - ✅ Single date selection
+- ✅ Date and time selection
 - ✅ Date range selection
 - ✅ Preset options for quick selection
 - ✅ Custom date formatting

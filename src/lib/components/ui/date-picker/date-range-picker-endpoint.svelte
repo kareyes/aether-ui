@@ -4,6 +4,7 @@
 	import { cn } from "$lib/utils.js";
 	import { Calendar } from "$lib/components/ui/calendar/index.js";
 	import * as Popover from "$lib/components/ui/popover/index.js";
+	import { dialogPopover } from "./dialog-popover.svelte.js";
 
 	/**
 	 * One end of a `DateRangePickerSplit`. The two ends differ only in their
@@ -40,6 +41,11 @@
 
 	let open = $state(false);
 
+	// Renders correctly inside a native <dialog>; see dialogPopover's docs. This
+	// component has no wrapper element, so the trigger is the anchor.
+	let triggerEl = $state<HTMLButtonElement | null>(null);
+	const dialogPop = dialogPopover(() => triggerEl);
+
 	function select(date: DateValue | undefined): void {
 		onSelect(date);
 		open = false;
@@ -49,7 +55,13 @@
 <Popover.Root bind:open>
 	<Popover.Trigger>
 		{#snippet child({ props })}
-			<button {...props} type="button" {disabled} class={triggerClass}>
+			<button
+				{...props}
+				bind:this={triggerEl}
+				type="button"
+				{disabled}
+				class={triggerClass}
+			>
 				<span class="text-xs font-medium text-muted-foreground">{label}</span>
 				<span class="flex w-full items-center gap-2">
 					<CalendarIcon class="size-4 text-muted-foreground" />
@@ -63,7 +75,12 @@
 			</button>
 		{/snippet}
 	</Popover.Trigger>
-	<Popover.Content class="w-auto p-0" align="start">
+	<Popover.Content
+		class="w-auto p-0"
+		align="start"
+		portalProps={dialogPop.portalProps}
+		strategy={dialogPop.strategy}
+	>
 		<Calendar
 			type="single"
 			{value}

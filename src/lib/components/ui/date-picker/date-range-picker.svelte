@@ -7,6 +7,7 @@
     import { RangeCalendar } from "$lib/components/ui/range-calendar/index.js";
     import * as Popover from "$lib/components/ui/popover/index.js";
     import type { DatePickerProps } from ".";
+    import { dialogPopover } from "./dialog-popover.svelte.js";
 
     type Props = DatePickerProps & {
         value?: DateRange;
@@ -51,6 +52,10 @@
 
     let open = $state(false);
 
+    // Renders correctly inside a native <dialog>; see dialogPopover's docs.
+    let rootEl = $state<HTMLDivElement | null>(null);
+    const dialogPop = dialogPopover(() => rootEl);
+
     // Track error state and notify parent
     $effect(() => {
         if (onError) {
@@ -71,7 +76,7 @@
     });
 </script>
 
-<div class={cn("grid gap-2", className)} {...restProps}>
+<div bind:this={rootEl} class={cn("grid gap-2", className)} {...restProps}>
     <Popover.Root bind:open>
         <Popover.Trigger>
             {#snippet child({ props })}
@@ -92,7 +97,12 @@
                 </Button>
             {/snippet}
         </Popover.Trigger>
-        <Popover.Content class="w-auto p-0" align="start">
+        <Popover.Content
+            class="w-auto p-0"
+            align="start"
+            portalProps={dialogPop.portalProps}
+            strategy={dialogPop.strategy}
+        >
             <RangeCalendar
                 bind:value
                 bind:placeholder

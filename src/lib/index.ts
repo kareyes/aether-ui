@@ -110,6 +110,7 @@ import {
 	DateRangePicker,
 	DateRangePickerSplit,
 	DateRangePickerWithPresets,
+	DateTimePicker,
 } from "./components/ui/date-picker/index.js";
 import { Root as Dialog } from "./components/ui/dialog/index.js";
 import { DropdownMenu } from "./components/ui/dropdown-menu/index.js";
@@ -178,6 +179,7 @@ export {
 	DateRangePicker,
 	DateRangePickerSplit,
 	DateRangePickerWithPresets,
+	DateTimePicker,
 	Dialog,
 	DropdownMenu,
 	Empty,

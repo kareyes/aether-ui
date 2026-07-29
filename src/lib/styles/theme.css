@@ -173,6 +173,17 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-primary-light: color-mix(
+    in oklch,
+    var(--color-primary),
+    white 30%
+  );
+  --color-tertiary: var(--chart-2);
+  --color-tertiary-light: color-mix(
+    in oklch,
+    var(--color-tertiary),
+    white 30%
+  );
 }
 
 @layer base {
