@@ -30,7 +30,7 @@
 		class: className,
 		style: styleProp,
 		weekStartsOn = 0,
-		weekdayFormat = "short",
+		weekdayFormat: weekdayFormatProp,
 		locale = "en-US",
 		buttonVariant = "ghost",
 		size = "default",
@@ -70,6 +70,14 @@
 
 	const timeZone = getLocalTimeZone();
 	const isFullSize = $derived(size === "full");
+
+	// `full` keeps its long weekday headers by default, but an explicit
+	// `weekdayFormat` now wins at every size — passing one used to be silently
+	// ignored in `full`, leaving no way to ask for `Mon` instead of `Monday`.
+	// Mirrors the same fix in `Calendar`.
+	const weekdayFormat = $derived(
+		weekdayFormatProp ?? (isFullSize ? "long" : "short"),
+	);
 
 	// `fluid` stretches each cell across its share of the row, but the day
 	// button keeps its fixed `--cell-size`. The cell is not a flex container,
@@ -187,7 +195,7 @@ so we cast `value` to `never` to quiet TypeScript — same trick as `Calendar`.
 	bind:ref
 	bind:placeholder
 	{weekStartsOn}
-	weekdayFormat={isFullSize ? "long" : weekdayFormat}
+	{weekdayFormat}
 	{locale}
 	style={rootStyle}
 	class={cn(
@@ -250,12 +258,18 @@ so we cast `value` to `never` to quiet TypeScript — same trick as `Calendar`.
 							<Calendar.HeadCell
 								class={fluid ? "flex-1 text-center" : undefined}
 							>
-								{#if isFullSize}
+								{#if isFullSize && weekdayFormat === "long"}
+									<!-- Only a long name needs the narrow-column
+									     fallback. -->
 									<span class="hidden md:inline">{weekday}</span
 									>
 									<span class="md:hidden"
 										>{weekday.slice(0, 2)}</span
 									>
+								{:else if isFullSize}
+									<!-- A caller-chosen short format already fits;
+									     slicing it would drop a letter for nothing. -->
+									{weekday}
 								{:else}
 									{weekday.slice(0, 2)}
 								{/if}

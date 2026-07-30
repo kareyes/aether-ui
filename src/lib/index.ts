@@ -65,6 +65,16 @@ export * as TablePrimitives from "./components/ui/table/index.js";
 export * as TabsPrimitives from "./components/ui/tabs/index.js";
 export * as TextareaPrimitives from "./components/ui/textarea/index.js";
 export * as TimelinePrimitives from "./components/ui/timeline/index.js";
+export * as TimePickerPrimitives from "./components/ui/time-picker/index.js";
+// `value` itself is a `Time` from `@internationalized/date` — import that
+// directly to declare state. These are the picker's own vocabulary: the
+// granularity a caller passes in, the `{hour,minute,second}` shape the column
+// helpers work in, and the full prop surface for wrapping the component.
+export type {
+	TimeGranularity,
+	TimeParts,
+	TimePickerProps,
+} from "./components/ui/time-picker/index.js";
 export * as TooltipPrimitives from "./components/ui/tooltip/index.js";
 export * as NavigationMenuPrimitives from "./components/ui/navigation-menu/index.js";
 export * as DarkModePrimitives from "./components/ui/dark-mode/index.js";
@@ -145,6 +155,13 @@ import { Root as Table } from "./components/ui/table/index.js";
 import { Root as Tabs } from "./components/ui/tabs/index.js";
 import { Textarea } from "./components/ui/textarea/index.js";
 import { Timeline } from "./components/ui/timeline/index.js";
+import {
+	TimeField,
+	TimeFieldInput,
+	TimeFieldLabel,
+	TimeFieldSegment,
+	TimePicker,
+} from "./components/ui/time-picker/index.js";
 import { Root as Tooltip } from "./components/ui/tooltip/index.js";
 import { Root as NavigationMenu } from "./components/ui/navigation-menu/index.js";
 import {
@@ -211,6 +228,11 @@ export {
 	Tabs,
 	Textarea,
 	Timeline,
+	TimePicker,
+	TimeField,
+	TimeFieldInput,
+	TimeFieldSegment,
+	TimeFieldLabel,
 	Tooltip,
 	NavigationMenu,
 	DarkModeToggle,

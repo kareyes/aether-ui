@@ -72,6 +72,19 @@
   --illustration-outline: #d7e2f3;
   --illustration-glow: rgba(59, 130, 246, 0.22);
   --illustration-shadow: rgba(0, 0, 0, 0.35);
+
+    --status-info: oklch(0.55 0.132 242.749);
+  --status-info-label: oklch(0.435 0.118 242.749);
+  --status-warning: oklch(0.7 0.148 68);
+  --status-warning-label: oklch(0.485 0.115 62);
+  --status-success: oklch(0.62 0.14 150);
+  --status-success-label: oklch(0.44 0.11 152);
+  --status-danger: oklch(0.577 0.245 27.325);
+  --status-danger-label: oklch(0.47 0.2 27.325);
+  --status-accent: oklch(0.585 0.19 312);
+  --status-accent-label: oklch(0.46 0.17 312);
+  --status-neutral: oklch(0.72 0.014 220);
+  --status-neutral-label: oklch(0.56 0.021 213.5);
 }
 
 .dark {
@@ -129,6 +142,19 @@
      light-mode default and the fixed accent tokens. */
   --illustration-surface: #181c24;
   --illustration-outline: #2b3442;
+
+    --status-info: oklch(0.655 0.13 242.749);
+  --status-info-label: oklch(0.83 0.072 242.749);
+  --status-warning: oklch(0.76 0.145 72);
+  --status-warning-label: oklch(0.87 0.098 78);
+  --status-success: oklch(0.7 0.14 152);
+  --status-success-label: oklch(0.85 0.1 155);
+  --status-danger: oklch(0.704 0.191 22.216);
+  --status-danger-label: oklch(0.85 0.11 22.216);
+  --status-accent: oklch(0.685 0.18 312);
+  --status-accent-label: oklch(0.85 0.105 312);
+  --status-neutral: oklch(0.5 0.016 220);
+  --status-neutral-label: oklch(0.723 0.014 214.4);
 }
 
 @theme inline {
@@ -184,7 +210,36 @@
     var(--color-tertiary),
     white 30%
   );
+
+    --color-status-info: var(--status-info);
+  --color-status-info-label: var(--status-info-label);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-label: var(--status-warning-label);
+  --color-status-success: var(--status-success);
+  --color-status-success-label: var(--status-success-label);
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-label: var(--status-danger-label);
+  --color-status-accent: var(--status-accent);
+  --color-status-accent-label: var(--status-accent-label);
+  --color-status-neutral: var(--status-neutral);
+  --color-status-neutral-label: var(--status-neutral-label);
 }
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@theme {
+  --animate-rise-in: rise-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
 
 @layer base {
   * {
@@ -203,6 +258,12 @@
     @apply appearance-none;
     -moz-appearance: textfield;
   }
+  
+  	@media (prefers-reduced-motion: reduce) {
+		[data-stagger] {
+			animation: none;
+		}
+	}
 }
 
 /* Skeleton animations */

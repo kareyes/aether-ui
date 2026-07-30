@@ -43,7 +43,7 @@
 		value = $bindable(),
 		placeholder = $bindable(),
 		class: className,
-		weekdayFormat = "short",
+		weekdayFormat: weekdayFormatProp,
 		buttonVariant = "ghost",
 		captionLayout = "label",
 		locale = "en-US",
@@ -78,6 +78,14 @@
 		return "long";
 	});
 
+	// `full` keeps its long weekday headers by default (they fit the wide
+	// month grid), but an explicit `weekdayFormat` now wins at every size —
+	// passing one used to be silently ignored in `full`, leaving no way to ask
+	// for `Mon` instead of `Monday`.
+	const weekdayFormat = $derived(
+		weekdayFormatProp ?? (size === "full" ? "long" : "short"),
+	);
+
 	// Create a map of events by date for quick lookup
 	const eventsByDate = $derived.by(() => {
 		const map = new Map<string, CalendarEvent[]>();
@@ -102,7 +110,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 	bind:value={value as never}
 	bind:ref
 	bind:placeholder
-	weekdayFormat={size === "full" ? "long" : weekdayFormat}
+	{weekdayFormat}
 	{disableDaysOutsideMonth}
 	class={cn(calendarVariants({ size }), className)}
 	{locale}
