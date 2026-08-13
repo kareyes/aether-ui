@@ -1023,7 +1023,7 @@ export const SIDEBAR_KEYBOARD_SHORTCUT = "b"; // Change to desired key
 ## State Persistence
 
 The sidebar automatically persists its state using cookies:
-- Cookie name: `sidebar:state`
+- Cookie name: `sidebar_state`
 - Max age: 7 days
 - Remembers collapsed/expanded state across sessions
 

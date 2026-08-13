@@ -23,6 +23,10 @@ import Separator from "./sidebar-separator.svelte";
 import Trigger from "./sidebar-trigger.svelte";
 import Root from "./sidebar.svelte";
 
+// The `SIDEBAR_*` constants deliberately do **not** re-export from here. They
+// live in `$lib/constants.ts` and reach consumers through the main barrel or
+// `aether-ui/constants`; a third path through this namespace would be one more
+// place for an import to point at the same values.
 export {
 	Content,
 	Footer,

@@ -52,6 +52,18 @@
 		onRowSelectionChange?: (selectedRows: TData[]) => void;
 		onClearFilter?: () => void;
 		responsiveMode?: ResponsiveMode;
+		/**
+		 * Width (px) below which `responsiveMode="auto"` switches to cards.
+		 * Defaults to `DEFAULT_MOBILE_BREAKPOINT`, the same threshold `IsMobile`
+		 * uses, so omitting it changes nothing.
+		 *
+		 * Raise it for a table whose column count needs more room than a phone
+		 * boundary implies. A table living beside a sidebar gets far less width
+		 * than the viewport suggests, and a nine-column table at 740px of
+		 * content is a horizontal scroll through columns the caller already has
+		 * a `mobileCard` for.
+		 */
+		cardBreakpoint?: number;
 	};
 
 	let {
@@ -78,13 +90,26 @@
 		onRowSelectionChange,
 		onClearFilter,
 		responsiveMode = "scroll",
+		cardBreakpoint,
 	}: DataTableProps<TData, TValue> = $props();
 
-	// Mobile detection
+	// Mobile detection. `isMobile` drives the *chrome* (toolbar, pagination),
+	// which is a question about the device and stays on the 768 default.
+	// `isNarrow` drives the card/table switch, which is a question about how
+	// much room this particular table needs — hence the separate, overridable
+	// breakpoint. They are the same query unless a caller says otherwise.
 	const isMobile = new IsMobile();
+	// Read once, on purpose: this is configuration, not state. Each `IsMobile`
+	// registers a `matchMedia` listener, so re-deriving it whenever the prop
+	// changed identity would churn subscriptions to answer a question no caller
+	// asks — nobody moves a table's card threshold at runtime. Reusing
+	// `isMobile` when unset keeps the common case to a single listener.
+	// svelte-ignore state_referenced_locally
+	const isNarrow =
+		cardBreakpoint !== undefined ? new IsMobile(cardBreakpoint) : isMobile;
 	const shouldShowCards = $derived.by(() =>
 		responsiveMode === "card" ||
-			(responsiveMode === "auto" && isMobile.current),
+			(responsiveMode === "auto" && isNarrow.current),
 	);
 	const isMobileLayout = $derived.by(() => isMobile.current);
 

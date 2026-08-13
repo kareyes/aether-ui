@@ -95,6 +95,11 @@ export {
 // because the variant is a prop, not a class.
 export { IsMobile } from "./hooks/is-mobile.svelte.js";
 
+// Configuration constants, re-exported so component-side code needs only this
+// import. They also have their own Svelte-free entry point (`aether-ui/constants`)
+// for server modules that must not pull components in — see `constants.ts`.
+export * from "./constants.js";
+
 // Shorthand component imports
 import { Root as Accordion } from "./components/ui/accordion/index.js";
 import { Alert } from "./components/ui/alert/index.js";

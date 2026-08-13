@@ -29,7 +29,14 @@
 <div
 	class={cn(
 		"rounded-md border",
-		responsiveMode === "scroll" && "overflow-x-auto",
+		// Every mode that reaches this branch is rendering a real table, so
+		// every one of them needs somewhere for a too-wide table to scroll.
+		// This was `=== "scroll"`, which left `auto` above its card breakpoint
+		// rendering a desktop table with no scroll container at all — the table
+		// then overflowed its card and pushed the page. `card` never gets here
+		// (the root renders the mobile view instead), so the guard is only
+		// about not adding a scroller to something that isn't a table.
+		responsiveMode !== "card" && "overflow-x-auto",
 		variant === "bordered" && "border-2",
 		variant === "compact" && "text-xs",
 	)}
