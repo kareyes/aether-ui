@@ -12,11 +12,11 @@
 	import { Calendar } from "$lib/components/ui/calendar/index.js";
 	import * as Popover from "$lib/components/ui/popover/index.js";
 	import type { DatePickerProps } from ".";
+	import { commitDateTime } from "./date-time-commit.js";
+	import DateTimeColumns from "./date-time-columns.svelte";
 	import { dialogPopover } from "./dialog-popover.svelte.js";
 	import { untrack } from "svelte";
 	import type { ComponentProps } from "svelte";
-
-	type Period = "AM" | "PM";
 
 	type Props = DatePickerProps & {
 		value?: CalendarDateTime;
@@ -136,85 +136,48 @@
 		if (!placeholder) placeholder = toCalendarDateTime(today(getLocalTimeZone()));
 	});
 
+	/** What the columns highlight: the picked value, or the placeholder's time. */
 	const currentSource = $derived(value ?? placeholder);
-	const currentHour24 = $derived(currentSource?.hour ?? 0);
-	const currentMinute = $derived(currentSource?.minute ?? 0);
-	const currentPeriod: Period = $derived(currentHour24 < 12 ? "AM" : "PM");
-	const currentHour12 = $derived.by(() => {
-		const h = currentHour24 % 12;
-		return h === 0 ? 12 : h;
-	});
 
-	const hours = $derived(
-		hourCycle === 24
-			? Array.from({ length: 24 }, (_, i) => i)
-			: Array.from({ length: 12 }, (_, i) => i + 1),
-	);
-	const minutes = $derived(
-		Array.from({ length: Math.ceil(60 / minuteStep) }, (_, i) => i * minuteStep),
-	);
-
-	function to24Hour(hour12: number, period: Period): number {
-		const base = hour12 % 12;
-		return period === "PM" ? base + 12 : base;
-	}
+	/**
+	 * Whether a time column has been used while no day was ever clicked. With no
+	 * `value` the columns write into `placeholder` (see `applyTime`), which the
+	 * calendar owns and nothing submits — so without this the popover closes on
+	 * `undefined` and the time the user just picked is silently dropped. "Done"
+	 * commits it against today; see `confirm`.
+	 *
+	 * It must stay an *interaction* flag rather than "is there a placeholder":
+	 * under `defaultToNow={false}` the empty picker means "keep the existing
+	 * value", and seeding on a popover that was merely opened and closed would
+	 * turn every visit into an overwrite.
+	 */
+	let timeTouched = $state(false);
 
 	function applyTime(fields: { hour?: number; minute?: number }): void {
 		if (value) {
 			value = value.set(fields);
 		} else if (placeholder) {
+			timeTouched = true;
 			placeholder = placeholder.set(fields);
 		}
 	}
 
-	function selectHour24(hour: number): void {
-		applyTime({ hour });
-	}
-
-	function selectHour12(hour12: number): void {
-		applyTime({ hour: to24Hour(hour12, currentPeriod) });
-	}
-
-	function selectPeriod(period: Period): void {
-		applyTime({ hour: to24Hour(currentHour12, period) });
-	}
-
-	function selectMinute(minute: number): void {
-		applyTime({ minute });
-	}
-
-	// Bring the currently-selected hour/minute/period into view whenever the
-	// popover opens, so the user isn't dropped at the top of an unrelated part
-	// of the list.
-	let hourListEl = $state<HTMLDivElement | null>(null);
-	let minuteListEl = $state<HTMLDivElement | null>(null);
-	let periodListEl = $state<HTMLDivElement | null>(null);
-
-	// Scroll the column itself rather than calling scrollIntoView, which walks up
-	// and scrolls every scrollable ancestor — including the page — to reveal the
-	// item.
-	function centerSelected(el: HTMLDivElement | null): void {
-		const target = el?.querySelector<HTMLElement>('[data-selected="true"]');
-		if (!el || !target) return;
-		const list = el.getBoundingClientRect();
-		const item = target.getBoundingClientRect();
-		el.scrollTop += item.top - list.top - (list.height - item.height) / 2;
-	}
-
-	$effect(() => {
-		if (!open) return;
-		requestAnimationFrame(() => {
-			centerSelected(hourListEl);
-			centerSelected(minuteListEl);
-			centerSelected(periodListEl);
+	/**
+	 * Close, committing a time picked against no date. The rule itself lives in
+	 * the pure {@link commitDateTime} — it is the one piece of this component with
+	 * a wrong answer in both directions (a dropped selection, or an overwrite of a
+	 * value nobody touched), so it is tested rather than trusted.
+	 */
+	function confirm(): void {
+		value = commitDateTime({
+			value,
+			placeholder,
+			timeTouched,
+			today: today(getLocalTimeZone()),
 		});
-	});
-
-	const timeColumnItemClass = cn(
-		"mx-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm tabular-nums",
-		"hover:bg-accent hover:text-accent-foreground",
-		"data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground data-[selected=true]:hover:bg-primary/90",
-	);
+		timeTouched = false;
+		open = false;
+	}
 </script>
 
 <div bind:this={rootEl} class={cn("grid gap-2", className)} {...restProps}>
@@ -253,97 +216,17 @@
 					captionLayout={dropdown}
 					{...calendarProps}
 				/>
-				<!--
-					The columns scroll *within* the calendar's height rather than growing
-					the popover. `overflow-y-auto` only scrolls against a definite height,
-					and a plain flex sibling has none — it just stretches to its content,
-					so a 60-entry minute column (minuteStep={1}) would run off the popover.
-					Stretching this wrapper to the flex line (i.e. the calendar) and
-					absolutely filling it gives the columns that definite height.
-					The wrapper carries an explicit width because absolute children
-					contribute none: 3 × w-14 columns with AM/PM, 2 without.
-				-->
-				<div
-					class={cn(
-						"relative border-l border-border",
-						hourCycle === 12 ? "w-42" : "w-28",
-					)}
-				>
-					<div class="absolute inset-0 flex divide-x divide-border">
-						<div
-							bind:this={hourListEl}
-							role="group"
-							aria-label="Hour"
-							class="flex min-h-0 w-14 flex-col gap-1 overflow-y-auto p-2"
-						>
-							{#each hours as h (h)}
-								{@const selected =
-									(hourCycle === 24 ? currentHour24 : currentHour12) === h}
-								<button
-									type="button"
-									aria-pressed={selected}
-									data-selected={selected ? "true" : undefined}
-									class={timeColumnItemClass}
-									{disabled}
-									onclick={() =>
-										hourCycle === 24 ? selectHour24(h) : selectHour12(h)}
-								>
-									{h}
-								</button>
-							{/each}
-						</div>
-						<div
-							bind:this={minuteListEl}
-							role="group"
-							aria-label="Minute"
-							class="flex min-h-0 w-14 flex-col gap-1 overflow-y-auto p-2"
-						>
-							{#each minutes as m (m)}
-								{@const selected = currentMinute === m}
-								<button
-									type="button"
-									aria-pressed={selected}
-									data-selected={selected ? "true" : undefined}
-									class={timeColumnItemClass}
-									{disabled}
-									onclick={() => selectMinute(m)}
-								>
-									{String(m).padStart(2, "0")}
-								</button>
-							{/each}
-						</div>
-						{#if hourCycle === 12}
-							<div
-								bind:this={periodListEl}
-								role="group"
-								aria-label="AM or PM"
-								class="flex min-h-0 w-14 flex-col gap-1 overflow-y-auto p-2"
-							>
-								{#each ["AM", "PM"] as const as p (p)}
-									{@const selected = currentPeriod === p}
-									<button
-										type="button"
-										aria-pressed={selected}
-										data-selected={selected ? "true" : undefined}
-										class={cn(timeColumnItemClass, "w-10")}
-										{disabled}
-										onclick={() => selectPeriod(p)}
-									>
-										{p}
-									</button>
-								{/each}
-							</div>
-						{/if}
-					</div>
-				</div>
+				<DateTimeColumns
+					current={currentSource}
+					{hourCycle}
+					{minuteStep}
+					{disabled}
+					{open}
+					onSelect={applyTime}
+				/>
 			</div>
 			<div class="flex justify-end border-t border-border p-3">
-				<Button
-					size="sm"
-					variant="outline"
-					{disabled}
-					onclick={() => (open = false)}
-				>
+				<Button size="sm" variant="outline" {disabled} onclick={confirm}>
 					Done
 				</Button>
 			</div>
