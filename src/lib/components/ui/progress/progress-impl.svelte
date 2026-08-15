@@ -49,7 +49,7 @@
 		trackClass,
 	}: Props = $props();
 
-	const isIndeterminate = $derived(value == null);
+	const isIndeterminate = $derived(value === null);
 	const percentage = $derived(isIndeterminate ? null : Math.round((100 * (value ?? 0)) / (max ?? 1)));
 	const displayValue = $derived(
 		isIndeterminate

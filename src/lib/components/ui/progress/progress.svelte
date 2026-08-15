@@ -75,7 +75,7 @@
 		animation?: ProgressAnimation;
 	} = $props();
 
-	const isIndeterminate = $derived(value == null);
+	const isIndeterminate = $derived(value === null || value === undefined);
 	const offset = $derived(isIndeterminate ? 0 : 100 - (100 * (value ?? 0)) / (max ?? 1));
 </script>
 

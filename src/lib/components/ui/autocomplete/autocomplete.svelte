@@ -181,7 +181,9 @@
 	const visibleItems = $derived(remoteMode ? results : localItems);
 	const belowMinLength = $derived(remoteMode && query.length < minLength);
 	const hasClear = $derived(
-		clearable && !disabled && (query.length > 0 || value != null),
+		clearable &&
+			!disabled &&
+			(query.length > 0 || (value !== null && value !== undefined)),
 	);
 
 	const debouncer = createDebouncer();
@@ -285,7 +287,13 @@
 	});
 
 	function isSelected(it: T) {
-		return value != null && itemValue(value) === itemValue(it);
+		// Nullish, not just null: `itemValue` dereferences its argument, and the
+		// hidden input below guards this same prop with a truthiness check.
+		return (
+			value !== null &&
+			value !== undefined &&
+			itemValue(value) === itemValue(it)
+		);
 	}
 
 	function handleSelect(it: T) {
