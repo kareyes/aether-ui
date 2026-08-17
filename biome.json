@@ -1,0 +1,105 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "main"
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"ignore": [
+			"node_modules/**",
+			".svelte-kit/**",
+			"build/**",
+			"dist/**",
+			"storybook-static/**",
+			"*.d.ts",
+			"tsconfig.json",
+			"tsconfig.*.json",
+			"vite.config.*.timestamp-*",
+			"pnpm-lock.yaml",
+			"package-lock.json",
+			"yarn.lock"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 100
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"include": [
+			"src/**/*.{js,ts,svelte}",
+			".storybook/**/*.{js,ts}",
+			"*.{js,ts}"
+		],
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"noFlatMapIdentity": "off",
+				"noUndeclaredVariables": "error",
+				"useExhaustiveDependencies": "warn"
+			},
+			"complexity": {
+				"noForEach": "off",
+				"useLiteralKeys": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off",
+				"useImportType": "error",
+				"useNodejsImportProtocol": "error",
+				"useNumberNamespace": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "warn",
+				"noArrayIndexKey": "warn"
+			},
+			"performance": {
+				"noAccumulatingSpread": "warn"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"include": ["**/*.stories.{js,ts,svelte}", ".storybook/**/*.{js,ts}"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useImportType": "off"
+					},
+					"suspicious": {
+						"noExplicitAny": "off"
+					},
+					"correctness": {
+						"noUndeclaredVariables": "off"
+					}
+				}
+			}
+		}
+	],
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"arrowParentheses": "always",
+			"trailingCommas": "all",
+			"semicolons": "always",
+			"bracketSpacing": true,
+			"bracketSameLine": false
+		}
+	},
+	"json": {
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
+			"indentWidth": 2,
+			"trailingCommas": "none"
+		}
+	}
+}

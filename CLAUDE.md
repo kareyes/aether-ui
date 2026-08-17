@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-`aether-ui` is a **Svelte 5 UI component library** built with Tailwind CSS v4. It is packaged and published from `src/lib/` via `svelte-package`, while `src/routes/` provides a SvelteKit dev app for previewing components.
+`@kareyes/aether-ui` is a **Svelte 5 UI component library** built with Tailwind CSS v4. It is packaged and published from `src/lib/` via `svelte-package`, while `src/routes/` provides a SvelteKit dev app for previewing components.
 
 ## Commands
 

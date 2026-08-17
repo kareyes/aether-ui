@@ -1,20 +1,3 @@
-# UPSTREAM-ONLY — do not convert to Bun.
-#
-# This file is inert in the stardust monorepo: GitHub Actions reads workflows
-# only from the repo-root .github/workflows, never from nested ones. It lives
-# here so that `git subtree push --prefix=ui-packages/aether-ui` carries it to
-# github.com/kareyes/aether-ui, where pnpm/Node are the correct toolchain.
-#
-# It cannot live upstream-only: the split tree contains exactly this prefix, so
-# anything present only in the standalone repo is deleted by the next export.
-#
-# Currently dormant — it triggers only on `release: created` or manual dispatch,
-# and three things must be reconciled before it can succeed:
-#   1. `pnpm-lock.yaml` is not seeded, so `--frozen-lockfile` fails.
-#   2. `build:package` is not a script in this package.json (it is `package`).
-#   3. `scope: '@kareyes'` targets GitHub Packages, but the package name is
-#      unscoped `aether-ui`; GitHub Packages requires the scope to match the
-#      owning account.
 name: Publish Package
 
 on:
