@@ -1,0 +1,66 @@
+# UPSTREAM-ONLY — do not convert to Bun.
+#
+# This file is inert in the stardust monorepo: GitHub Actions reads workflows
+# only from the repo-root .github/workflows, never from nested ones. It lives
+# here so that `git subtree push --prefix=ui-packages/aether-ui` carries it to
+# github.com/kareyes/aether-ui, where pnpm/Node are the correct toolchain.
+#
+# It cannot live upstream-only: the split tree contains exactly this prefix, so
+# anything present only in the standalone repo is deleted by the next export.
+#
+# Currently dormant — it triggers only on `release: created` or manual dispatch,
+# and three things must be reconciled before it can succeed:
+#   1. `pnpm-lock.yaml` is not seeded, so `--frozen-lockfile` fails.
+#   2. `build:package` is not a script in this package.json (it is `package`).
+#   3. `scope: '@kareyes'` targets GitHub Packages, but the package name is
+#      unscoped `aether-ui`; GitHub Packages requires the scope to match the
+#      owning account.
+name: Publish Package
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (leave empty to use package.json version)'
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@kareyes'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run type check
+        run: pnpm check
+
+      - name: Build package
+        run: pnpm build:package
+
+      - name: Publish to GitHub Packages
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
