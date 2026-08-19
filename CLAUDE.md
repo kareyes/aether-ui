@@ -36,10 +36,15 @@ bunx biome format src/  # Format
   `node_modules`). Bun's default hoisted layout breaks vite-plugin-svelte:
   `.svelte` files under `src/lib` reach rollup uncompiled and `vite build`
   fails on TypeScript syntax. Do not remove this setting.
-- `overrides` in `package.json` pin transitive versions to the set the old
-  pnpm lockfile resolved. A fresh resolution of the current ranges breaks
-  `vite build` (under pnpm too). Treat dependency upgrades as deliberate,
-  separately verified work.
+- `overrides` in `package.json` pins **esrap to 2.1.0**. Do not remove it.
+  esrap is svelte's code generator; svelte 5.39.12 declares `esrap: ^2.1.0`,
+  so a fresh install otherwise resolves 2.3.5, which miscompiles optional
+  parameters: `function open(newConfig?: Config)` is emitted as
+  `function open(newConfig?)` - the type annotation is stripped but the `?`
+  is left behind, which is not valid JavaScript. `vite build` then dies with
+  `Expected ',', got '?'`. This is upstream and package-manager independent
+  (pnpm hits it too). The remaining 9 overrides pin the runtime dependencies
+  so the published caret ranges in `dependencies` stay untouched.
 - Playwright browsers are not installed by postinstall; run
   `bunx playwright install` before `bun run test:e2e`.
 
