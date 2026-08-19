@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.2.6/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -8,19 +8,20 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": [
-			"node_modules/**",
-			".svelte-kit/**",
-			"build/**",
-			"dist/**",
-			"storybook-static/**",
-			"*.d.ts",
-			"tsconfig.json",
-			"tsconfig.*.json",
-			"vite.config.*.timestamp-*",
-			"bun.lock",
-			"package-lock.json",
-			"yarn.lock"
+		"includes": [
+			"**",
+			"!**/node_modules/**",
+			"!**/.svelte-kit/**",
+			"!**/build/**",
+			"!**/dist/**",
+			"!**/storybook-static/**",
+			"!**/*.d.ts",
+			"!**/tsconfig.json",
+			"!**/tsconfig.*.json",
+			"!**/vite.config.*.timestamp-*",
+			"!**/bun.lock",
+			"!**/package-lock.json",
+			"!**/yarn.lock"
 		]
 	},
 	"formatter": {
@@ -30,26 +31,20 @@
 		"lineEnding": "lf",
 		"lineWidth": 100
 	},
-	"organizeImports": {
-		"enabled": true
-	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
-		"include": [
-			"src/**/*.{js,ts,svelte}",
-			".storybook/**/*.{js,ts}",
-			"*.{js,ts}"
-		],
+		"includes": ["**/src/**/*.{js,ts,svelte}", "**/.storybook/**/*.{js,ts}", "**/*.{js,ts}"],
 		"rules": {
 			"recommended": true,
 			"correctness": {
-				"noFlatMapIdentity": "off",
 				"noUndeclaredVariables": "error",
 				"useExhaustiveDependencies": "warn"
 			},
 			"complexity": {
 				"noForEach": "off",
-				"useLiteralKeys": "off"
+				"useLiteralKeys": "off",
+				"noFlatMapIdentity": "off"
 			},
 			"style": {
 				"noNonNullAssertion": "off",
@@ -68,7 +63,7 @@
 	},
 	"overrides": [
 		{
-			"include": ["**/*.stories.{js,ts,svelte}", ".storybook/**/*.{js,ts}"],
+			"includes": ["**/*.stories.{js,ts,svelte}", "**/.storybook/**/*.{js,ts}"],
 			"linter": {
 				"rules": {
 					"style": {
