@@ -36,16 +36,10 @@ export default defineConfig({
     exclude: ['@kareyes/aether-ui']
   },
 
-  build: {
-    rollupOptions: {
-      external: [
-        'svelte',
-        'svelte/internal',
-        '@lucide/svelte',
-        'tailwindcss'
-      ]
-    }
-  },
+  // NB: no build.rollupOptions.external here. The published package is built by
+  // svelte-package (`build:package`), not by vite, so externalising svelte /
+  // @lucide/svelte only affected this preview app - and broke its SSR bundle,
+  // which then tried to `import` raw .svelte files at runtime under node.
   // Unit tests run on bun's test runner (`bun run test:unit`); vitest is kept
   // solely for the Storybook browser-test project below.
   test: {
