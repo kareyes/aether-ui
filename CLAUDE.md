@@ -43,8 +43,8 @@ bunx biome format src/  # Format
   `function open(newConfig?)` - the type annotation is stripped but the `?`
   is left behind, which is not valid JavaScript. `vite build` then dies with
   `Expected ',', got '?'`. This is upstream and package-manager independent
-  (pnpm hits it too). The remaining 9 overrides pin the runtime dependencies
-  so the published caret ranges in `dependencies` stay untouched.
+  (pnpm hits it too). It is the only override; runtime dependency versions are
+  held by `bun.lock`, which CI installs with `--frozen-lockfile`.
 - Playwright browsers are not installed by postinstall; run
   `bunx playwright install` before `bun run test:e2e`.
 
