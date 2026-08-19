@@ -56,8 +56,10 @@ describe("stepperVariants", () => {
 
 		it("should return separatorLine styles", () => {
 			const result = stepperVariants();
-			expect(result.separatorLine()).toContain("bg-border");
+			// separatorLine is the animated fill; the track colour lives on separator
+			expect(result.separatorLine()).toContain("bg-primary");
 			expect(result.separatorLine()).toContain("rounded-full");
+			expect(result.separator()).toContain("bg-border");
 		});
 	});
 
@@ -162,8 +164,8 @@ describe("stepperVariants", () => {
 	describe("compound variants", () => {
 		it("should apply vertical + xs compound variant", () => {
 			const result = stepperVariants({ orientation: "vertical", size: "xs" });
-			expect(result.separatorLine()).toContain("ml-[11px]");
-			expect(result.separator()).toContain("min-h-16");
+			expect(result.separatorLine()).toContain("w-px");
+			expect(result.separator()).toContain("h-12");
 		});
 
 		it("should apply vertical + default compound variant", () => {
@@ -171,18 +173,20 @@ describe("stepperVariants", () => {
 				orientation: "vertical",
 				size: "default",
 			});
-			expect(result.separatorLine()).toContain("ml-[19px]");
-			expect(result.separator()).toContain("min-h-24");
+			expect(result.separatorLine()).toContain("w-0.5");
+			expect(result.separator()).toContain("h-20");
 		});
 
 		it("should apply horizontal + sm compound variant", () => {
 			const result = stepperVariants({ orientation: "horizontal", size: "sm" });
-			expect(result.separator()).toContain("mt-3");
+			// button size-8 (32px), connector h-0.5 (2px) -> mt = 16 - 1 = 15px
+			expect(result.separator()).toContain("mt-[15px]");
 		});
 
 		it("should apply horizontal + lg compound variant", () => {
 			const result = stepperVariants({ orientation: "horizontal", size: "lg" });
-			expect(result.separator()).toContain("mt-5");
+			// button size-12 (48px), connector h-0.5 (2px) -> mt = 24 - 1 = 23px
+			expect(result.separator()).toContain("mt-[23px]");
 		});
 	});
 
