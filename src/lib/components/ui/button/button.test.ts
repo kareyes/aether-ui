@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { buttonVariants } from "./button.svelte";
+import { buttonVariants } from "./button-variants.js";
 
 describe("buttonVariants", () => {
 	describe("base styles", () => {
