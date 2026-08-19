@@ -9,7 +9,7 @@ import type { TestProjectConfiguration } from 'vitest/config';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // Storybook browser tests - only include when STORYBOOK_TEST env is set
-// Run with: STORYBOOK_TEST=1 pnpm test:unit --project=storybook
+// Run with: bun run test:storybook
 const storybookProject: TestProjectConfiguration = {
   extends: true,
   plugins: [
@@ -46,19 +46,10 @@ export default defineConfig({
       ]
     }
   },
+  // Unit tests run on bun's test runner (`bun run test:unit`); vitest is kept
+  // solely for the Storybook browser-test project below.
   test: {
     expect: { requireAssertions: true },
-    projects: [
-      {
-        extends: './vite.config.ts',
-        test: {
-          name: 'server',
-          environment: 'node',
-          include: ['src/**/*.{test,spec}.{js,ts}'],
-          exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
-        }
-      },
-      ...(process.env.STORYBOOK_TEST ? [storybookProject] : [])
-    ]
+    projects: [...(process.env.STORYBOOK_TEST ? [storybookProject] : [])]
   }
 });

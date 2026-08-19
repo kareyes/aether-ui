@@ -18,7 +18,7 @@
 			"tsconfig.json",
 			"tsconfig.*.json",
 			"vite.config.*.timestamp-*",
-			"pnpm-lock.yaml",
+			"bun.lock",
 			"package-lock.json",
 			"yarn.lock"
 		]

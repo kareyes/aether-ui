@@ -1,0 +1,5 @@
+[install]
+# Use pnpm-style symlinked node_modules. Bun's default hoisted layout breaks
+# vite-plugin-svelte: .svelte files under src/lib reach rollup uncompiled,
+# failing `vite build` with "Expected ',', got '?'" on TypeScript syntax.
+linker = "isolated"
