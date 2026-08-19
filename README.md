@@ -200,20 +200,23 @@ Merge Tailwind classes with proper precedence:
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
 # Start development server
-pnpm dev
+bun run dev
 
 # Run Storybook
-pnpm storybook
+bun run storybook
 
 # Build the package
-pnpm build:package
+bun run build:package
 
 # Run tests
-pnpm test
+bun run test
 ```
+
+> **Note**: use `bun run test`, not `bun test` — the bare form invokes bun's
+> test runner directly and bypasses the project's scripts.
 
 ## License
 

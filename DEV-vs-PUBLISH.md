@@ -34,11 +34,11 @@ The watch mode (`svelte-package --watch`):
 
 ### Publishing Mode (npm)
 
-When publishing to npm (`pnpm publish`):
+When publishing to npm (`bun publish`):
 
 1. **prepublishOnly Hook** (`packages/aether-ui/package.json`):
    ```json
-   "prepublishOnly": "pnpm run build:package"
+   "prepublishOnly": "bun run build:package"
    ```
    - Automatically runs before publishing
    - Builds library to `dist/` using `@sveltejs/package`
@@ -110,7 +110,7 @@ moon run :typecheck
 ```bash
 # Build is automatic via prepublishOnly
 cd packages/aether-ui
-pnpm publish
+bun publish
 
 # Or manually build
 moon run aether-ui:build
@@ -143,7 +143,7 @@ We use watch mode instead of direct source imports because:
 
 ### What Gets Published
 
-When you run `pnpm publish`, the package includes:
+When you run `bun publish`, the package includes:
 - `dist/` — compiled Svelte components and utilities
 - `dist/**/*.d.ts` — TypeScript declarations
 - `package.json` — metadata and exports

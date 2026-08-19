@@ -8,21 +8,45 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+The package manager is **bun** (not pnpm/npm).
+
 ```bash
-pnpm dev              # Start dev server (component preview app)
-pnpm build:package    # Build the publishable library to dist/
-pnpm watch:package    # Build library in watch mode
-pnpm check            # Run svelte-check (type checking)
-pnpm test:unit        # Run Vitest unit tests
-pnpm test:e2e         # Run Playwright tests
-pnpm storybook        # Start Storybook on port 6006
+bun install             # Install dependencies
+bun run dev             # Start dev server (component preview app)
+bun run build:package   # Build the publishable library to dist/
+bun run watch:package   # Build library in watch mode
+bun run check           # Run svelte-check (type checking)
+bun run test:unit       # Run unit tests (bun's test runner)
+bun run test:e2e        # Run Playwright tests
+bun run test:storybook  # Run Storybook browser tests (vitest)
+bun run storybook       # Start Storybook on port 6006
 ```
 
 Linting/formatting uses **Biome** (not ESLint/Prettier):
 ```bash
-npx biome check src/   # Lint
-npx biome format src/  # Format
+bunx biome check src/   # Lint
+bunx biome format src/  # Format
 ```
+
+### Package manager notes
+
+- Use `bun run test`, never bare `bun test` — the latter invokes bun's test
+  runner directly and bypasses the project's scripts.
+- `bunfig.toml` sets `linker = "isolated"` (pnpm-style symlinked
+  `node_modules`). Bun's default hoisted layout breaks vite-plugin-svelte:
+  `.svelte` files under `src/lib` reach rollup uncompiled and `vite build`
+  fails on TypeScript syntax. Do not remove this setting.
+- `overrides` in `package.json` pin transitive versions to the set the old
+  pnpm lockfile resolved. A fresh resolution of the current ranges breaks
+  `vite build` (under pnpm too). Treat dependency upgrades as deliberate,
+  separately verified work.
+- Playwright browsers are not installed by postinstall; run
+  `bunx playwright install` before `bun run test:e2e`.
+
+### Test runners
+
+Unit tests use **bun's test runner** and import from `bun:test`. Vitest is
+retained only for the Storybook browser-test project in `vite.config.ts`.
 
 ## Architecture
 
