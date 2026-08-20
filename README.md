@@ -34,7 +34,7 @@ Every release attaches a `.tgz` you can install straight from the URL. Nothing
 to configure, no access token:
 
 ```bash
-bun add https://github.com/kareyes/aether-ui/releases/download/v0.0.19/kareyes-aether-ui-0.0.19.tgz
+bun add https://github.com/kareyes/aether-ui/releases/download/v0.0.20/kareyes-aether-ui-0.0.20.tgz
 ```
 
 Replace the tag and filename with the version you want - see
