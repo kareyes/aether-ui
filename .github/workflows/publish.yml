@@ -14,7 +14,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # write, not read: the release-asset upload below needs it
+      contents: write
       packages: write
 
     steps:
@@ -48,3 +49,16 @@ jobs:
         run: bun publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Token-free install path. Installing from GitHub Packages requires the
+      # consumer to hold a read:packages PAT even for a public repo; a release
+      # asset on a public repo requires nothing:
+      #   bun add https://github.com/kareyes/aether-ui/releases/download/<tag>/<file>.tgz
+      - name: Pack tarball
+        run: bun pm pack --destination ./release-artifacts
+
+      - name: Attach tarball to release
+        if: github.event_name == 'release'
+        run: gh release upload "${{ github.event.release.tag_name }}" ./release-artifacts/*.tgz --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

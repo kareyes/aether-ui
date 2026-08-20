@@ -20,9 +20,34 @@ https://aether-ui-svelte.web.app/
 
 ## Installation
 
-### 1. Configure npm Registry
+First install the peer dependencies:
 
-Create a `.npmrc` file in your project root:
+```bash
+bun add svelte @lucide/svelte tailwindcss
+```
+
+Then pick one of the two install paths below.
+
+### Option A - from a GitHub Release (no token)
+
+Every release attaches a `.tgz` you can install straight from the URL. Nothing
+to configure, no access token:
+
+```bash
+bun add https://github.com/kareyes/aether-ui/releases/download/v0.0.19/kareyes-aether-ui-0.0.19.tgz
+```
+
+Replace the tag and filename with the version you want - see
+[Releases](https://github.com/kareyes/aether-ui/releases). Because the URL
+pins one exact build, upgrading means changing the URL; there is no semver
+range resolution.
+
+### Option B - from GitHub Packages (requires a token)
+
+This path supports normal semver ranges, but GitHub Packages requires every
+consumer to authenticate, even though the repository is public.
+
+Create a `.npmrc` in your project root:
 
 ```
 @kareyes:registry=https://npm.pkg.github.com
@@ -31,21 +56,11 @@ Create a `.npmrc` file in your project root:
 
 > **Note**: You need a GitHub Personal Access Token with `read:packages` scope. Generate one at https://github.com/settings/tokens
 
-### 2. Install the Package
-
 ```bash
-pnpm add svelte @lucide/svelte tailwindcss
-
-pnpm add @kareyes/aether-ui
-
-# or
-
-npm install svelte @lucide/svelte tailwindcss
-
-npm install @kareyes/aether-ui
+bun add @kareyes/aether-ui
 ```
 
-### 3. Configure Styles
+### Configure Styles
 
 Add the following to your main CSS file (e.g., `src/app.css`):
 
@@ -57,7 +72,7 @@ Add the following to your main CSS file (e.g., `src/app.css`):
 @source "../node_modules/@kareyes/aether-ui/dist/**/*.{svelte,js}";
 ```
 
-### 3.2 Import `app.css` in Layout
+### Import `app.css` in Layout
 
 **File:** `src/routes/+layout.svelte`
 
@@ -190,9 +205,10 @@ Merge Tailwind classes with proper precedence:
 
 ## Requirements
 
-- **Svelte** ^5.0.0
+- **Svelte** ^5.0.0 (verified working from 5.20.0 up; older 5.x releases fail
+  to compile some components)
 - **Tailwind CSS** ^4.0.0
-- **Lucide Svelte** ^0.561.0
+- **Lucide Svelte** ^1.24.0
 
 
 
