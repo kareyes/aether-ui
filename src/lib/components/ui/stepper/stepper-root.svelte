@@ -217,7 +217,8 @@
 		Record<number, { label?: string; description?: string }>
 	>({});
 
-	function registerStep(step: number, label?: string, description?: string) {
+	// NB: unions rather than optional parameters - see skeleton.svelte.
+	function registerStep(step: number, label: string | undefined, description: string | undefined) {
 		stepData[step] = { label, description };
 	}
 

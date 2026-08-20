@@ -57,7 +57,9 @@
 		showAction: true,
 	});
 
-	function open(newConfig?: AlertDialogConfig) {
+	// NB: defaulted rather than `newConfig?:` - see skeleton.svelte. The default
+	// keeps this callable with no arguments, as AlertDialogContext["open"] requires.
+	function open(newConfig: AlertDialogConfig | undefined = undefined) {
 		if (newConfig) {
 			config = { ...config, ...newConfig };
 		}

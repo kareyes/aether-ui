@@ -92,7 +92,11 @@
 	}: SkeletonProps & Record<string, unknown> = $props();
 
 	// Convert width/height shortcuts
-	const getWidth = (w?: string) => {
+	// NB: union rather than an optional parameter. Svelte before 5.56.4 strips
+	// the type but leaves the question mark behind, emitting invalid JavaScript
+	// into consumers' builds. dist ships this file as source, so their compiler
+	// version decides. See src/lib/optional-params.test.ts.
+	const getWidth = (w: string | undefined) => {
 		if (!w) return undefined;
 		if (w === "full") return "100%";
 		if (w === "half") return "50%";
