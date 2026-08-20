@@ -58,18 +58,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # setup-node writes its authenticated .npmrc to a temp path and exports
-      # NPM_CONFIG_USERCONFIG. npm honours that variable; bun does not, and
-      # fails with "missing authentication". Verified locally: bun reads only
-      # $HOME/.npmrc. Write it explicitly rather than copying setup-node's
-      # file, so this does not depend on that file's location or contents.
-      # The runner is ephemeral, so the resolved token lives only for the job.
+      # Published with npm, not bun. bun publish cannot see the credentials
+      # setup-node provides: it ignores NPM_CONFIG_USERCONFIG, and even with a
+      # correct $HOME/.npmrc it still reports "missing authentication" here,
+      # though the same file satisfies `bun publish --dry-run` locally. npm is
+      # what setup-node is built to configure, so hand it the tarball bun
+      # already packed. Publishing a tarball also skips prepublishOnly, so the
+      # package is not rebuilt a second time.
       - name: Publish to GitHub Packages
-        run: |
-          printf '//npm.pkg.github.com/:_authToken=%s\n@kareyes:registry=https://npm.pkg.github.com/\n' \
-            "$NODE_AUTH_TOKEN" > "$HOME/.npmrc"
-          echo "npmrc written to $HOME/.npmrc:"
-          sed 's/_authToken=.*/_authToken=<redacted>/' "$HOME/.npmrc"
-          bun publish --access public
+        run: npm publish ./release-artifacts/*.tgz --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
