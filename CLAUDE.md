@@ -36,22 +36,33 @@ bunx biome format src/  # Format
   `node_modules`). Bun's default hoisted layout breaks vite-plugin-svelte:
   `.svelte` files under `src/lib` reach rollup uncompiled and `vite build`
   fails on TypeScript syntax. Do not remove this setting.
-- `overrides` in `package.json` pins **esrap to 2.1.0**. Do not remove it.
-  esrap is svelte's code generator; svelte 5.39.12 declares `esrap: ^2.1.0`,
-  so a fresh install otherwise resolves 2.3.5, which miscompiles optional
-  parameters: `function open(newConfig?: Config)` is emitted as
-  `function open(newConfig?)` - the type annotation is stripped but the `?`
-  is left behind, which is not valid JavaScript. `vite build` then dies with
-  `Expected ',', got '?'`. This is upstream and package-manager independent
-  (pnpm hits it too). It is the only override; runtime dependency versions are
-  held by `bun.lock`, which CI installs with `--frozen-lockfile`.
+- Keep **svelte at 5.56.9 or newer**. Older 5.39.x miscompiles optional
+  parameters together with current esrap (svelte's code generator): it strips
+  the type from `function open(newConfig?: Config)` but leaves the `?`, which
+  is not valid JavaScript, and `vite build` dies with `Expected ',', got '?'`.
+  Do not "fix" that by pinning esrap globally - `@storybook/addon-svelte-csf`
+  needs esrap **v1** while svelte needs **v2**, and bun 1.3.9 supports neither
+  npm nested overrides nor yarn `pkg/dep` resolutions, so the pin cannot be
+  scoped and takes down storybook. `overrides` is intentionally empty;
+  dependency versions are held by `bun.lock`, installed in CI with
+  `--frozen-lockfile`.
+- Do not add `build.rollupOptions.external` to `vite.config.ts`. The published
+  package is built by `svelte-package`, which ignores vite's build config, so
+  externalising svelte there only affects the preview app - and breaks its SSR
+  bundle, which then tries to `import` raw `.svelte` files under node.
 - Playwright browsers are not installed by postinstall; run
-  `bunx playwright install` before `bun run test:e2e`.
+  `bunx playwright install` before `bun run test:e2e` (on Linux also
+  `sudo npx playwright install-deps`).
 
 ### Test runners
 
 Unit tests use **bun's test runner** and import from `bun:test`. Vitest is
 retained only for the Storybook browser-test project in `vite.config.ts`.
+
+`bun run test:storybook` is currently red (221 failed / 283 passed):
+`@storybook/addon-svelte-csf` 5.0.10 does not fully understand svelte 5.56's
+AST. That suite has never passed in this configuration and needs a
+coordinated storybook upgrade. `bun run storybook` (dev server) works.
 
 ## Architecture
 
