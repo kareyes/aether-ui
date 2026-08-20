@@ -28,6 +28,22 @@ bunx biome check src/   # Lint
 bunx biome format src/  # Format
 ```
 
+### Migrating an existing clone
+
+This repo used pnpm until 0.0.20. A clone from before that has a pnpm-shaped
+`node_modules` which bun will not reuse:
+
+```bash
+git pull
+rm -rf node_modules   # pnpm's symlink farm
+bun install
+```
+
+`pnpm-lock.yaml` is deleted in git, so the pull removes it. Publishing an
+existing consumer past 0.0.19 needs an explicit version bump - `^0.0.19` means
+`>=0.0.19 <0.0.20`, so `update` commands will not move it. See the Upgrading
+section in README.md.
+
 ### Package manager notes
 
 - Use `bun run test`, never bare `bun test` — the latter invokes bun's test

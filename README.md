@@ -95,6 +95,50 @@ Add the following to your main CSS file (e.g., `src/app.css`):
 
 
 
+## Upgrading
+
+### From 0.0.19 or earlier
+
+**`pnpm update` / `npm update` will not move you.** The published range uses a
+`0.0.x` version, where caret does not mean what it usually does:
+
+```
+^0.0.19  ->  >=0.0.19 <0.0.20     # 0.0.20 is outside the range
+```
+
+Bump the version explicitly:
+
+```bash
+bun add  @kareyes/aether-ui@0.0.20
+pnpm add @kareyes/aether-ui@0.0.20
+npm  install @kareyes/aether-ui@0.0.20
+```
+
+Or, on the token-free path, change the URL to the new tag:
+
+```bash
+bun add https://github.com/kareyes/aether-ui/releases/download/0.0.20/kareyes-aether-ui-0.0.20.tgz
+```
+
+### Why 0.0.20 matters if you are on svelte below 5.56.4
+
+This package ships `.svelte` files as source, so **your** svelte compiles them.
+Releases up to 0.0.19 contained optional parameters (`function open(newConfig?:
+Config)`). Svelte before 5.56.4 strips the type but leaves the `?` behind,
+emitting `function open(newConfig?)` - not valid JavaScript - and your build
+fails with `Expected ',', got '?'` pointing inside `node_modules`.
+
+It takes two conditions, so you may be unaffected today and break later:
+
+| condition | breaks when |
+| --- | --- |
+| your `svelte` | older than 5.56.4 |
+| your `esrap` (a svelte dependency) | 2.2.12 or newer |
+
+A lockfile pinning an older `esrap` masks the problem entirely - until anything
+re-resolves it. 0.0.20 fixes this in the source, so it is safe on any svelte
+5.x and the trap goes away for good.
+
 ## Quick Start
 
 ```svelte
@@ -235,6 +279,38 @@ bun run test
 
 > **Note**: use `bun run test`, not `bun test` — the bare form invokes bun's
 > test runner directly and bypasses the project's scripts.
+
+### Migrating an existing clone from pnpm
+
+This repo used pnpm until 0.0.20. If you cloned before that, your working copy
+still has a pnpm-shaped `node_modules` that bun will not reuse:
+
+```bash
+git pull
+rm -rf node_modules          # pnpm's symlink farm; bun will not adopt it
+bun install                  # writes/uses bun.lock
+```
+
+`pnpm-lock.yaml` is deleted in git, so `git pull` removes it for you. If a
+stale copy survives (it was untracked locally, say), delete it — nothing reads
+it any more.
+
+Notes on the new setup:
+
+- `bunfig.toml` sets `linker = "isolated"`, giving a pnpm-style symlinked
+  `node_modules`. Bun's default hoisted layout breaks vite-plugin-svelte here,
+  so leave it alone.
+- Unit tests run on **bun's** test runner and import from `bun:test`. Vitest is
+  kept only for the Storybook browser tests (`bun run test:storybook`).
+- Playwright browsers are not installed automatically:
+
+  ```bash
+  bunx playwright install
+  sudo npx playwright install-deps    # Linux only, for the system libraries
+  ```
+
+- CI installs with `bun install --frozen-lockfile`, so commit `bun.lock`
+  whenever dependencies change.
 
 ## License
 

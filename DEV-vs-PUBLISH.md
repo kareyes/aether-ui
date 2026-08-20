@@ -34,13 +34,14 @@ The watch mode (`svelte-package --watch`):
 
 ### Publishing Mode (npm)
 
-When publishing to npm (`bun publish`):
+When the package is built for publishing (`bun run build:package`):
 
 1. **prepublishOnly Hook** (`packages/aether-ui/package.json`):
    ```json
    "prepublishOnly": "bun run build:package"
    ```
-   - Automatically runs before publishing
+   - Runs before a local `bun publish` (CI builds explicitly instead — see
+     Publishing below)
    - Builds library to `dist/` using `@sveltejs/package`
 
 2. **Package Exports** (`packages/aether-ui/package.json`):
@@ -107,14 +108,30 @@ moon run :typecheck
 ```
 
 ### Publishing
-```bash
-# Build is automatic via prepublishOnly
-cd packages/aether-ui
-bun publish
 
-# Or manually build
-moon run aether-ui:build
+Releases are cut through CI, not by hand:
+
+```bash
+# 1. bump "version" in package.json, commit, push
+# 2. create the release - tags are unprefixed
+gh release create 0.0.21 --generate-notes
 ```
+
+`.github/workflows/publish.yml` then builds, attaches a `.tgz` to the release
+(the token-free install path) and publishes to GitHub Packages.
+
+Two details differ from a local `bun publish`:
+
+- CI runs `bun run build:package` as its own step and publishes the packed
+  tarball, so **`prepublishOnly` does not fire** there. The build still
+  happens - just explicitly rather than as a lifecycle hook.
+- The registry step uses `npm publish`, not `bun publish`. `actions/setup-node`
+  supplies credentials via `NPM_CONFIG_USERCONFIG`, which bun ignores, so
+  `bun publish` fails in CI with `missing authentication`.
+
+The version published comes from `package.json`, **not** the tag - the workflow
+never reads the tag name, so a mismatch silently publishes whatever
+`package.json` says.
 
 ## Moon Tasks
 
