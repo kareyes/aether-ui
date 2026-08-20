@@ -34,11 +34,13 @@ Every release attaches a `.tgz` you can install straight from the URL. Nothing
 to configure, no access token:
 
 ```bash
-bun add https://github.com/kareyes/aether-ui/releases/download/v0.0.20/kareyes-aether-ui-0.0.20.tgz
+bun add https://github.com/kareyes/aether-ui/releases/download/0.0.20/kareyes-aether-ui-0.0.20.tgz
 ```
 
 Replace the tag and filename with the version you want - see
-[Releases](https://github.com/kareyes/aether-ui/releases). Because the URL
+[Releases](https://github.com/kareyes/aether-ui/releases). Release tags are
+unprefixed (`0.0.20`, not `v0.0.20`); the asset URL contains the tag, so the
+two have to agree. Because the URL
 pins one exact build, upgrading means changing the URL; there is no semver
 range resolution.
 
