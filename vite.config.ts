@@ -43,7 +43,9 @@ export default defineConfig({
   // Unit tests run on bun's test runner (`bun run test:unit`); vitest is kept
   // solely for the Storybook browser-test project below.
   test: {
-    expect: { requireAssertions: true },
+    // No requireAssertions here: storybook smoke stories render without a play
+    // function and make no assertions, which that flag would fail. Unit tests
+    // run on bun's runner and are unaffected either way.
     projects: [...(process.env.STORYBOOK_TEST ? [storybookProject] : [])]
   }
 });
