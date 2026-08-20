@@ -45,14 +45,9 @@ jobs:
       - name: Build package
         run: bun run build:package
 
-      - name: Publish to GitHub Packages
-        run: bun publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Token-free install path. Installing from GitHub Packages requires the
-      # consumer to hold a read:packages PAT even for a public repo; a release
-      # asset on a public repo requires nothing:
+      # Token-free install path, attached first so a registry failure cannot
+      # block it. Installing from GitHub Packages needs a read:packages PAT
+      # even for a public repo; a release asset needs nothing:
       #   bun add https://github.com/kareyes/aether-ui/releases/download/<tag>/<file>.tgz
       - name: Pack tarball
         run: bun pm pack --destination ./release-artifacts
@@ -62,3 +57,16 @@ jobs:
         run: gh release upload "${{ github.event.release.tag_name }}" ./release-artifacts/*.tgz --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # setup-node writes its authenticated .npmrc to a temp path and points
+      # NPM_CONFIG_USERCONFIG at it. npm honours that variable; bun does not,
+      # and fails with "missing authentication". bun does read $HOME/.npmrc,
+      # so copy it there. The file holds the literal ${NODE_AUTH_TOKEN}
+      # placeholder, which bun expands - no token is written to disk.
+      - name: Make the registry credentials visible to bun
+        run: cp "$NPM_CONFIG_USERCONFIG" "$HOME/.npmrc"
+
+      - name: Publish to GitHub Packages
+        run: bun publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
