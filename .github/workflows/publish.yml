@@ -58,15 +58,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # setup-node writes its authenticated .npmrc to a temp path and points
-      # NPM_CONFIG_USERCONFIG at it. npm honours that variable; bun does not,
-      # and fails with "missing authentication". bun does read $HOME/.npmrc,
-      # so copy it there. The file holds the literal ${NODE_AUTH_TOKEN}
-      # placeholder, which bun expands - no token is written to disk.
-      - name: Make the registry credentials visible to bun
-        run: cp "$NPM_CONFIG_USERCONFIG" "$HOME/.npmrc"
-
+      # setup-node writes its authenticated .npmrc to a temp path and exports
+      # NPM_CONFIG_USERCONFIG. npm honours that variable; bun does not, and
+      # fails with "missing authentication". Verified locally: bun reads only
+      # $HOME/.npmrc. Write it explicitly rather than copying setup-node's
+      # file, so this does not depend on that file's location or contents.
+      # The runner is ephemeral, so the resolved token lives only for the job.
       - name: Publish to GitHub Packages
-        run: bun publish --access public
+        run: |
+          printf '//npm.pkg.github.com/:_authToken=%s\n@kareyes:registry=https://npm.pkg.github.com/\n' \
+            "$NODE_AUTH_TOKEN" > "$HOME/.npmrc"
+          echo "npmrc written to $HOME/.npmrc:"
+          sed 's/_authToken=.*/_authToken=<redacted>/' "$HOME/.npmrc"
+          bun publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
