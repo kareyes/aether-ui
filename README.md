@@ -20,13 +20,16 @@ https://aether-ui-svelte.web.app/
 
 ## Installation
 
-First install the peer dependencies:
+First install the peer dependencies — the two packages you own and this
+library shares with your app:
 
 ```bash
-bun add svelte @lucide/svelte tailwindcss
+bun add svelte tailwindcss
 ```
 
-Then pick one of the two install paths below.
+Everything else (`@lucide/svelte`, `bits-ui`, `tailwind-merge`, …) is a regular
+dependency and installs automatically. Then pick one of the two install paths
+below.
 
 ### Option A - from a GitHub Release (no token)
 
@@ -251,10 +254,25 @@ Merge Tailwind classes with proper precedence:
 
 ## Requirements
 
-- **Svelte** ^5.0.0 (verified working from 5.20.0 up; older 5.x releases fail
-  to compile some components)
-- **Tailwind CSS** ^4.0.0
-- **Lucide Svelte** ^1.24.0
+### Peer dependencies — you install these
+
+They are shared with your app, so this package deliberately does not bundle its
+own copy:
+
+| package | range | notes |
+| --- | --- | --- |
+| `svelte` | `^5.0.0` | verified from **5.20.0** up; older 5.x releases fail to compile some components |
+| `tailwindcss` | `^4.0.0` | v4 only — configuration is CSS-based, there is no `tailwind.config.js` |
+
+### Bundled dependencies — installed for you
+
+Declared as regular dependencies, so you do not list them yourself. Notably
+`@lucide/svelte` (used by 69 shipped components), `bits-ui`, `@tanstack/table-core`,
+`@internationalized/date`, `svelte-sonner`, `mode-watcher`, `tailwind-merge`,
+`tailwind-variants`, `clsx` and `tw-animate-css`.
+
+Installing them explicitly is unnecessary and risks pinning a version that
+conflicts with the one this package expects.
 
 
 
