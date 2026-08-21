@@ -506,9 +506,9 @@ When using the `SchemaForm` component, declare file fields using `inputType: "fi
 ```typescript
 import {
   withField, withFormLayout,
-  RequiredFile, requiredFile,
-  FormController
-} from "aether-ui/forms";
+  RequiredFile, requiredFile
+} from "aether-forms";
+import { createForm } from "aether-forms/svelte";
 import { Schema, pipe } from "effect";
 
 const UploadSchema = pipe(
@@ -550,7 +550,7 @@ const UploadSchema = pipe(
   withFormLayout({ columns: 1 })
 );
 
-const controller = new FormController(UploadSchema, { validateOnBlur: true });
+const form = createForm(UploadSchema, { validateOnBlur: true });
 ```
 
 ### File-specific `withField` options

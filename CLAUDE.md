@@ -113,11 +113,15 @@ Each component lives in `src/lib/components/ui/<name>/`:
 
 ### Library Exports
 
-The published package (`dist/`) has four entry points:
+The published package (`dist/`) has three entry points:
 - `.` → all components and primitives
 - `./utils` → utility functions
 - `./icons` → icon re-exports
-- `./forms` → form integration (formsnap + superforms)
+
+The schema-first form system that used to sit behind `./forms` now lives in its
+own package, [aether-forms](https://github.com/kareyes/aether-forms). The
+`formsnap` + `superforms` components under `src/lib/components/ui/form/` are
+unrelated and stay here.
 
 ### Dev/Preview App
 
