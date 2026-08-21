@@ -18,7 +18,6 @@ bun run watch:package   # Build library in watch mode
 bun run check           # Run svelte-check (type checking)
 bun run test:unit       # Run unit tests (bun's test runner)
 bun run test:e2e        # Run Playwright tests
-bun run test:storybook  # Run Storybook browser tests (vitest)
 bun run storybook       # Start Storybook on port 6006
 ```
 
@@ -72,13 +71,17 @@ section in README.md.
 
 ### Test runners
 
-Unit tests use **bun's test runner** and import from `bun:test`. Vitest is
-retained only for the Storybook browser-test project in `vite.config.ts`.
+Unit tests use **bun's test runner** and import from `bun:test`. It is the
+only test runner for `src/`; `bun run test:e2e` adds playwright on top.
 
-`bun run test:storybook` is currently red (221 failed / 283 passed):
-`@storybook/addon-svelte-csf` 5.0.10 does not fully understand svelte 5.56's
-AST. That suite has never passed in this configuration and needs a
-coordinated storybook upgrade. `bun run storybook` (dev server) works.
+Vitest is gone. `@storybook/addon-vitest` turned all 50 stories into browser
+tests, but the suite never passed in this configuration - latterly 221 failed
+/ 283 passed, because `@storybook/addon-svelte-csf` 5.0.10 does not fully
+understand svelte 5.56's AST. Removing the addon dropped vitest,
+`@vitest/browser`, `@vitest/coverage-v8`, `.storybook/vitest.setup.ts` and
+`vitest.shims.d.ts` with it (130 fewer packages). `bun run storybook` and
+`bun run build-storybook` are unaffected. Re-adding story tests means a
+coordinated storybook upgrade first.
 
 ## Architecture
 

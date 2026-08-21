@@ -300,8 +300,8 @@ Notes on the new setup:
 - `bunfig.toml` sets `linker = "isolated"`, giving a pnpm-style symlinked
   `node_modules`. Bun's default hoisted layout breaks vite-plugin-svelte here,
   so leave it alone.
-- Unit tests run on **bun's** test runner and import from `bun:test`. Vitest is
-  kept only for the Storybook browser tests (`bun run test:storybook`).
+- Unit tests run on **bun's** test runner and import from `bun:test`. There is
+  no vitest in this repo; `bun run test:e2e` adds playwright on top.
 - Playwright browsers are not installed automatically:
 
   ```bash
