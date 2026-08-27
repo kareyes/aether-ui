@@ -1,0 +1,699 @@
+/*
+ * Alloy — the machined theme for aether-ui.
+ * ---------------------------------------------------------------------------
+ * Named after what a unibody is cut from. A block of aluminium goes into a mill
+ * and comes out as one piece: bead-blasted faces that hold light without
+ * reflecting it, a chamfer along every top edge that catches a single bright
+ * line, seams a hair wide because the two halves were cut from the same billet,
+ * and one anodized colour — the oxide layer, which is the only colour on the
+ * whole object.
+ *
+ * "Sleek" is usually taken to mean big radii and a gradient. It is the
+ * opposite: tight corners, no gradients, almost no shadow, and every dimension
+ * deliberate. What makes this theme read as machined is restraint plus
+ * precision — a 1px seam that is the same 1px everywhere, a 6px radius that
+ * never varies, motion at 120ms because a mechanism does not ease.
+ *
+ * The accent is titanium anodizing, where the colour comes from oxide
+ * thickness rather than pigment — which is also where the chart ramp comes
+ * from: bronze, violet, blue, teal, gold, in the order the voltage climbs.
+ *
+ * It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-alloy` scope, so every component in the library inherits the look
+ * without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-alloy">          light  ("bead-blasted")
+ *   <html class="theme-alloy dark">     dark   ("anodized graphite")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/alloy";
+ *
+ * Order matters. `.theme-alloy` and `.dark` have equal specificity, so the
+ * daylight palette only beats the base dark palette by coming later in the
+ * sheet; `.theme-alloy.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to the platform sans and mono stacks without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap">
+ *
+ * See ./THEMES.md for the token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Bead-blasted — daylight
+ * -------------------------------------------------------------------------*/
+
+.theme-alloy {
+	/* Fixed hues — the anodizing ramp, in voltage order, plus the oxide red.
+	   These are the palette's identity; the graphite block below overrides only
+	   the mode-reactive chrome, never these. */
+	--alloy-anodize: #3f4fd1;
+	--alloy-anodize-hi: #7684f0;
+	--alloy-bronze: #8a6234;
+	--alloy-violet: #7b52c4;
+	--alloy-teal: #17807f;
+	--alloy-gold: #b58a1a;
+	--alloy-red: #c8322f;
+
+	/* Mode-reactive chrome — the daylight values. Every name here is overridden
+	   in the graphite block; adding one without its night twin leaves daylight
+	   on a dark billet, which `alloy.test.ts` fails on. */
+	--alloy-face: #f7f8fa;
+	--alloy-seam: #d3d7de;
+	--alloy-chamfer: rgb(255 255 255 / 0.9);
+	--alloy-groove: #e3e6eb;
+	--alloy-contact: 0 1px 1px rgb(12 14 20 / 0.05), 0 1px 3px rgb(12 14 20 / 0.07);
+	--alloy-contact-lift: 0 1px 1px rgb(12 14 20 / 0.06), 0 3px 8px rgb(12 14 20 / 0.1);
+	--alloy-halo: rgb(63 79 209 / 0.2);
+	--alloy-scrim: rgb(14 16 22 / 0.42);
+	/* The bead-blasted grain: a fine directional noise, cheap enough to sit on
+	   a full-page ground. Two hairline gradients at 45° read as texture at
+	   normal zoom and vanish at 400%. */
+	--alloy-grain:
+		repeating-linear-gradient(45deg, rgb(12 14 20 / 0.014) 0 1px, transparent 1px 3px),
+		repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.4) 0 1px, transparent 1px 4px);
+
+	/* Structure — constant across modes, and the reason the theme reads as
+	   machined. One radius, one seam width, one motion duration. */
+	--alloy-corner: 0.375rem;
+	--alloy-corner-sm: 0.25rem;
+	--alloy-hairline: 1px;
+	--alloy-snap: 120ms;
+
+	--font-alloy-display: "Schibsted Grotesk", "Helvetica Neue", ui-sans-serif, sans-serif;
+	--font-alloy-utility: "Spline Sans Mono", ui-monospace, "SFMono-Regular", monospace;
+
+	/* ---- Role tokens ---- */
+	--background: #eceef1;
+	--foreground: #16181d;
+	--card: var(--alloy-face);
+	--card-foreground: #16181d;
+	--popover: #ffffff;
+	--popover-foreground: #16181d;
+	--primary: var(--alloy-anodize);
+	--primary-foreground: #f3f4fe;
+	--secondary: #dfe2e8;
+	--secondary-foreground: #22252c;
+	--muted: var(--alloy-groove);
+	--muted-foreground: #565c66;
+	--accent: #dfe2e8;
+	--accent-foreground: #22252c;
+	--destructive: var(--alloy-red);
+	--destructive-foreground: #fff2f1;
+	--border: var(--alloy-seam);
+	--input: #c3c8d1;
+	--ring: var(--alloy-anodize);
+	--radius: 0.375rem;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted on the element that block matched —
+	   scope this theme to a subtree and that element sits above it, so the
+	   alias keeps the base red. Same reason for --status-danger and the
+	   --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	--warning: #8f6300;
+	--warning-foreground: #fff8ea;
+	--success: #157a52;
+	--success-foreground: #f0fbf6;
+	--info: #1a63a6;
+	--info-foreground: #f1f7fd;
+
+	/* The anodizing ramp in voltage order. */
+	--chart-1: var(--alloy-anodize);
+	--chart-2: var(--alloy-teal);
+	--chart-3: var(--alloy-bronze);
+	--chart-4: var(--alloy-violet);
+	--chart-5: var(--alloy-gold);
+
+	/* The sidebar is the machined body the faces are set into — graphite in
+	   both modes, so the anodized accent has one constant ground. */
+	--sidebar: #1b1e24;
+	--sidebar-foreground: #dfe3ea;
+	--sidebar-primary: var(--alloy-anodize-hi);
+	--sidebar-primary-foreground: #080b1a;
+	--sidebar-accent: #262a32;
+	--sidebar-accent-foreground: #dfe3ea;
+	--sidebar-border: #2f343d;
+	--sidebar-ring: var(--alloy-anodize-hi);
+
+	--header: var(--alloy-face);
+	--header-foreground: #16181d;
+	--footer: #e6e9ee;
+	--footer-foreground: #565c66;
+
+	--code: #f2f4f7;
+	--code-foreground: #383e47;
+	--code-highlight: var(--alloy-groove);
+	--code-number: #8b929c;
+	--code-selection: #ccd4f7;
+	--code-border: var(--alloy-seam);
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue. Here
+	   it is the anodized layer — the object has exactly one colour, and a
+	   second blue next to it would look like a part from another machine. */
+	--illustration-primary: var(--alloy-anodize);
+	--illustration-secondary: var(--alloy-anodize-hi);
+	--illustration-surface: var(--alloy-face);
+	--illustration-outline: var(--alloy-seam);
+	--illustration-glow: rgb(63 79 209 / 0.18);
+	--illustration-shadow: rgb(12 14 20 / 0.28);
+
+	--status-info: #2a76bd;
+	--status-info-label: #1b568f;
+	--status-warning: #a97400;
+	--status-warning-label: #7d5600;
+	--status-success: #1f8a5f;
+	--status-success-label: #146245;
+	--status-danger: var(--destructive);
+	--status-danger-label: #9e2724;
+	--status-accent: var(--alloy-violet);
+	--status-accent-label: #5b3b94;
+	--status-neutral: #a9b0bb;
+	--status-neutral-label: #565c66;
+}
+
+/* ---------------------------------------------------------------------------
+ * Anodized graphite — the same object in the dark anodize. Not an inverted
+ * page: the oxide goes black, the chamfer stays the only bright line on it,
+ * and the accent climbs because a deep anodize disappears against graphite.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-alloy.dark,
+.dark .theme-alloy,
+.theme-alloy .dark {
+	--alloy-face: #191c21;
+	--alloy-seam: #2c313a;
+	--alloy-chamfer: rgb(255 255 255 / 0.07);
+	--alloy-groove: #14161a;
+	--alloy-contact: 0 1px 1px rgb(0 0 0 / 0.4), 0 1px 3px rgb(0 0 0 / 0.5);
+	--alloy-contact-lift: 0 1px 1px rgb(0 0 0 / 0.45), 0 3px 10px rgb(0 0 0 / 0.6);
+	--alloy-halo: rgb(118 132 240 / 0.26);
+	--alloy-scrim: rgb(4 5 8 / 0.66);
+	--alloy-grain:
+		repeating-linear-gradient(45deg, rgb(0 0 0 / 0.16) 0 1px, transparent 1px 3px),
+		repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.016) 0 1px, transparent 1px 4px);
+
+	--background: #121418;
+	--foreground: #e8ebf0;
+	--card: var(--alloy-face);
+	--card-foreground: #e8ebf0;
+	--popover: #1f232a;
+	--popover-foreground: #e8ebf0;
+	/* The bright anodize. #3f4fd1 is nearly invisible on graphite, so after
+	   dark the primary steps up the ramp rather than staying put. */
+	--primary: var(--alloy-anodize-hi);
+	--primary-foreground: #080b1a;
+	--secondary: #23272e;
+	--secondary-foreground: #e8ebf0;
+	--muted: #1e2127;
+	--muted-foreground: #9aa2ae;
+	--accent: #262a32;
+	--accent-foreground: #e8ebf0;
+	--destructive: #f0665f;
+	--destructive-foreground: #260605;
+	--border: var(--alloy-seam);
+	--input: #3a404a;
+	--ring: var(--alloy-anodize-hi);
+	--radius: 0.375rem;
+
+	--warning: #e0a72e;
+	--warning-foreground: #1a1201;
+	--success: #3fb883;
+	--success-foreground: #021c11;
+	--info: #5aa9ee;
+	--info-foreground: #021421;
+
+	--chart-1: #7684f0;
+	--chart-2: #35b3b0;
+	--chart-3: #c39257;
+	--chart-4: #a983e0;
+	--chart-5: #e0c04e;
+
+	--sidebar: #0d0f13;
+	--sidebar-foreground: #dfe3ea;
+	--sidebar-primary: #7684f0;
+	--sidebar-primary-foreground: #080b1a;
+	--sidebar-accent: #1b1e24;
+	--sidebar-accent-foreground: #dfe3ea;
+	--sidebar-border: #22262d;
+	--sidebar-ring: #7684f0;
+
+	--header: #16191e;
+	--header-foreground: #e8ebf0;
+	--footer: #0f1115;
+	--footer-foreground: #9aa2ae;
+
+	--code: #15181c;
+	--code-foreground: #a4adb9;
+	--code-highlight: #23272e;
+	--code-number: #6b7381;
+	--code-selection: #2f3a6b;
+	--code-border: var(--alloy-seam);
+
+	--illustration-primary: #7684f0;
+	--illustration-secondary: #3a44a0;
+	--illustration-surface: #191c21;
+	--illustration-outline: #2c313a;
+	--illustration-glow: rgb(118 132 240 / 0.22);
+	--illustration-shadow: rgb(0 0 0 / 0.55);
+
+	--status-info: #5aa9ee;
+	--status-info-label: #b6d9f7;
+	--status-warning: #e0a72e;
+	--status-warning-label: #f3d99b;
+	--status-success: #3fb883;
+	--status-success-label: #9fe0c2;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f8b6b2;
+	--status-accent: #a983e0;
+	--status-accent-label: #d5c3f2;
+	--status-neutral: #4b525c;
+	--status-neutral-label: #9aa2ae;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *tolerance* — one seam width, one
+ * radius, one chamfer, one duration, applied without exception. It hangs off
+ * `data-slot`, the attribute every aether-ui root element already sets, so no
+ * component file changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g.
+ * `!rounded-2xl`) or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+.theme-alloy {
+	font-family: var(--font-alloy-display);
+	line-height: 1.55;
+}
+
+.theme-alloy :is(
+	h1, h2, h3, h4,
+	[data-slot="card-title"],
+	[data-slot="dialog-title"],
+	[data-slot="alert-dialog-title"],
+	.alloy-title
+) {
+	font-family: var(--font-alloy-display);
+	font-weight: 600;
+	letter-spacing: -0.022em;
+	text-wrap: balance;
+}
+
+/* ---- Faces — a milled surface, a hairline seam, a lit chamfer ----
+   The chamfer is the whole trick: one inset highlight along the top edge
+   instead of a drop shadow doing the lifting. */
+
+.theme-alloy :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="tooltip-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="empty"],
+	[data-slot="chatbox"],
+	[data-slot="alert"]
+) {
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	border-radius: var(--alloy-corner);
+	box-shadow:
+		var(--alloy-contact),
+		inset 0 var(--alloy-hairline) 0 var(--alloy-chamfer);
+}
+
+.theme-alloy :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--alloy-scrim);
+}
+
+.theme-alloy :is(
+	[data-slot="separator"],
+	[data-slot="dropdown-menu-separator"],
+	[data-slot="select-separator"]
+) {
+	background-color: var(--alloy-seam);
+}
+
+/* ---- Buttons — a machined key, not a lifted card ----
+   No travel on hover: the surface brightens, the contact shadow tightens, and
+   pressing it seats the key into the body. `data-variant` is the hook; ghost
+   and link have no body to seat. */
+
+.theme-alloy :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border-radius: var(--alloy-corner-sm);
+	font-family: var(--font-alloy-display);
+	font-weight: 600;
+	letter-spacing: -0.005em;
+	transition:
+		box-shadow var(--alloy-snap) linear,
+		background-color var(--alloy-snap) linear,
+		filter var(--alloy-snap) linear;
+}
+
+.theme-alloy :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: 0;
+	box-shadow:
+		var(--alloy-contact),
+		inset 0 var(--alloy-hairline) 0 rgb(255 255 255 / 0.18);
+}
+
+.theme-alloy :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):hover:not(:disabled, [aria-disabled="true"]) {
+	filter: brightness(1.08);
+	box-shadow:
+		var(--alloy-contact-lift),
+		inset 0 var(--alloy-hairline) 0 rgb(255 255 255 / 0.24);
+}
+
+/* Seated. The chamfer flips to the bottom edge, which is what a key looks like
+   from above when it is down. */
+.theme-alloy :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):active:not(:disabled, [aria-disabled="true"]) {
+	filter: brightness(0.94);
+	box-shadow:
+		inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.28),
+		inset 0 -1px 0 var(--alloy-chamfer);
+}
+
+.theme-alloy :is(
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"]
+) {
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	box-shadow: inset 0 var(--alloy-hairline) 0 var(--alloy-chamfer);
+}
+
+.theme-alloy [data-slot="button"]:is(:disabled, [aria-disabled="true"]) {
+	box-shadow: none;
+	filter: none;
+}
+
+/* ---- Fields — a groove milled into the face ----
+   Recessed rather than raised: the shadow is on the inside top, the chamfer on
+   the inside bottom. Exactly the inverse of a button. */
+
+.theme-alloy :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	border-radius: var(--alloy-corner-sm);
+	background-color: var(--alloy-groove);
+	box-shadow:
+		inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.08),
+		inset 0 -1px 0 var(--alloy-chamfer);
+	transition: box-shadow var(--alloy-snap) linear, border-color var(--alloy-snap) linear;
+}
+
+.theme-alloy :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="chatbox-input"]
+):focus-visible {
+	border-color: var(--ring);
+	box-shadow:
+		inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.08),
+		0 0 0 3px var(--alloy-halo);
+}
+
+.theme-alloy :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+/* Data goes in the utility face — a field holding a figure should line up with
+   the table below it. */
+.theme-alloy :is(
+	[data-slot="input"],
+	[data-slot="time-field-input"],
+	[data-slot="time-field-segment"],
+	[data-slot="input-otp-slot"]
+) {
+	font-family: var(--font-alloy-utility);
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---- Toggles ---- */
+
+.theme-alloy :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="radio-group-item"]) {
+	border: var(--alloy-hairline) solid var(--input);
+}
+
+.theme-alloy [data-slot="checkbox"] {
+	border-radius: 0.1875rem;
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty groove behind the tick. */
+.theme-alloy :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--alloy-groove);
+	box-shadow: inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.1);
+}
+
+/* A machined slide switch: the track is a groove, the thumb is a milled key. */
+.theme-alloy [data-slot="switch"] {
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	border-radius: 999px;
+}
+
+.theme-alloy [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--alloy-groove);
+	box-shadow: inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.12);
+}
+
+.theme-alloy [data-slot="switch-thumb"] {
+	border-radius: 999px;
+	box-shadow: var(--alloy-contact), inset 0 var(--alloy-hairline) 0 rgb(255 255 255 / 0.4);
+}
+
+.theme-alloy :is([data-slot="slider-track"], [data-slot="progress"]) {
+	border-radius: 999px;
+	background-color: var(--alloy-groove);
+	box-shadow: inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.12);
+}
+
+.theme-alloy :is([data-slot="slider-range"], [data-slot="progress-indicator"]) {
+	border-radius: 999px;
+}
+
+.theme-alloy [data-slot="slider-thumb"] {
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	box-shadow: var(--alloy-contact-lift), inset 0 var(--alloy-hairline) 0 rgb(255 255 255 / 0.4);
+}
+
+/* ---- Badge / avatar ---- */
+
+.theme-alloy [data-slot="badge"] {
+	border-radius: var(--alloy-corner-sm);
+	border-color: transparent;
+	font-family: var(--font-alloy-utility);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.theme-alloy [data-slot="avatar"] {
+	border-radius: var(--alloy-corner);
+	box-shadow: 0 0 0 var(--alloy-hairline) var(--alloy-seam);
+}
+
+/* ---- Table — the reason the utility face is in the theme at all ---- */
+
+.theme-alloy [data-slot="table"] {
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-alloy [data-slot="table-head"] {
+	font-family: var(--font-alloy-utility);
+	font-weight: 500;
+	font-size: 0.6875rem;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+}
+
+.theme-alloy [data-slot="table-body"] [data-slot="table-row"] {
+	border-bottom: var(--alloy-hairline) solid var(--alloy-seam);
+}
+
+.theme-alloy [data-slot="table-cell"] {
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---- Tabs — a segmented control seated in a groove ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   opts out by its own class, which the component does not expose as a flag. */
+
+.theme-alloy [data-slot="tabs-list"]:not(.bg-transparent) {
+	border-radius: var(--alloy-corner);
+	background-color: var(--alloy-groove);
+	box-shadow: inset 0 var(--alloy-hairline) 2px rgb(0 0 0 / 0.1);
+	padding: 0.1875rem;
+}
+
+.theme-alloy [data-slot="tabs-trigger"]:not(.rounded-none) {
+	border-radius: var(--alloy-corner-sm);
+}
+
+.theme-alloy [data-slot="tabs-trigger"][data-state="active"]:not(.rounded-none) {
+	box-shadow: var(--alloy-contact), inset 0 var(--alloy-hairline) 0 var(--alloy-chamfer);
+}
+
+/* ---- Accordion ---- */
+
+.theme-alloy [data-slot="accordion-item"] {
+	border-bottom: var(--alloy-hairline) solid var(--alloy-seam);
+}
+
+/* ---- Toast ---- */
+
+.theme-alloy [data-sonner-toast] {
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	border-radius: var(--alloy-corner);
+	box-shadow: var(--alloy-contact-lift), inset 0 var(--alloy-hairline) 0 var(--alloy-chamfer);
+}
+
+/* ---- Focus — a tight ring, offset by one seam ---- */
+
+.theme-alloy :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* The billet the faces are cut from: bead-blasted grain over the page ground.
+   Subtle by design — if you can see it as a pattern it is too strong. */
+.theme-alloy .alloy-billet {
+	background-color: var(--background);
+	background-image: var(--alloy-grain);
+}
+
+/* A face with no component behind it. */
+.theme-alloy .alloy-face {
+	padding: 1.5rem;
+	color: var(--card-foreground);
+	background-color: var(--card);
+	border: var(--alloy-hairline) solid var(--alloy-seam);
+	border-radius: var(--alloy-corner);
+	box-shadow: var(--alloy-contact), inset 0 var(--alloy-hairline) 0 var(--alloy-chamfer);
+}
+
+/* The seam where two milled halves meet: a hairline with the chamfer under it,
+   which is what a real one looks like edge-on. */
+.theme-alloy .alloy-seam {
+	height: 2px;
+	border: 0;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--alloy-seam), var(--alloy-seam)),
+		linear-gradient(var(--alloy-chamfer), var(--alloy-chamfer));
+	background-size: 100% var(--alloy-hairline), 100% var(--alloy-hairline);
+	background-position: left top, left bottom;
+	background-repeat: no-repeat;
+}
+
+/* An engraved micro-label — the text stamped next to a port. */
+.theme-alloy .alloy-label {
+	display: block;
+	font-family: var(--font-alloy-utility);
+	font-size: 0.625rem;
+	line-height: 1.4;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--muted-foreground);
+}
+
+/* A figure meant to be read as an instrument reading, not as prose. */
+.theme-alloy .alloy-readout {
+	font-family: var(--font-alloy-utility);
+	font-variant-numeric: tabular-nums;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-alloy :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"],
+		[data-slot="input"],
+		[data-slot="textarea"],
+		[data-slot="select-trigger"]
+	) {
+		transition: none;
+	}
+}

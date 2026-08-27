@@ -46,12 +46,25 @@
   --code-selection: oklch(0.922 0 0);
   --code-border: oklch(0.922 0 0);
   --radius: 0.5rem;
-  --danger: oklch(0.577 0.245 27.325);
-  --danger-foreground: oklch(0.971 0.013 17.38);
+  /* DEPRECATED — `--danger` is an alias for `--destructive`, kept for one
+     release so external consumers of the published package keep working.
+     Nothing in this repo should reference it; use `--destructive`.
+     Remove after 0.0.21.
+
+     Deliberately not re-declared in `.dark`. A custom property holding a
+     `var()` is substituted on the element its block matched, so this resolves
+     at `:root` — correct while `.dark` lands on `<html>`, which is `:root` and
+     is where mode-watcher puts it. Put `.dark` on a *subtree* and this alias
+     keeps the light red inside it. Themes have the same hazard one scope down
+     and do re-declare it; see any themes/*.css. */
+  --danger: var(--destructive);
+  --danger-foreground: var(--destructive-foreground);
   --warning: oklch(0.852 0.199 91.936);
   --warning-foreground: oklch(0.421 0.095 57.708);
   --success: oklch(0.648 0.2 131.684);
   --success-foreground: oklch(0.986 0.031 120.757);
+  --info: oklch(0.546 0.245 262.881);
+  --info-foreground: oklch(1 0 0);
 
   /* Illustration state accents (Aether UI illustration library) — resolved
      live against the base tokens above, so a single declaration here
@@ -60,7 +73,7 @@
      structural palette is fixed — see --illustration-* below. */
   --aether-success: var(--success);
   --aether-warning: var(--warning);
-  --aether-danger: var(--danger);
+  --aether-danger: var(--destructive);
 
   /* Illustration accent palette (Aether UI illustration library) — fixed
      brand blue, deliberately not theme-reactive so the accent identity stays
@@ -79,7 +92,7 @@
   --status-warning-label: oklch(0.485 0.115 62);
   --status-success: oklch(0.62 0.14 150);
   --status-success-label: oklch(0.44 0.11 152);
-  --status-danger: oklch(0.577 0.245 27.325);
+  --status-danger: var(--destructive);
   --status-danger-label: oklch(0.47 0.2 27.325);
   --status-accent: oklch(0.585 0.19 312);
   --status-accent-label: oklch(0.46 0.17 312);
@@ -131,12 +144,15 @@
   --code-selection: oklch(0.922 0 0);
   --code-border: oklch(1 0 0 / 10%);
   --radius: 0.5rem;
-  --danger: oklch(0.637 0.237 25.331);
-  --danger-foreground: oklch(0.02 0.1896 25.331);
   --warning: oklch(0.795 0.184 86.047);
   --warning-foreground: oklch(0.02 0.1472 86.047);
   --success: oklch(0.648 0.2 131.684);
   --success-foreground: oklch(0.02 0.16000000000000003 131.684);
+  --info: oklch(0.707 0.165 254.624);
+  /* Near-black, matching --warning-foreground / --success-foreground above.
+     The light block's near-white was copied down with the token and read
+     2.53:1 on this lit blue; every dark-mode role fill takes a dark label. */
+  --info-foreground: oklch(0.02 0.165 254.624);
 
   /* Illustration card — dark-navy in dark mode; see :root above for the
      light-mode default and the fixed accent tokens. */
@@ -149,7 +165,7 @@
   --status-warning-label: oklch(0.87 0.098 78);
   --status-success: oklch(0.7 0.14 152);
   --status-success-label: oklch(0.85 0.1 155);
-  --status-danger: oklch(0.704 0.191 22.216);
+  --status-danger: var(--destructive);
   --status-danger-label: oklch(0.85 0.11 22.216);
   --status-accent: oklch(0.685 0.18 312);
   --status-accent-label: oklch(0.85 0.105 312);
@@ -177,6 +193,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -193,12 +210,17 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* DEPRECATED — see the `--danger` alias above. `bg-danger` / `text-danger`
+     still compile so published consumers keep working; use `bg-destructive` /
+     `text-destructive-foreground`. Remove after 0.0.21. */
   --color-danger: var(--danger);
   --color-danger-foreground: var(--danger-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-primary-light: color-mix(
     in oklch,
     var(--color-primary),

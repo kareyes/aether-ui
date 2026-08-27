@@ -40,7 +40,10 @@ export const timelineVariants = tv({
 		connector: ["transition-colors duration-300", "group-last/item:hidden"],
 		content: ["flex min-w-0 flex-1 flex-col gap-1"],
 		header: ["flex flex-wrap items-center gap-x-2 gap-y-1"],
-		title: ["font-medium text-foreground", "data-[state=error]:text-danger"],
+		title: [
+			"font-medium text-foreground",
+			"data-[state=error]:text-destructive",
+		],
 		timestamp: ["tabular-nums text-muted-foreground"],
 		description: ["text-muted-foreground"],
 	},
@@ -83,7 +86,7 @@ export const timelineVariants = tv({
 					"data-[state=pending]:border-muted-foreground/30 data-[state=pending]:text-muted-foreground",
 					"data-[state=completed]:border-primary data-[state=completed]:text-primary",
 					"data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
-					"data-[state=error]:border-danger data-[state=error]:text-danger",
+					"data-[state=error]:border-destructive data-[state=error]:text-destructive",
 				],
 			},
 			// Small solid dot — accent for the live item, muted for the rest.
@@ -92,7 +95,7 @@ export const timelineVariants = tv({
 					"data-[state=pending]:bg-muted-foreground/40",
 					"data-[state=completed]:bg-primary",
 					"data-[state=active]:bg-primary",
-					"data-[state=error]:bg-danger",
+					"data-[state=error]:bg-destructive",
 				],
 			},
 			// Unstyled — the icon/avatar snippet is the whole marker.

@@ -94,7 +94,14 @@ export interface ButtonFileInputProps extends BaseFileInputProps {
 	/** Button text */
 	buttonText?: string;
 
-	/** Button variant */
+	/**
+	 * Button variant.
+	 *
+	 * `"danger"` is DEPRECATED and renders as `"default"`, which is what it has
+	 * always done — the file-input button has no red intent of its own. Kept for
+	 * one release so published consumers keep working, on the same schedule as
+	 * button's `color="danger"` and `--danger`. Remove after 0.0.21.
+	 */
 	variant?: "default" | "filled" | "ghost" | "danger";
 
 	/** Button size */

@@ -4,7 +4,7 @@ A toggle switch component for binary on/off states. Built with accessibility in 
 
 ## Features
 
-- **Multiple Variants**: default, success, warning, danger, ghost
+- **Multiple Variants**: default, success, warning, destructive, ghost
 - **Three Sizes**: sm, default, lg
 - **Error States**: Built-in error state handling
 - **Field Integration**: Works seamlessly with Field component
@@ -90,10 +90,10 @@ Orange/yellow variant for actions requiring attention.
 ```
 
 ### Danger
-Red variant for destructive or dangerous actions.
+Red variant for destructive actions.
 
 ```svelte
-<Switch variant="danger" checked={true} />
+<Switch variant="destructive" checked={true} />
 ```
 
 ### Ghost
@@ -272,7 +272,7 @@ The Field component provides a consistent way to add labels, descriptions, and e
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `checked` | `boolean` | `false` | Whether the switch is checked |
-| `variant` | `'default' \| 'success' \| 'warning' \| 'danger' \| 'ghost'` | `'default'` | Visual variant |
+| `variant` | `'default' \| 'success' \| 'warning' \| 'destructive' \| 'ghost'` | `'default'` | Visual variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size of the switch |
 | `disabled` | `boolean` | `false` | Whether the switch is disabled |
 | `required` | `boolean` | `false` | Whether the field is required |
@@ -325,7 +325,7 @@ Called when the error state changes.
 - **Default**: General settings and preferences
 - **Success**: Confirmed or enabled features (auto-save, syncing)
 - **Warning**: Actions requiring attention (beta features, experimental)
-- **Danger**: Destructive or dangerous actions (delete on exit, permanent changes)
+- **Destructive**: Actions that destroy or permanently change data (delete on exit)
 - **Ghost**: Secondary or less important options
 
 ### Provide Clear Labels

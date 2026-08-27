@@ -27,14 +27,16 @@ describe("timelineVariants", () => {
 			// Minimalist: active fills the ring, no halo.
 			expect(result.marker()).toContain("data-[state=active]:bg-primary");
 			expect(result.marker()).not.toContain("ring-4");
-			expect(result.marker()).toContain("data-[state=error]:border-danger");
+			expect(result.marker()).toContain(
+				"data-[state=error]:border-destructive",
+			);
 		});
 
 		it("should keep titles a consistent weight (only errors recolor)", () => {
 			const result = timelineVariants();
 			expect(result.title()).toContain("font-medium");
 			expect(result.title()).toContain("text-foreground");
-			expect(result.title()).toContain("data-[state=error]:text-danger");
+			expect(result.title()).toContain("data-[state=error]:text-destructive");
 			// State distinction lives in the marker, not the title.
 			expect(result.title()).not.toContain("data-[state=active]:text-primary");
 		});

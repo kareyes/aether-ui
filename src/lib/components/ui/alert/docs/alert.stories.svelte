@@ -17,7 +17,7 @@
 		argTypes: {
 			variant: {
 				control: 'select',
-				options: ['default', 'destructive', 'info', 'success', 'warning', 'error'],
+				options: ['default', 'info', 'success', 'warning', 'error'],
 				description: 'Alert variant',
 			},
 			showIcon: {

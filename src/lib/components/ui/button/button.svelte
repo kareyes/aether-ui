@@ -42,8 +42,14 @@
 	const buttonClass = $derived(cn(buttonVariants({ variant, size, color }), className));
 
 
+	// `data-variant` / `data-color` mirror the resolved variants onto the DOM,
+	// the same hook select-trigger, radio-group-item and accordion-root already
+	// expose. A stylesheet can then target one intent — a theme has to know
+	// that `ghost` has no ground to bevel — without parsing the class string.
 	const commonProps = $derived({
 		"data-slot": "button",
+		"data-variant": variant,
+		"data-color": color,
 		class: buttonClass,
 		...restProps
 	});

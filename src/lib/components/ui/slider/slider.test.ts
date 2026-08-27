@@ -86,16 +86,16 @@ describe("sliderVariants", () => {
 
 		it("should apply success variant", () => {
 			const result = sliderVariants({ variant: "success" });
-			expect(result.track()).toContain("bg-green-100");
-			expect(result.range()).toContain("bg-green-600");
-			expect(result.thumb()).toContain("border-green-600");
+			expect(result.track()).toContain("bg-success/20");
+			expect(result.range()).toContain("bg-success");
+			expect(result.thumb()).toContain("border-success");
 		});
 
 		it("should apply warning variant", () => {
 			const result = sliderVariants({ variant: "warning" });
-			expect(result.track()).toContain("bg-yellow-100");
-			expect(result.range()).toContain("bg-yellow-600");
-			expect(result.thumb()).toContain("border-yellow-600");
+			expect(result.track()).toContain("bg-warning/20");
+			expect(result.range()).toContain("bg-warning");
+			expect(result.thumb()).toContain("border-warning");
 		});
 
 		it("should apply destructive variant", () => {
@@ -166,7 +166,7 @@ describe("sliderVariants", () => {
 	describe("combined variants", () => {
 		it("should combine variant and size correctly", () => {
 			const result = sliderVariants({ variant: "success", size: "lg" });
-			expect(result.track()).toContain("bg-green-100");
+			expect(result.track()).toContain("bg-success/20");
 			expect(result.thumb()).toContain("size-5");
 		});
 	});

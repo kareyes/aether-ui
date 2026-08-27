@@ -29,10 +29,13 @@
 		variants: {
 			variant: {
 				default: "bg-primary",
-				success: "bg-green-500",
-				warning: "bg-amber-500",
+				success: "bg-success",
+				warning: "bg-warning",
 				destructive: "bg-destructive",
 				secondary: "bg-secondary-foreground",
+				// NOTE: not `--accent` — that token is a neutral surface in
+				// this theme, not a hue. Left on the palette until a purple
+				// role token exists.
 				accent: "bg-violet-500"
 			},
 			animation: {

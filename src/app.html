@@ -1,10 +1,45 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="dark theme-pelican">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23000'/></svg>" />
-		%sveltekit.head%
+		<!-- Theme faces for the preview app. The theme stylesheets deliberately
+		     do not @import these — a package sheet should not force a request to
+		     a third-party host on every consumer. Apps that use a theme add the
+		     link themselves; without it each theme falls back to the platform
+		     stacks named in its font tokens. This app loads all of them because
+		     the nav picker can switch to any. -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Silkscreen:wght@400;700&family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@400;500;600;700&family=Share+Tech+Mono&family=Archivo+Black&family=Azeret+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&family=Karla:wght@400;500;600;700&family=Urbanist:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Schibsted+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&family=Chakra+Petch:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<script>
+			// Pelican ships on <html> by default. Swap it for the stored choice
+			// before the first paint, so no setting flashes the wrong theme.
+			// Pairs with routes/theme.svelte.ts.
+			try {
+				const themes = [
+					"theme-pelican",
+					"theme-ledger",
+					"theme-blueprint",
+					"theme-bundy",
+					"theme-sampaguita",
+					"theme-capiz",
+					"theme-alloy",
+					"theme-reticle",
+				];
+				const stored = localStorage.getItem("aether-ui:theme");
+				if (stored === "" || themes.includes(stored))
+					for (const name of themes)
+						document.documentElement.classList.toggle(name, name === stored);
+			} catch {
+				/* storage unavailable */
+			}
+		</script>
+%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>

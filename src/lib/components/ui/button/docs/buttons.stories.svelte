@@ -135,34 +135,34 @@
 <Story name="Flat" args={{ variant: 'flat', text: 'Button' }} />
 
 <!-- Color Variants -->
-<Story name="Success" args={{ variant: 'default', color: 'success', text: 'Success' }} />
-<Story name="Warning" args={{ variant: 'default', color: 'warning', text: 'Warning' }} />
-<Story name="Danger" args={{ variant: 'default', color: 'danger', text: 'Danger' }} />
-<Story name="Info" args={{ variant: 'default', color: 'info', text: 'Info' }} />
+<Story name="Green" args={{ variant: 'default', color: 'green', text: 'Green' }} />
+<Story name="Yellow" args={{ variant: 'default', color: 'yellow', text: 'Yellow' }} />
+<Story name="Red" args={{ variant: 'default', color: 'red', text: 'Red' }} />
+<Story name="Blue" args={{ variant: 'default', color: 'blue', text: 'Blue' }} />
 
 <!-- Outline Colors -->
-<Story name="Outline Success" args={{ variant: 'outline', color: 'success', text: 'Success' }} />
-<Story name="Outline Warning" args={{ variant: 'outline', color: 'warning', text: 'Warning' }} />
-<Story name="Outline Danger" args={{ variant: 'outline', color: 'danger', text: 'Danger' }} />
-<Story name="Outline Info" args={{ variant: 'outline', color: 'info', text: 'Info' }} />
+<Story name="Outline Green" args={{ variant: 'outline', color: 'green', text: 'Green' }} />
+<Story name="Outline Yellow" args={{ variant: 'outline', color: 'yellow', text: 'Yellow' }} />
+<Story name="Outline Red" args={{ variant: 'outline', color: 'red', text: 'Red' }} />
+<Story name="Outline Blue" args={{ variant: 'outline', color: 'blue', text: 'Blue' }} />
 
 <!-- Bordered Colors -->
-<Story name="Bordered Success" args={{ variant: 'bordered', color: 'success', text: 'Success' }} />
-<Story name="Bordered Warning" args={{ variant: 'bordered', color: 'warning', text: 'Warning' }} />
-<Story name="Bordered Danger" args={{ variant: 'bordered', color: 'danger', text: 'Danger' }} />
-<Story name="Bordered Info" args={{ variant: 'bordered', color: 'info', text: 'Info' }} />
+<Story name="Bordered Green" args={{ variant: 'bordered', color: 'green', text: 'Green' }} />
+<Story name="Bordered Yellow" args={{ variant: 'bordered', color: 'yellow', text: 'Yellow' }} />
+<Story name="Bordered Red" args={{ variant: 'bordered', color: 'red', text: 'Red' }} />
+<Story name="Bordered Blue" args={{ variant: 'bordered', color: 'blue', text: 'Blue' }} />
 
 <!-- Flat Colors -->
-<Story name="Flat Success" args={{ variant: 'flat', color: 'success', text: 'Success' }} />
-<Story name="Flat Warning" args={{ variant: 'flat', color: 'warning', text: 'Warning' }} />
-<Story name="Flat Danger" args={{ variant: 'flat', color: 'danger', text: 'Danger' }} />
-<Story name="Flat Info" args={{ variant: 'flat', color: 'info', text: 'Info' }} />
+<Story name="Flat Green" args={{ variant: 'flat', color: 'green', text: 'Green' }} />
+<Story name="Flat Yellow" args={{ variant: 'flat', color: 'yellow', text: 'Yellow' }} />
+<Story name="Flat Red" args={{ variant: 'flat', color: 'red', text: 'Red' }} />
+<Story name="Flat Blue" args={{ variant: 'flat', color: 'blue', text: 'Blue' }} />
 
 <!-- Ghost Colors -->
-<Story name="Ghost Success" args={{ variant: 'ghost', color: 'success', text: 'Success' }} />
-<Story name="Ghost Warning" args={{ variant: 'ghost', color: 'warning', text: 'Warning' }} />
-<Story name="Ghost Danger" args={{ variant: 'ghost', color: 'danger', text: 'Danger' }} />
-<Story name="Ghost Info" args={{ variant: 'ghost', color: 'info', text: 'Info' }} />
+<Story name="Ghost Green" args={{ variant: 'ghost', color: 'green', text: 'Green' }} />
+<Story name="Ghost Yellow" args={{ variant: 'ghost', color: 'yellow', text: 'Yellow' }} />
+<Story name="Ghost Red" args={{ variant: 'ghost', color: 'red', text: 'Red' }} />
+<Story name="Ghost Blue" args={{ variant: 'ghost', color: 'blue', text: 'Blue' }} />
 
 <Story name="With Icon" args={{ variant: 'default', text: 'Button', icon: DownloadIcon }} />
 <Story name="With Icon Position" args={{ variant: 'default', text: 'Button', icon: DownloadIcon, iconPosition: 'right' }} />

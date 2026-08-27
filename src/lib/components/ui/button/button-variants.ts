@@ -1,5 +1,8 @@
 import type { WithElementRef } from "$lib/utils.js";
-import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
+import type {
+	HTMLAnchorAttributes,
+	HTMLButtonAttributes,
+} from "svelte/elements";
 import { type VariantProps, tv } from "tailwind-variants";
 import type { Component } from "svelte";
 import type { IconProps } from "@lucide/svelte";
@@ -8,15 +11,19 @@ export const buttonVariants = tv({
 	base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	variants: {
 		variant: {
-			default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+			default:
+				"bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
 			destructive:
-				"bg-destructive shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white",
+				"bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
 			outline:
 				"bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border",
-			secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-			ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+			secondary:
+				"bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+			ghost:
+				"hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
 			link: "text-primary underline-offset-4 hover:underline",
-			bordered: "bg-transparent border-2 text-primary hover:bg-primary hover:text-primary-foreground focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 transition-colors",
+			bordered:
+				"bg-transparent border-2 text-primary hover:bg-primary hover:text-primary-foreground focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 transition-colors",
 			flat: "bg-primary/10 text-primary hover:bg-primary/20 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 dark:bg-primary/20 dark:hover:bg-primary/30",
 		},
 		size: {
@@ -31,6 +38,16 @@ export const buttonVariants = tv({
 			default: "",
 			primary: "",
 			secondary: "",
+			// Hue names — the vocabulary shared with Badge, Avatar and
+			// Timeline. Each resolves to a role token, so `color="red"`
+			// and `variant="destructive"` agree about what red is.
+			red: "",
+			green: "",
+			yellow: "",
+			blue: "",
+			// DEPRECATED — semantic aliases kept for one release. They
+			// render identically to their hue counterpart above.
+			// Remove after 0.0.21.
 			success: "",
 			warning: "",
 			danger: "",
@@ -38,110 +55,118 @@ export const buttonVariants = tv({
 		},
 	},
 	compoundVariants: [
-		// Default variant colors
+		// Solid — the role token itself, with its paired foreground.
 		{
 			variant: "default",
-			color: "success",
-			class: "bg-green-600 hover:bg-green-700 text-white",
-		},
-		{
-			variant: "default",
-			color: "warning",
-			class: "bg-yellow-600 hover:bg-yellow-700 text-white",
+			color: ["red", "danger"],
+			class:
+				"bg-destructive text-destructive-foreground hover:bg-destructive/90",
 		},
 		{
 			variant: "default",
-			color: "danger",
-			class: "bg-red-600 hover:bg-red-700 text-white",
+			color: ["green", "success"],
+			class: "bg-success text-success-foreground hover:bg-success/90",
 		},
 		{
 			variant: "default",
-			color: "info",
-			class: "bg-blue-600 hover:bg-blue-700 text-white",
-		},
-		// Outline variant colors
-		{
-			variant: "outline",
-			color: "success",
-			class: "border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950/30",
+			color: ["yellow", "warning"],
+			class: "bg-warning text-warning-foreground hover:bg-warning/90",
 		},
 		{
-			variant: "outline",
-			color: "warning",
-			class: "border-yellow-600 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/30",
+			variant: "default",
+			color: ["blue", "info"],
+			class: "bg-info text-info-foreground hover:bg-info/90",
 		},
+		// Outline — tinted hover replaces the old light/dark palette pair.
 		{
 			variant: "outline",
-			color: "danger",
-			class: "border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30",
+			color: ["red", "danger"],
+			class: "border-destructive text-destructive hover:bg-destructive/10",
 		},
 		{
 			variant: "outline",
-			color: "info",
-			class: "border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30",
+			color: ["green", "success"],
+			class: "border-success text-success hover:bg-success/10",
 		},
-		// Bordered variant colors
+		{
+			variant: "outline",
+			color: ["yellow", "warning"],
+			class: "border-warning text-warning hover:bg-warning/10",
+		},
+		{
+			variant: "outline",
+			color: ["blue", "info"],
+			class: "border-info text-info hover:bg-info/10",
+		},
+		// Bordered — fills with the role token on hover.
 		{
 			variant: "bordered",
-			color: "success",
-			class: "border-green-600 text-green-600 hover:bg-green-600 hover:text-white",
+			color: ["red", "danger"],
+			class:
+				"border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground",
 		},
 		{
 			variant: "bordered",
-			color: "warning",
-			class: "border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white",
+			color: ["green", "success"],
+			class:
+				"border-success text-success hover:bg-success hover:text-success-foreground",
 		},
 		{
 			variant: "bordered",
-			color: "danger",
-			class: "border-red-600 text-red-600 hover:bg-red-600 hover:text-white",
+			color: ["yellow", "warning"],
+			class:
+				"border-warning text-warning hover:bg-warning hover:text-warning-foreground",
 		},
 		{
 			variant: "bordered",
-			color: "info",
-			class: "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white",
+			color: ["blue", "info"],
+			class: "border-info text-info hover:bg-info hover:text-info-foreground",
 		},
-		// Flat variant colors
+		// Flat — a tint of the role token.
 		{
 			variant: "flat",
-			color: "success",
-			class: "bg-green-600/10 text-green-600 hover:bg-green-600/20 dark:bg-green-600/20 dark:hover:bg-green-600/30",
-		},
-		{
-			variant: "flat",
-			color: "warning",
-			class: "bg-yellow-600/10 text-yellow-600 hover:bg-yellow-600/20 dark:bg-yellow-600/20 dark:hover:bg-yellow-600/30",
+			color: ["red", "danger"],
+			class:
+				"bg-destructive/10 text-destructive hover:bg-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30",
 		},
 		{
 			variant: "flat",
-			color: "danger",
-			class: "bg-red-600/10 text-red-600 hover:bg-red-600/20 dark:bg-red-600/20 dark:hover:bg-red-600/30",
+			color: ["green", "success"],
+			class:
+				"bg-success/10 text-success hover:bg-success/20 dark:bg-success/20 dark:hover:bg-success/30",
 		},
 		{
 			variant: "flat",
-			color: "info",
-			class: "bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 dark:bg-blue-600/20 dark:hover:bg-blue-600/30",
-		},
-		// Ghost variant colors
-		{
-			variant: "ghost",
-			color: "success",
-			class: "text-green-600 hover:bg-green-50 dark:hover:bg-green-950/30",
+			color: ["yellow", "warning"],
+			class:
+				"bg-warning/10 text-warning hover:bg-warning/20 dark:bg-warning/20 dark:hover:bg-warning/30",
 		},
 		{
-			variant: "ghost",
-			color: "warning",
-			class: "text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/30",
+			variant: "flat",
+			color: ["blue", "info"],
+			class:
+				"bg-info/10 text-info hover:bg-info/20 dark:bg-info/20 dark:hover:bg-info/30",
 		},
+		// Ghost — no ground until hover.
 		{
 			variant: "ghost",
-			color: "danger",
-			class: "text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30",
+			color: ["red", "danger"],
+			class: "text-destructive hover:bg-destructive/10",
 		},
 		{
 			variant: "ghost",
-			color: "info",
-			class: "text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30",
+			color: ["green", "success"],
+			class: "text-success hover:bg-success/10",
+		},
+		{
+			variant: "ghost",
+			color: ["yellow", "warning"],
+			class: "text-warning hover:bg-warning/10",
+		},
+		{
+			variant: "ghost",
+			color: ["blue", "info"],
+			class: "text-info hover:bg-info/10",
 		},
 	],
 	defaultVariants: {

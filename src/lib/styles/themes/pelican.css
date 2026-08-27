@@ -1,0 +1,683 @@
+/*
+ * Pelican — a Stardew-flavoured theme for aether-ui.
+ * ---------------------------------------------------------------------------
+ * Wooden menu frames, parchment panels, ink outlines, and a four-season accent
+ * set. It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-pelican` scope, so every component in the library inherits the look
+ * without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-pelican">          light  ("day")
+ *   <html class="theme-pelican dark">     dark   ("night")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/pelican";
+ *
+ * Order matters. `.theme-pelican` and `.dark` have equal specificity, so the
+ * day palette only beats the base dark palette by coming later in the sheet;
+ * `.theme-pelican.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to the platform monospace stack without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Silkscreen:wght@400;700&display=swap">
+ *
+ * See ./PELICAN.md for the full token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Day
+ * -------------------------------------------------------------------------*/
+
+.theme-pelican {
+	/* Fixed hues — the palette's identity. Declared once; the night block
+	   below overrides only the mode-reactive chrome, never these. */
+	--pelican-ink: #2b1608;
+	--pelican-wood-dark: #5a2f0d;
+	--pelican-wood: #9c5f2c;
+	--pelican-wood-light: #d9a066;
+	--pelican-parchment: #fff3d6;
+	--pelican-parchment-hi: #fff9e9;
+	--pelican-parchment-2: #f0dca8;
+	--pelican-parchment-3: #e2c88e;
+	--pelican-crop: #5e9e2e;
+	--pelican-sky: #4ba3dc;
+	--pelican-coin: #f0b429;
+	/* Text-safe companions to the three lit hues above. The lit values are the
+	   palette's identity and stay on fills — charts, the sidebar accent, the
+	   field green — where a dark foreground sits on them. As *text* on
+	   parchment they are 2.97 / 2.52 / 1.69:1, so the role tokens point here
+	   instead and carry parchment as their foreground, the way --destructive
+	   already does. Same split as Reticle's phosphor/phosphor-deep. */
+	--pelican-crop-deep: #487823;
+	--pelican-sky-deep: #34729a;
+	--pelican-coin-deep: #896717;
+	/* One red. Deepened from the reference's #d6453d, which lands at 3.99:1
+	   against parchment — under AA for the button label sitting on it. */
+	--pelican-heart: #c0342d;
+	--pelican-pumpkin: #c4641f;
+
+	/* Mode-reactive chrome — the day values. Every name here is overridden in
+	   the night block; adding one without its night twin leaks parchment into
+	   dark mode, which `pelican.test.ts` fails on. */
+	--pelican-field: #8fbf5a;
+	--pelican-inset: #f0dca8;
+	--pelican-groove: #e2c88e;
+	--pelican-row-alt: #f6e7be;
+	--pelican-press: #5a2f0d;
+	--pelican-bevel-top: inset 0 3px 0 rgb(255 255 255 / 0.55);
+	--pelican-bevel-bottom: inset 0 -3px 0 rgb(90 47 13 / 0.3);
+	--pelican-inset-shadow: inset 2px 2px 0 rgb(90 47 13 / 0.22);
+	--pelican-drop: 5px 5px 0 rgb(43 22 8 / 0.28);
+	--pelican-scrim: rgb(43 22 8 / 0.62);
+
+	/* Structure — constant across modes. */
+	--pelican-press-depth: 4px;
+	--pelican-outline-width: 3px;
+	--pelican-corner: 3px;
+
+	--font-pelican-display: "Pixelify Sans", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+	--font-pelican-utility: "Silkscreen", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+
+	/* ---- Role tokens ---- */
+	--background: var(--pelican-parchment);
+	--foreground: var(--pelican-ink);
+	--card: var(--pelican-parchment-hi);
+	--card-foreground: var(--pelican-ink);
+	--popover: var(--pelican-parchment-hi);
+	--popover-foreground: var(--pelican-ink);
+	--primary: var(--pelican-wood);
+	--primary-foreground: var(--pelican-parchment);
+	--secondary: var(--pelican-parchment-2);
+	--secondary-foreground: var(--pelican-ink);
+	--muted: var(--pelican-parchment-3);
+	--muted-foreground: #694d2d;
+	--accent: var(--pelican-parchment-2);
+	--accent-foreground: var(--pelican-ink);
+	--destructive: var(--pelican-heart);
+	--destructive-foreground: var(--pelican-parchment);
+	--border: var(--pelican-ink);
+	--input: var(--pelican-ink);
+	--ring: var(--pelican-sky);
+	--radius: 0.25rem;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted *at :root*, so it froze to the base
+	   red before this scope existed. Overriding `--destructive` here does not
+	   reach it; the alias has to be re-pointed inside the scope. Same reason
+	   for --status-danger and the --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	/* Deep hues with a parchment foreground: one value has to clear AA both as
+	   text on the page ground and under a label sitting on the fill, and
+	   contrast is symmetric, so the pair that works one way works the other. */
+	--warning: var(--pelican-coin-deep);
+	--warning-foreground: var(--pelican-parchment);
+	--success: var(--pelican-crop-deep);
+	--success-foreground: var(--pelican-parchment);
+	--info: var(--pelican-sky-deep);
+	--info-foreground: var(--pelican-parchment);
+
+	/* Seasons, in order: spring, summer, fall, winter, then wood. */
+	--chart-1: var(--pelican-crop);
+	--chart-2: var(--pelican-coin);
+	--chart-3: var(--pelican-pumpkin);
+	--chart-4: var(--pelican-sky);
+	--chart-5: var(--pelican-wood);
+
+	--sidebar: var(--pelican-wood);
+	--sidebar-foreground: var(--pelican-parchment);
+	--sidebar-primary: var(--pelican-coin);
+	--sidebar-primary-foreground: var(--pelican-ink);
+	--sidebar-accent: var(--pelican-wood-dark);
+	--sidebar-accent-foreground: var(--pelican-parchment);
+	--sidebar-border: var(--pelican-ink);
+	--sidebar-ring: var(--pelican-sky);
+
+	--header: var(--pelican-wood);
+	--header-foreground: var(--pelican-parchment);
+	--footer: var(--pelican-wood-dark);
+	--footer-foreground: var(--pelican-parchment);
+
+	--code: var(--pelican-parchment-2);
+	--code-foreground: var(--pelican-wood-dark);
+	--code-highlight: var(--pelican-parchment-3);
+	--code-number: #7a5a34;
+	--code-selection: #bfe0f4;
+	--code-border: var(--pelican-ink);
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue so it
+	   survives light/dark. A theme is exactly the case that should move it —
+	   a blue-and-white spot drawing on a parchment card reads as a foreign
+	   asset dropped into the farm. */
+	--illustration-primary: var(--pelican-sky);
+	--illustration-secondary: var(--pelican-wood-light);
+	--illustration-surface: var(--pelican-parchment-hi);
+	--illustration-outline: var(--pelican-ink);
+	--illustration-glow: rgb(75 163 220 / 0.28);
+	--illustration-shadow: rgb(43 22 8 / 0.35);
+
+	--status-info: var(--pelican-sky);
+	--status-info-label: #1e6a99;
+	--status-warning: var(--pelican-coin);
+	--status-warning-label: #8a5a05;
+	--status-success: var(--pelican-crop);
+	--status-success-label: #3c6a1d;
+	--status-danger: var(--destructive);
+	--status-danger-label: #8e2a24;
+	--status-accent: var(--pelican-pumpkin);
+	--status-accent-label: #8a4412;
+	--status-neutral: #b99a6a;
+	--status-neutral-label: #7a5a34;
+}
+
+/* ---------------------------------------------------------------------------
+ * Night — the same wooden menu, lit by a lamp, on a field after dark.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-pelican.dark,
+.dark .theme-pelican,
+.theme-pelican .dark {
+	--pelican-field: #2e4230;
+	--pelican-inset: #241a11;
+	--pelican-groove: #17100a;
+	--pelican-row-alt: #332417;
+	--pelican-press: #17100a;
+	--pelican-bevel-top: inset 0 3px 0 rgb(255 255 255 / 0.16);
+	--pelican-bevel-bottom: inset 0 -3px 0 rgb(0 0 0 / 0.4);
+	--pelican-inset-shadow: inset 2px 2px 0 rgb(0 0 0 / 0.45);
+	--pelican-drop: 5px 5px 0 rgb(0 0 0 / 0.5);
+	--pelican-scrim: rgb(10 7 16 / 0.72);
+
+	--background: #1a1626;
+	--foreground: #f2e3c0;
+	--card: #3a2a1b;
+	--card-foreground: #f7ebce;
+	--popover: #43301f;
+	--popover-foreground: #f7ebce;
+	--primary: var(--pelican-wood-light);
+	--primary-foreground: var(--pelican-ink);
+	--secondary: #5a3f27;
+	--secondary-foreground: #f7ebce;
+	--muted: #4a3524;
+	--muted-foreground: #c7ac80;
+	--accent: #5a3f27;
+	--accent-foreground: #f7ebce;
+	/* Lifted off #c0342d — at night the red sits on dark wood, so it has to
+	   climb rather than deepen to keep its label legible. Climbed again from
+	   #ea6259, which read 4.18:1 as error text on --card. */
+	--destructive: #ec736b;
+	--destructive-foreground: var(--pelican-ink);
+	--border: #17100a;
+	--input: #17100a;
+	--ring: #7cc5f0;
+	--radius: 0.25rem;
+
+	--warning: #f5c24c;
+	--warning-foreground: var(--pelican-ink);
+	--success: #7cbe45;
+	--success-foreground: var(--pelican-ink);
+	--info: #6fb9e8;
+	--info-foreground: var(--pelican-ink);
+
+	--chart-1: #7cbe45;
+	--chart-2: #f5c24c;
+	--chart-3: #e08a3c;
+	--chart-4: #6fb9e8;
+	--chart-5: var(--pelican-wood-light);
+
+	--sidebar: #2c1f14;
+	--sidebar-foreground: #f2e3c0;
+	--sidebar-primary: #f5c24c;
+	--sidebar-primary-foreground: var(--pelican-ink);
+	--sidebar-accent: #43301f;
+	--sidebar-accent-foreground: #f7ebce;
+	--sidebar-border: #17100a;
+	--sidebar-ring: #7cc5f0;
+
+	--header: #2c1f14;
+	--header-foreground: #f2e3c0;
+	--footer: #221810;
+	--footer-foreground: #f2e3c0;
+
+	--code: #241a11;
+	--code-foreground: #c7ac80;
+	--code-highlight: #3a2a1b;
+	--code-number: #9a7f55;
+	--code-selection: #2e4a5c;
+	--code-border: #17100a;
+
+	--illustration-primary: #6fb9e8;
+	--illustration-secondary: var(--pelican-wood-light);
+	--illustration-surface: #2a1f15;
+	--illustration-outline: #17100a;
+	--illustration-glow: rgb(111 185 232 / 0.24);
+	--illustration-shadow: rgb(0 0 0 / 0.5);
+
+	--status-info: #6fb9e8;
+	--status-info-label: #b6def6;
+	--status-warning: #f5c24c;
+	--status-warning-label: #f8dfa3;
+	--status-success: #7cbe45;
+	--status-success-label: #c0e29b;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f5b0aa;
+	--status-accent: #e08a3c;
+	--status-accent-label: #f3c99b;
+	--status-neutral: #6b563c;
+	--status-neutral-label: #c7ac80;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *shape* — ink outlines, beveled
+ * edges, hard offset shadows, and buttons that sink 4px when pressed. It hangs
+ * off `data-slot`, the attribute every aether-ui root element already sets, so
+ * no component file changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g. `!rounded-full`)
+ * or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+.theme-pelican {
+	font-family: var(--font-pelican-display);
+	/* The faces are already pixel grids; hinting and synthesis blur them. */
+	font-synthesis-weight: none;
+	-webkit-font-smoothing: none;
+}
+
+.theme-pelican :is(
+	[data-slot="badge"],
+	[data-slot="table-head"],
+	[data-slot="tabs-trigger"],
+	.pelican-label
+) {
+	font-family: var(--font-pelican-utility);
+	letter-spacing: 0.06em;
+}
+
+/* ---- Surfaces ---- */
+
+.theme-pelican :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="tooltip-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="empty"],
+	[data-slot="chatbox"]
+) {
+	border: var(--pelican-outline-width) solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow: var(--pelican-bevel-top), var(--pelican-drop);
+}
+
+.theme-pelican :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--pelican-scrim);
+}
+
+.theme-pelican :is([data-slot="separator"], [data-slot="dropdown-menu-separator"], [data-slot="select-separator"]) {
+	background-color: var(--border);
+}
+
+/* ---- Buttons ----
+   `data-variant` is the hook; ghost and link have no ground to bevel, so they
+   are excluded rather than special-cased back out. Buttons assembled from
+   `buttonVariants` without the component (alert-dialog's action/cancel) are
+   always solid, so they take the treatment unconditionally. */
+
+.theme-pelican :is([data-slot="button"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"]) {
+	border-radius: var(--pelican-corner);
+	font-weight: 600;
+	transition:
+		transform 60ms steps(2),
+		box-shadow 60ms steps(2),
+		background-color 100ms linear;
+}
+
+.theme-pelican :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: var(--pelican-outline-width) solid var(--border);
+	box-shadow:
+		var(--pelican-bevel-top),
+		var(--pelican-bevel-bottom),
+		0 var(--pelican-press-depth) 0 var(--pelican-press);
+}
+
+.theme-pelican :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):active:not(:disabled, [aria-disabled="true"]) {
+	transform: translateY(var(--pelican-press-depth));
+	box-shadow: var(--pelican-bevel-top), 0 0 0 var(--pelican-press);
+}
+
+.theme-pelican [data-slot="button"]:is(:disabled, [aria-disabled="true"]) {
+	box-shadow: none;
+	transform: none;
+}
+
+/* ---- Fields ---- */
+
+.theme-pelican :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	border: var(--pelican-outline-width) solid var(--input);
+	border-radius: var(--pelican-corner);
+	background-color: var(--pelican-inset);
+	box-shadow: var(--pelican-inset-shadow);
+}
+
+.theme-pelican :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+/* ---- Toggles ---- */
+
+.theme-pelican :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="radio-group-item"]) {
+	border: var(--pelican-outline-width) solid var(--border);
+	box-shadow: var(--pelican-inset-shadow);
+}
+
+.theme-pelican [data-slot="checkbox"] {
+	border-radius: 2px;
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty well behind the tick. */
+.theme-pelican :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--pelican-inset);
+}
+
+.theme-pelican :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="checked"] {
+	box-shadow: var(--pelican-bevel-top);
+}
+
+/* A lever, not a pill. */
+.theme-pelican [data-slot="switch"] {
+	/* 2px: the track is 18px tall and the thumb has an outline of its own. */
+	border: 2px solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow: var(--pelican-inset-shadow);
+}
+
+.theme-pelican [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--pelican-groove);
+}
+
+.theme-pelican [data-slot="switch-thumb"] {
+	border: 2px solid var(--border);
+	border-radius: 2px;
+	box-shadow: var(--pelican-bevel-top);
+}
+
+/* Outline, not border: a slider track is 6px tall and a progress bar 8px, so
+   a 3px border on each edge would leave nothing between them to fill. An
+   outline draws the same ink edge outside the box and costs no interior. */
+.theme-pelican [data-slot="slider-track"] {
+	border: 0;
+	outline: 2px solid var(--border);
+	border-radius: var(--pelican-corner);
+	background-color: var(--pelican-groove);
+	box-shadow: var(--pelican-inset-shadow);
+}
+
+.theme-pelican [data-slot="slider-range"] {
+	border-radius: 0;
+}
+
+.theme-pelican [data-slot="slider-thumb"] {
+	border: var(--pelican-outline-width) solid var(--border);
+	border-radius: 2px;
+	box-shadow: var(--pelican-bevel-top);
+}
+
+/* ---- Progress — the segmented skill bar ---- */
+
+.theme-pelican [data-slot="progress"] {
+	border: 0;
+	outline: 2px solid var(--border);
+	border-radius: var(--pelican-corner);
+	background-color: var(--pelican-groove);
+	box-shadow: var(--pelican-inset-shadow);
+}
+
+/* Fill colour still comes from the component's variant; this only lays the
+   notches and the highlight strip over it. */
+.theme-pelican [data-slot="progress-indicator"] {
+	border-radius: 0;
+	background-image:
+		linear-gradient(rgb(255 255 255 / 0.4) 0 4px, transparent 4px),
+		repeating-linear-gradient(90deg, transparent 0 14px, rgb(0 0 0 / 0.16) 14px 17px);
+}
+
+/* ---- Badge / avatar ---- */
+
+.theme-pelican [data-slot="badge"] {
+	border: 2px solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.45);
+}
+
+/* A portrait in a frame — square, like every face in the game's menus. */
+.theme-pelican [data-slot="avatar"] {
+	border: var(--pelican-outline-width) solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow:
+		inset 0 4px 0 rgb(255 255 255 / 0.28),
+		inset 0 -4px 0 rgb(0 0 0 / 0.18);
+}
+
+.theme-pelican :is([data-slot="avatar-image"], [data-slot="avatar-fallback"]) {
+	border-radius: 0;
+}
+
+/* ---- Alert — a notice pinned to the board, thick edge on the reading side ---- */
+
+.theme-pelican [data-slot="alert"] {
+	border-width: var(--pelican-outline-width);
+	border-left-width: 12px;
+	border-radius: var(--pelican-corner);
+	box-shadow: var(--pelican-drop);
+	/* The variants tint with `bg-<role>/10`, which reads as whatever is behind
+	   the notice — over the field that is grass. A pinned notice is opaque
+	   paper; the state colour stays in the border and the icon. */
+	background-color: var(--card);
+}
+
+/* ---- Table ---- */
+
+.theme-pelican [data-slot="table-header"] {
+	background-color: var(--pelican-wood);
+	color: var(--pelican-parchment);
+}
+
+.theme-pelican [data-slot="table-head"] {
+	color: var(--pelican-parchment);
+	border-bottom: var(--pelican-outline-width) solid var(--border);
+}
+
+.theme-pelican [data-slot="table-body"] [data-slot="table-row"]:nth-child(even) {
+	background-color: var(--pelican-row-alt);
+}
+
+/* ---- Tabs ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   the pill triggers are round; both opt out by their own class rather than by
+   a variant flag, which the component does not expose. */
+
+.theme-pelican [data-slot="tabs-list"]:not(.bg-transparent) {
+	border: var(--pelican-outline-width) solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow: var(--pelican-inset-shadow);
+}
+
+.theme-pelican [data-slot="tabs-trigger"]:not(.rounded-full, .rounded-none) {
+	border-radius: 2px;
+}
+
+.theme-pelican [data-slot="tabs-trigger"][data-state="active"]:not(.rounded-none) {
+	box-shadow: var(--pelican-bevel-top), 0 2px 0 rgb(0 0 0 / 0.18);
+}
+
+/* ---- Accordion ---- */
+
+.theme-pelican [data-slot="accordion-item"] {
+	border-bottom: var(--pelican-outline-width) solid var(--border);
+}
+
+/* ---- Toast ---- */
+
+.theme-pelican [data-sonner-toast] {
+	border: var(--pelican-outline-width) solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow: var(--pelican-bevel-top), var(--pelican-drop);
+}
+
+/* ---- Focus — one crisp square ring, no blur ---- */
+
+.theme-pelican :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: var(--pelican-outline-width) solid var(--ring);
+	outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* The farm underneath the menu. */
+.theme-pelican .pelican-field,
+.pelican-field.theme-pelican {
+	background-color: var(--pelican-field);
+	background-image:
+		linear-gradient(rgb(255 255 255 / 0.1) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(0 0 0 / 0.06) 1px, transparent 1px);
+	background-size: 32px 32px, 32px 32px;
+}
+
+/* The beveled wooden menu border — four nested inset rings, no image assets. */
+.theme-pelican .pelican-frame {
+	position: relative;
+	padding: 1.875rem;
+	background-color: var(--card);
+	color: var(--card-foreground);
+	border: 4px solid var(--border);
+	border-radius: var(--pelican-corner);
+	box-shadow:
+		inset 0 0 0 4px var(--pelican-wood-light),
+		inset 0 0 0 10px var(--pelican-wood),
+		inset 0 0 0 13px var(--pelican-wood-dark),
+		inset 0 0 0 16px var(--border),
+		8px 8px 0 rgb(43 22 8 / 0.32);
+}
+
+/* Four corner nails. */
+.theme-pelican .pelican-frame::after {
+	content: "";
+	position: absolute;
+	inset: 1.375rem;
+	pointer-events: none;
+	background-image:
+		linear-gradient(var(--border), var(--border)),
+		linear-gradient(var(--border), var(--border)),
+		linear-gradient(var(--border), var(--border)),
+		linear-gradient(var(--border), var(--border));
+	background-size: 6px 6px;
+	background-repeat: no-repeat;
+	background-position: 0 0, 100% 0, 0 100%, 100% 100%;
+}
+
+/* An inventory slot. */
+.theme-pelican .pelican-slot {
+	display: grid;
+	place-items: center;
+	aspect-ratio: 1;
+	background-color: var(--pelican-inset);
+	border: var(--pelican-outline-width) solid var(--border);
+	border-radius: 2px;
+	box-shadow:
+		inset 2px 2px 0 rgb(90 47 13 / 0.25),
+		inset -2px -2px 0 rgb(255 255 255 / 0.55);
+}
+
+/* A micro-label in the utility face: counters, table captions, stat keys. */
+.theme-pelican .pelican-label {
+	display: block;
+	font-size: 0.625rem;
+	line-height: 1.4;
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-pelican :is([data-slot="button"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"]) {
+		transition: none;
+	}
+
+	.theme-pelican :is([data-slot="button"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"]):active {
+		transform: none;
+	}
+}

@@ -16,7 +16,7 @@
 			},
 			variant: {
 				default: "",
-				destructive: "data-[state=checked]:text-danger-foreground data-[state=checked]:bg-destructive data-[state=checked]:border-destructive dark:data-[state=checked]:bg-destructive/80",
+				destructive: "data-[state=checked]:text-destructive-foreground data-[state=checked]:bg-destructive data-[state=checked]:border-destructive dark:data-[state=checked]:bg-destructive/80",
 				success: "data-[state=checked]:text-success-foreground data-[state=checked]:bg-success data-[state=checked]:border-success dark:data-[state=checked]:bg-success/80",
 				warning: "data-[state=checked]:text-warning-foreground data-[state=checked]:bg-warning data-[state=checked]:border-warning dark:data-[state=checked]:bg-warning/80",
 			},

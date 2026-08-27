@@ -506,7 +506,7 @@
 					aria-label={copied ? "Copied!" : "Copy code"}
 				>
 					{#if copied}
-						<CheckIcon class="size-4 text-green-500" />
+						<CheckIcon class="size-4 text-success" />
 					{:else}
 						<CopyIcon class="size-4" />
 					{/if}
@@ -531,7 +531,7 @@
 					aria-label={copied ? "Copied!" : "Copy code"}
 				>
 					{#if copied}
-						<CheckIcon class="size-4 text-green-500" />
+						<CheckIcon class="size-4 text-success" />
 					{:else}
 						<CopyIcon class="size-4" />
 					{/if}

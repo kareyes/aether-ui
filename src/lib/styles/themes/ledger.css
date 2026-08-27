@@ -1,0 +1,651 @@
+/*
+ * Ledger — green-bar continuous-form paper for aether-ui.
+ * ---------------------------------------------------------------------------
+ * The stock payroll ran on for forty years: pale green bands every few rows so
+ * the eye does not slip a line, sprocket holes down both margins, hairline
+ * rules, red ink for anything negative, and figures set in a mono face so the
+ * columns align. Nothing is rounded and nothing floats — this is printed
+ * matter.
+ *
+ * It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-ledger` scope, so every component in the library inherits the look
+ * without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-ledger">          light  ("stock")
+ *   <html class="theme-ledger dark">     dark   ("microfiche")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/ledger";
+ *
+ * Order matters. `.theme-ledger` and `.dark` have equal specificity, so the
+ * stock palette only beats the base dark palette by coming later in the sheet;
+ * `.theme-ledger.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to Georgia and the platform monospace stack without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+ *
+ * See ./THEMES.md for the token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Stock — the printed sheet
+ * -------------------------------------------------------------------------*/
+
+.theme-ledger {
+	/* Fixed hues — the palette's identity. Declared once; the microfiche block
+	   below overrides only the mode-reactive chrome, never these. */
+	--ledger-ink: #17211b;
+	--ledger-green: #1c5138;
+	--ledger-green-deep: #0f3323;
+	--ledger-green-hi: #2b7150;
+	--ledger-red: #9d2a1e;
+	--ledger-blue: #1c4a72;
+	--ledger-ochre: #7f5c10;
+	--ledger-violet: #55467f;
+	--ledger-stock: #f7f6ef;
+	--ledger-stock-hi: #fdfcf6;
+	--ledger-bar: #cfe1cd;
+	--ledger-bar-deep: #b5d1b3;
+
+	/* Mode-reactive chrome — the stock values. Every name here is overridden in
+	   the microfiche block; adding one without its night twin leaves paper on a
+	   dark ground, which `ledger.test.ts` fails on. */
+	--ledger-rule: #b3b8ac;
+	--ledger-band: #e9eee5;
+	--ledger-margin: #eceada;
+	--ledger-punch: #d5d3c4;
+	--ledger-inset: #f1f0e6;
+	--ledger-shadow: 0 1px 0 rgb(23 33 27 / 0.16);
+	--ledger-scrim: rgb(23 33 27 / 0.55);
+
+	/* Structure — constant across modes. Printed matter has no corner radius
+	   and one weight of rule. */
+	--ledger-rule-width: 1px;
+	--ledger-rule-heavy: 3px;
+	--ledger-corner: 0px;
+
+	--font-ledger-display: "Zilla Slab", Georgia, "Times New Roman", serif;
+	--font-ledger-utility: "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+
+	/* ---- Role tokens ---- */
+	--background: var(--ledger-stock);
+	--foreground: var(--ledger-ink);
+	--card: var(--ledger-stock-hi);
+	--card-foreground: var(--ledger-ink);
+	--popover: var(--ledger-stock-hi);
+	--popover-foreground: var(--ledger-ink);
+	--primary: var(--ledger-green);
+	--primary-foreground: #f3f8f2;
+	--secondary: var(--ledger-bar);
+	--secondary-foreground: var(--ledger-green-deep);
+	--muted: #e7e6da;
+	--muted-foreground: #56604f;
+	--accent: var(--ledger-bar);
+	--accent-foreground: var(--ledger-green-deep);
+	--destructive: var(--ledger-red);
+	--destructive-foreground: #fdf5f3;
+	--border: var(--ledger-rule);
+	--input: #8d9488;
+	--ring: var(--ledger-green-hi);
+	--radius: 0.25rem;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted on the element that block matched —
+	   scope this theme to a subtree and that element sits above it, so the
+	   alias keeps the base red. Same reason for --status-danger and the
+	   --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	--warning: #8a6410;
+	--warning-foreground: #fdfaf0;
+	--success: #216b41;
+	--success-foreground: #f2faf3;
+	--info: var(--ledger-blue);
+	--info-foreground: #f1f6fb;
+
+	/* A column of figures: green, ochre, blue, red, pencil. */
+	--chart-1: var(--ledger-green);
+	--chart-2: var(--ledger-ochre);
+	--chart-3: var(--ledger-blue);
+	--chart-4: var(--ledger-red);
+	--chart-5: #6c7568;
+
+	--sidebar: var(--ledger-green-deep);
+	--sidebar-foreground: #e3ece2;
+	--sidebar-primary: var(--ledger-bar);
+	--sidebar-primary-foreground: var(--ledger-green-deep);
+	--sidebar-accent: #17452f;
+	--sidebar-accent-foreground: #e3ece2;
+	--sidebar-border: #0a2318;
+	--sidebar-ring: #8fc7a5;
+
+	--header: var(--ledger-stock-hi);
+	--header-foreground: var(--ledger-ink);
+	--footer: #efeee2;
+	--footer-foreground: #56604f;
+
+	--code: #eceada;
+	--code-foreground: #3a473d;
+	--code-highlight: #dfe6d6;
+	--code-number: #8b9a8d;
+	--code-selection: var(--ledger-bar);
+	--code-border: #c3c9ba;
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue so it
+	   survives light/dark. A theme is exactly the case that should move it —
+	   a blue-and-white spot drawing on green-bar stock reads as a foreign
+	   asset pasted onto the printout. */
+	--illustration-primary: var(--ledger-green);
+	--illustration-secondary: #7ea87e;
+	--illustration-surface: var(--ledger-stock-hi);
+	--illustration-outline: #c8cebf;
+	--illustration-glow: rgb(28 81 56 / 0.18);
+	--illustration-shadow: rgb(23 33 27 / 0.3);
+
+	--status-info: #2f6f9e;
+	--status-info-label: var(--ledger-blue);
+	--status-warning: #ab7a16;
+	--status-warning-label: var(--ledger-ochre);
+	--status-success: #2d8253;
+	--status-success-label: var(--ledger-green);
+	--status-danger: var(--destructive);
+	--status-danger-label: #7d1f16;
+	--status-accent: #6a5a9e;
+	--status-accent-label: var(--ledger-violet);
+	--status-neutral: #a8b0a6;
+	--status-neutral-label: #56604f;
+}
+
+/* ---------------------------------------------------------------------------
+ * Microfiche — the same sheet read off a screen. The bands stay, they just
+ * stop being paper: a negative, not an inversion.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-ledger.dark,
+.dark .theme-ledger,
+.theme-ledger .dark {
+	--ledger-rule: #2c3a32;
+	--ledger-band: #182119;
+	--ledger-margin: #121a15;
+	--ledger-punch: #070b09;
+	--ledger-inset: #121a15;
+	--ledger-shadow: 0 1px 0 rgb(0 0 0 / 0.5);
+	--ledger-scrim: rgb(4 8 6 / 0.72);
+
+	--background: #0e1411;
+	--foreground: #e7ece3;
+	--card: #151d18;
+	--card-foreground: #e7ece3;
+	--popover: #1a231d;
+	--popover-foreground: #e7ece3;
+	/* Lifted off #1c5138 — on a dark ground the green has to climb rather than
+	   deepen to keep a label legible on it. */
+	--primary: #4f9d76;
+	--primary-foreground: #06150e;
+	--secondary: #22302a;
+	--secondary-foreground: #dde7de;
+	--muted: #1d2721;
+	--muted-foreground: #96a598;
+	--accent: #22302a;
+	--accent-foreground: #dde7de;
+	--destructive: #e0685a;
+	--destructive-foreground: #190705;
+	--border: #2c3a32;
+	--input: #3d4d43;
+	--ring: #5fb98c;
+	--radius: 0.25rem;
+
+	--warning: #d9a63a;
+	--warning-foreground: #191204;
+	--success: #5fb17a;
+	--success-foreground: #06160b;
+	--info: #63a6d8;
+	--info-foreground: #04121c;
+
+	--chart-1: #5fb17a;
+	--chart-2: #d9a63a;
+	--chart-3: #63a6d8;
+	--chart-4: #e0685a;
+	--chart-5: #8d9a8b;
+
+	--sidebar: #0a100d;
+	--sidebar-foreground: #dbe3d9;
+	--sidebar-primary: #4f9d76;
+	--sidebar-primary-foreground: #06150e;
+	--sidebar-accent: #1a241e;
+	--sidebar-accent-foreground: #dbe3d9;
+	--sidebar-border: #25322a;
+	--sidebar-ring: #5fb98c;
+
+	--header: #121a15;
+	--header-foreground: #e7ece3;
+	--footer: #0a100d;
+	--footer-foreground: #96a598;
+
+	--code: #121a15;
+	--code-foreground: #a7b6a9;
+	--code-highlight: #1c2620;
+	--code-number: #6b7a6e;
+	--code-selection: #24402f;
+	--code-border: #2c3a32;
+
+	--illustration-primary: #5fb98c;
+	--illustration-secondary: #3f6b52;
+	--illustration-surface: #151d18;
+	--illustration-outline: #2c3a32;
+	--illustration-glow: rgb(95 185 140 / 0.22);
+	--illustration-shadow: rgb(0 0 0 / 0.5);
+
+	--status-info: #63a6d8;
+	--status-info-label: #b7d8f0;
+	--status-warning: #d9a63a;
+	--status-warning-label: #f0d59a;
+	--status-success: #5fb17a;
+	--status-success-label: #aedcbf;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f3b0a6;
+	--status-accent: #9c8ad2;
+	--status-accent-label: #cec4ea;
+	--status-neutral: #47544a;
+	--status-neutral-label: #96a598;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *shape* — square corners, hairline
+ * rules, banded rows, and figures that line up. It hangs off `data-slot`, the
+ * attribute every aether-ui root element already sets, so no component file
+ * changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g. `!rounded-lg`)
+ * or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+.theme-ledger {
+	font-family: var(--font-ledger-display);
+}
+
+.theme-ledger :is(
+	[data-slot="badge"],
+	[data-slot="table-head"],
+	[data-slot="table-cell"],
+	[data-slot="tabs-trigger"],
+	[data-slot="input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	.ledger-label,
+	.ledger-figure
+) {
+	font-family: var(--font-ledger-utility);
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---- Surfaces — printed matter does not float ---- */
+
+.theme-ledger :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="tooltip-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="empty"],
+	[data-slot="chatbox"]
+) {
+	border: var(--ledger-rule-width) solid var(--border);
+	border-radius: var(--ledger-corner);
+	box-shadow: var(--ledger-shadow);
+}
+
+.theme-ledger :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--ledger-scrim);
+}
+
+.theme-ledger :is(
+	[data-slot="separator"],
+	[data-slot="dropdown-menu-separator"],
+	[data-slot="select-separator"]
+) {
+	background-color: var(--ledger-rule);
+}
+
+/* ---- Buttons — a stamped block, not a pill ----
+   `data-variant` is the hook; ghost and link have no ground to rule, so they
+   are excluded rather than special-cased back out. Buttons assembled from
+   `buttonVariants` without the component (alert-dialog's action/cancel) are
+   always solid, so they take the treatment unconditionally. */
+
+.theme-ledger :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border-radius: var(--ledger-corner);
+	font-family: var(--font-ledger-utility);
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	transition: box-shadow 90ms linear, background-color 90ms linear;
+}
+
+.theme-ledger :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: var(--ledger-rule-width) solid var(--foreground);
+	box-shadow: 2px 2px 0 var(--foreground);
+}
+
+.theme-ledger :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):active:not(:disabled, [aria-disabled="true"]) {
+	box-shadow: 0 0 0 var(--foreground);
+}
+
+.theme-ledger [data-slot="button"]:is(:disabled, [aria-disabled="true"]) {
+	box-shadow: none;
+}
+
+/* ---- Fields — a ruled line to write on, not a box ---- */
+
+.theme-ledger :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	border: 0;
+	border-bottom: var(--ledger-rule-width) solid var(--input);
+	border-radius: var(--ledger-corner);
+	background-color: transparent;
+	box-shadow: none;
+}
+
+.theme-ledger :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"]):focus-visible {
+	border-bottom-width: 2px;
+	border-bottom-color: var(--ring);
+}
+
+.theme-ledger :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	border-bottom-color: var(--destructive);
+}
+
+/* The OTP slots are cells in a form, so they keep their boxes. */
+.theme-ledger [data-slot="input-otp-slot"] {
+	border: var(--ledger-rule-width) solid var(--input);
+	border-radius: var(--ledger-corner);
+	background-color: var(--ledger-inset);
+}
+
+/* ---- Toggles ---- */
+
+.theme-ledger [data-slot="checkbox"] {
+	border: var(--ledger-rule-width) solid var(--foreground);
+	border-radius: var(--ledger-corner);
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty well behind the tick. */
+.theme-ledger :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--ledger-inset);
+}
+
+.theme-ledger :is([data-slot="radio"], [data-slot="radio-group-item"]) {
+	border: var(--ledger-rule-width) solid var(--foreground);
+}
+
+/* A tick-box on a form, not a pill. */
+.theme-ledger [data-slot="switch"] {
+	border: var(--ledger-rule-width) solid var(--foreground);
+	border-radius: var(--ledger-corner);
+}
+
+.theme-ledger [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--ledger-inset);
+}
+
+.theme-ledger [data-slot="switch-thumb"] {
+	border-radius: var(--ledger-corner);
+	background-color: var(--foreground);
+}
+
+/* Outline, not border: a slider track is 6px tall and a progress bar 8px, so
+   a border on each edge leaves nothing between them to fill. */
+.theme-ledger :is([data-slot="slider-track"], [data-slot="progress"]) {
+	border: 0;
+	outline: var(--ledger-rule-width) solid var(--foreground);
+	border-radius: var(--ledger-corner);
+	background-color: var(--ledger-band);
+}
+
+.theme-ledger :is([data-slot="slider-range"], [data-slot="progress-indicator"]) {
+	border-radius: var(--ledger-corner);
+}
+
+.theme-ledger [data-slot="slider-thumb"] {
+	border: var(--ledger-rule-width) solid var(--foreground);
+	border-radius: var(--ledger-corner);
+}
+
+/* ---- Badge / avatar — square, like every field on a form ---- */
+
+.theme-ledger [data-slot="badge"] {
+	border: var(--ledger-rule-width) solid currentcolor;
+	border-radius: var(--ledger-corner);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 0.6875rem;
+}
+
+.theme-ledger [data-slot="avatar"] {
+	border: var(--ledger-rule-width) solid var(--border);
+	border-radius: var(--ledger-corner);
+}
+
+.theme-ledger :is([data-slot="avatar-image"], [data-slot="avatar-fallback"]) {
+	border-radius: var(--ledger-corner);
+}
+
+/* ---- Alert — a note in the margin, ruled off on the reading side ---- */
+
+.theme-ledger [data-slot="alert"] {
+	border-width: var(--ledger-rule-width);
+	border-left-width: var(--ledger-rule-heavy);
+	border-radius: var(--ledger-corner);
+	box-shadow: none;
+	/* The variants tint with `bg-<role>/10`, which reads as whatever is behind
+	   the note — over banded stock that is a green stripe. A note is opaque
+	   paper; the state colour stays in the rule and the icon. */
+	background-color: var(--card);
+}
+
+/* ---- Table — the reason this theme exists ---- */
+
+.theme-ledger [data-slot="table"] {
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-ledger [data-slot="table-header"] {
+	background-color: var(--ledger-band);
+}
+
+.theme-ledger [data-slot="table-head"] {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 0.6875rem;
+	/* A double rule under the headings — the one place a ledger doubles up. */
+	border-bottom: var(--ledger-rule-heavy) double var(--foreground);
+}
+
+.theme-ledger [data-slot="table-body"] [data-slot="table-row"]:nth-child(even) {
+	background-color: var(--ledger-band);
+}
+
+.theme-ledger [data-slot="table-footer"] {
+	border-top: var(--ledger-rule-heavy) double var(--foreground);
+	background-color: transparent;
+	font-weight: 600;
+}
+
+/* ---- Tabs ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   the pill triggers are round; both opt out by their own class rather than by
+   a variant flag, which the component does not expose. */
+
+.theme-ledger [data-slot="tabs-list"]:not(.bg-transparent) {
+	border: var(--ledger-rule-width) solid var(--border);
+	border-radius: var(--ledger-corner);
+	background-color: var(--ledger-inset);
+}
+
+.theme-ledger [data-slot="tabs-trigger"]:not(.rounded-full, .rounded-none) {
+	border-radius: var(--ledger-corner);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-size: 0.75rem;
+}
+
+.theme-ledger [data-slot="tabs-trigger"][data-state="active"]:not(.rounded-none) {
+	box-shadow: inset 0 -2px 0 var(--primary);
+}
+
+/* ---- Accordion ---- */
+
+.theme-ledger [data-slot="accordion-item"] {
+	border-bottom: var(--ledger-rule-width) solid var(--ledger-rule);
+}
+
+/* ---- Toast ---- */
+
+.theme-ledger [data-sonner-toast] {
+	border: var(--ledger-rule-width) solid var(--border);
+	border-radius: var(--ledger-corner);
+	box-shadow: 2px 2px 0 var(--foreground);
+}
+
+/* ---- Focus — one square rule, no blur ---- */
+
+.theme-ledger :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* The sheet itself: tractor-feed margins with sprocket holes down both edges. */
+.theme-ledger .ledger-sheet,
+.ledger-sheet.theme-ledger {
+	padding-inline: 2.25rem;
+	background-color: var(--card);
+	background-image:
+		linear-gradient(var(--ledger-margin), var(--ledger-margin)),
+		linear-gradient(var(--ledger-margin), var(--ledger-margin)),
+		radial-gradient(circle, var(--ledger-punch) 0 0.1875rem, transparent 0.2rem),
+		radial-gradient(circle, var(--ledger-punch) 0 0.1875rem, transparent 0.2rem);
+	background-size: 1.5rem 100%, 1.5rem 100%, 1.5rem 1.75rem, 1.5rem 1.75rem;
+	background-position: left top, right top, left top, right top;
+	background-repeat: no-repeat, no-repeat, repeat-y, repeat-y;
+	border-inline: var(--ledger-rule-width) solid var(--ledger-rule);
+}
+
+/* Green bars, three rows to a band. Put it behind a list that has no table. */
+.theme-ledger .ledger-bars {
+	background-image: repeating-linear-gradient(
+		var(--ledger-band) 0 4.5rem,
+		transparent 4.5rem 9rem
+	);
+}
+
+/* A figure in a column: mono, tabular, right-aligned, and red when negative. */
+.theme-ledger .ledger-figure {
+	display: block;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "zero" 1;
+}
+
+.theme-ledger .ledger-figure[data-sign="negative"] {
+	color: var(--destructive);
+}
+
+/* A micro-label in the utility face: column keys, stat captions, run numbers. */
+.theme-ledger .ledger-label {
+	display: block;
+	font-size: 0.625rem;
+	line-height: 1.4;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--muted-foreground);
+}
+
+/* The double rule that closes a section of figures. */
+.theme-ledger .ledger-rule-total {
+	border-top: var(--ledger-rule-heavy) double var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-ledger :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"]
+	) {
+		transition: none;
+	}
+}

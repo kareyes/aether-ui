@@ -42,7 +42,7 @@ export const stepperVariants = tv({
 			// Minimum 44 × 44 px touch target on small screens
 			"max-sm:min-h-[44px] max-sm:min-w-[44px]",
 			// Error state — always destructive regardless of variant
-			"data-[state=error]:bg-danger data-[state=error]:text-danger-foreground data-[state=error]:border-danger data-[state=error]:scale-100",
+			"data-[state=error]:bg-destructive data-[state=error]:text-destructive-foreground data-[state=error]:border-destructive data-[state=error]:scale-100",
 			// Disabled state — always muted regardless of variant
 			"data-[state=disabled]:bg-muted data-[state=disabled]:text-muted-foreground data-[state=disabled]:border-muted data-[state=disabled]:opacity-50 data-[state=disabled]:cursor-not-allowed data-[state=disabled]:scale-95",
 		],
@@ -149,7 +149,7 @@ export const stepperVariants = tv({
 					"data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:scale-110 data-[state=active]:shadow-lg",
 					"data-[state=inactive]:bg-background data-[state=inactive]:text-muted-foreground data-[state=inactive]:border-border data-[state=inactive]:scale-95",
 					"data-[state=loading]:bg-background data-[state=loading]:text-primary data-[state=loading]:border-primary data-[state=loading]:scale-110 data-[state=loading]:shadow-lg",
-					"data-[state=error]:bg-background data-[state=error]:text-danger data-[state=error]:border-danger data-[state=error]:scale-110 data-[state=error]:shadow-lg",
+					"data-[state=error]:bg-background data-[state=error]:text-destructive data-[state=error]:border-destructive data-[state=error]:scale-110 data-[state=error]:shadow-lg",
 				],
 			},
 			ghost: {
@@ -159,7 +159,7 @@ export const stepperVariants = tv({
 					"data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:scale-110 data-[state=active]:shadow-lg",
 					"data-[state=inactive]:bg-muted data-[state=inactive]:text-muted-foreground data-[state=inactive]:scale-95",
 					"data-[state=loading]:bg-primary/10 data-[state=loading]:text-primary data-[state=loading]:scale-110 data-[state=loading]:shadow-lg",
-					"data-[state=error]:bg-danger/20 dark:data-[state=error]:text-red-300 data-[state=error]:text-danger data-[state=error]:scale-110 data-[state=error]:shadow-lg",
+					"data-[state=error]:bg-destructive/20 data-[state=error]:text-destructive data-[state=error]:scale-110 data-[state=error]:shadow-lg",
 				],
 			},
 			flat: {
@@ -172,7 +172,7 @@ export const stepperVariants = tv({
 					"data-[state=active]:bg-primary",
 					"data-[state=inactive]:bg-border",
 					"data-[state=loading]:bg-primary",
-					"data-[state=error]:bg-danger",
+					"data-[state=error]:bg-destructive",
 					"data-[state=disabled]:bg-muted data-[state=disabled]:opacity-50",
 				],
 				separator: "hidden",
@@ -186,7 +186,7 @@ export const stepperVariants = tv({
 					"data-[state=active]:text-primary",
 					"data-[state=inactive]:text-muted-foreground",
 					"data-[state=loading]:text-primary",
-					"data-[state=error]:text-danger",
+					"data-[state=error]:text-destructive",
 					"data-[state=disabled]:text-muted-foreground data-[state=disabled]:opacity-50",
 				],
 				stepDescription: [
@@ -195,7 +195,7 @@ export const stepperVariants = tv({
 					"data-[state=active]:text-primary/70",
 					"data-[state=inactive]:text-muted-foreground",
 					"data-[state=loading]:text-primary/70",
-					"data-[state=error]:text-danger/70",
+					"data-[state=error]:text-destructive/70",
 					"data-[state=disabled]:text-muted-foreground data-[state=disabled]:opacity-50",
 				],
 			},

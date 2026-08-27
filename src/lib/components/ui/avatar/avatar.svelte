@@ -64,13 +64,13 @@
 				fallback: "bg-secondary text-secondary-foreground",
 			},
 			green: {
-				fallback: "bg-success text-white",
+				fallback: "bg-success text-success-foreground",
 			},
 			yellow: {
-				fallback: "bg-warning text-white",
+				fallback: "bg-warning text-warning-foreground",
 			},
 			red: {
-				fallback: "bg-danger text-white",
+				fallback: "bg-destructive text-destructive-foreground",
 			},
 			blue: {
 				fallback: "bg-blue-500 text-white",
@@ -132,7 +132,7 @@
 			variant: "bordered",
 			color: "red",
 			class: {
-				root: "ring-danger/50",
+				root: "ring-destructive/50",
 			},
 		},
 		// Bordered + Info color

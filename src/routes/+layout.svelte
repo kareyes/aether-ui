@@ -4,8 +4,14 @@
 	import { DarkModeToggle } from "$lib";
 	import { ModeWatcher } from "mode-watcher";
 	import { page } from "$app/state";
+	import { THEMES, syncTheme, theme } from "./theme.svelte.js";
 
 	let { children } = $props();
+
+	// The chosen theme is applied app-wide, so every demo page is a test of it
+	// against a real component rather than a curated showcase. The picker in the
+	// nav switches between them; /pelican explains what a theme is.
+	$effect(syncTheme);
 
 	// Auto-discover every demo route so the nav stays in sync as pages are added.
 	const pages = import.meta.glob("./**/+page.svelte");
@@ -49,6 +55,17 @@
 				</li>
 			{/each}
 		</ul>
+		<label class="flex shrink-0 items-center gap-2 text-xs">
+			<span class="sr-only">Theme</span>
+			<select
+				bind:value={theme.active}
+				class="rounded-md border border-border bg-card px-2 py-1 text-xs text-foreground"
+			>
+				{#each THEMES as option (option.id)}
+					<option value={option.id}>{option.label}</option>
+				{/each}
+			</select>
+		</label>
 		<DarkModeToggle animation="scale" showTooltip={true} />
 	</nav>
 

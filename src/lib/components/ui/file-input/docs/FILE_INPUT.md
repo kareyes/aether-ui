@@ -123,7 +123,7 @@ Pass via `buttonProps` or use `FileInputButton` directly.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `buttonText` | `string` | `"Choose Files"` | Button label text |
-| `variant` | `'default' \| 'filled' \| 'ghost' \| 'danger'` | `'default'` | Button variant |
+| `variant` | `'default' \| 'filled' \| 'ghost'` | `'default'` | Button variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Button size |
 | `showCount` | `boolean` | `true` | Show selected file count in the button label |
 | `showFileList` | `boolean` | `true` | Show selected files below the button |
@@ -286,7 +286,7 @@ Minimal button trigger with an optional file list. All shared props plus:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `buttonText` | `string` | `"Choose Files"` | Button label text |
-| `variant` | `'default' \| 'filled' \| 'ghost' \| 'danger'` | `'default'` | Button visual variant |
+| `variant` | `'default' \| 'filled' \| 'ghost'` | `'default'` | Button visual variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Button size |
 | `showCount` | `boolean` | `true` | Show selected file count next to the button label |
 | `showFileList` | `boolean` | `true` | Show selected files below the button |

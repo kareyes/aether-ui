@@ -22,16 +22,16 @@ export const alertDialogVariants = tv({
 				title: "text-destructive",
 			},
 			success: {
-				content: "rounded-lg p-6 border-green-500/50",
-				title: "text-green-600 dark:text-green-400",
+				content: "rounded-lg p-6 border-success/50",
+				title: "text-success",
 			},
 			warning: {
-				content: "rounded-lg p-6 border-yellow-500/50",
-				title: "text-yellow-600 dark:text-yellow-400",
+				content: "rounded-lg p-6 border-warning/50",
+				title: "text-warning",
 			},
 			info: {
-				content: "rounded-lg p-6 border-blue-500/50",
-				title: "text-blue-600 dark:text-blue-400",
+				content: "rounded-lg p-6 border-info/50",
+				title: "text-info",
 			},
 		},
 		size: {

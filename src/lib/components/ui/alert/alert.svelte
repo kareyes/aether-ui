@@ -39,7 +39,6 @@
 	// Default icons for variants
 	const variantIcons = {
 		default: CircleAlert,
-		destructive: CircleX,
 		info: Info,
 		success: CircleCheck,
 		warning: TriangleAlert,
@@ -49,21 +48,19 @@
 	// Icon container styles for each variant
 	const iconVariantStyles = {
 		default: "bg-muted/50 dark:bg-muted/90 border-border",
-		destructive: "bg-destructive/10 dark:bg-destructive/20 border-destructive/20 dark:border-destructive/30",
-		info: "bg-blue-50 dark:bg-blue-500/20 border-blue-100 dark:border-blue-500/30",
-		success: "bg-green-50 dark:bg-green-500/20 border-green-100 dark:border-green-500/30",
-		warning: "bg-yellow-50 dark:bg-yellow-500/20 border-yellow-100 dark:border-yellow-500/30",
-		error: "bg-red-50 dark:bg-red-500/20 border-red-100 dark:border-red-500/30",
+		info: "bg-info/10 dark:bg-info/20 border-info/20 dark:border-info/30",
+		success: "bg-success/10 dark:bg-success/20 border-success/20 dark:border-success/30",
+		warning: "bg-warning/10 dark:bg-warning/20 border-warning/20 dark:border-warning/30",
+		error: "bg-destructive/10 dark:bg-destructive/20 border-destructive/20 dark:border-destructive/30",
 	};
 
 	// Icon color styles for each variant
 	const iconColorStyles = {
 		default: "text-muted-foreground",
-		destructive: "text-destructive",
-		info: "text-blue-600 dark:text-blue-400",
-		success: "text-green-600 dark:text-green-400",
-		warning: "text-yellow-600 dark:text-yellow-500",
-		error: "text-red-600 dark:text-red-400",
+		info: "text-info",
+		success: "text-success",
+		warning: "text-warning",
+		error: "text-destructive",
 	};
 
 	const DefaultIcon = $derived(variantIcons[variant]);

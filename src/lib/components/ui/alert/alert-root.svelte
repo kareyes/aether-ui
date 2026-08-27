@@ -6,10 +6,10 @@
 		variants: {
 			variant: {
 				default: "bg-card text-card-foreground border-border",
-				info: "bg-blue-50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-800",
-				success: "bg-success/10 dark:bg-success/10 text-green-900 dark:text-green-200 border-success dark:border-success/80",
-				warning: "bg-warning/10 dark:bg-warning/10 text-yellow-900 dark:text-yellow-200 border-warning dark:border-warning/80",
-				error: "bg-danger/10 dark:bg-danger/10 text-red-900 dark:text-red-200 border-danger/30 dark:border-danger/80",
+				info: "bg-info/10 text-info border-info/30 dark:border-info/80",
+				success: "bg-success/10 text-success border-success dark:border-success/80",
+				warning: "bg-warning/10 text-warning border-warning dark:border-warning/80",
+				error: "bg-destructive/10 text-destructive border-destructive/30 dark:border-destructive/80",
 			},
 		},
 		defaultVariants: {

@@ -1,6 +1,5 @@
+import { Glob } from "bun";
 import { describe, expect, it } from "bun:test";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
 
 /**
  * The package ships .svelte files as source, so consumers compile them with
@@ -20,6 +19,9 @@ import { join } from "node:path";
  * path and compile correctly even on svelte 5.39.12, verified against
  * dropdown-menu.svelte.
  */
+
+const libDir = new URL("./", import.meta.url).pathname;
+
 const DECLARATIONS = [
 	/function\s+\w+\s*\(/g,
 	/(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?\(/g,
@@ -40,33 +42,31 @@ function parameterList(source: string, open: number): string {
 	return "";
 }
 
-/** Drop anything nested inside (), [], {} or <> so only top-level params remain. */
+/**
+ * Drop anything nested inside (), [], {} or <> so only top-level params remain.
+ *
+ * `=>` is erased first and the counter is floored at zero: `>` is otherwise
+ * read as a closer, so one top-level arrow - `(onChange: (v: string) => void,
+ * label?: string)` - would drive the depth negative and silently discard every
+ * parameter after it, including the `label?` this exists to catch.
+ */
 function topLevelOnly(params: string): string {
 	let depth = 0;
 	let out = "";
-	for (const char of params) {
+	for (const char of params.replaceAll("=>", "  ")) {
 		if ("([{<".includes(char)) depth++;
-		else if (")]}>".includes(char)) depth--;
+		else if (")]}>".includes(char)) depth = Math.max(0, depth - 1);
 		else if (depth === 0) out += char;
 	}
 	return out;
 }
 
-function svelteFiles(dir: string, found: string[] = []): string[] {
-	for (const entry of readdirSync(dir)) {
-		const path = join(dir, entry);
-		if (statSync(path).isDirectory()) svelteFiles(path, found);
-		else if (entry.endsWith(".svelte")) found.push(path);
-	}
-	return found;
-}
-
 describe("shipped svelte sources", () => {
-	it("declare no optional parameters in implementation positions", () => {
+	it("declare no optional parameters in implementation positions", async () => {
 		const offenders: string[] = [];
 
-		for (const file of svelteFiles("src/lib")) {
-			const source = readFileSync(file, "utf8");
+		for (const file of new Glob("**/*.svelte").scanSync(libDir)) {
+			const source = await Bun.file(libDir + file).text();
 			for (const declaration of DECLARATIONS) {
 				for (const match of source.matchAll(declaration)) {
 					const open = match.index + match[0].length - 1;

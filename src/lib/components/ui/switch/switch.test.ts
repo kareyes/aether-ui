@@ -42,17 +42,23 @@ describe("switchVariants", () => {
 
 		it("should apply success variant to root", () => {
 			const result = switchVariants({ variant: "success" });
-			expect(result.root()).toContain("data-[state=checked]:bg-green-500");
+			expect(result.root()).toContain("data-[state=checked]:bg-success");
 		});
 
 		it("should apply warning variant to root", () => {
 			const result = switchVariants({ variant: "warning" });
-			expect(result.root()).toContain("data-[state=checked]:bg-orange-500");
+			expect(result.root()).toContain("data-[state=checked]:bg-warning");
 		});
 
-		it("should apply danger variant to root", () => {
-			const result = switchVariants({ variant: "danger" });
-			expect(result.root()).toContain("data-[state=checked]:bg-red-500");
+		it("should apply destructive variant to root", () => {
+			const result = switchVariants({ variant: "destructive" });
+			expect(result.root()).toContain("data-[state=checked]:bg-destructive");
+		});
+
+		it("should render the deprecated danger alias identically to destructive", () => {
+			expect(switchVariants({ variant: "danger" }).root()).toBe(
+				switchVariants({ variant: "destructive" }).root(),
+			);
 		});
 
 		it("should apply ghost variant to root", () => {
@@ -112,7 +118,7 @@ describe("switchVariants", () => {
 	describe("combined variants", () => {
 		it("should combine variant and size correctly", () => {
 			const result = switchVariants({ variant: "success", size: "lg" });
-			expect(result.root()).toContain("data-[state=checked]:bg-green-500");
+			expect(result.root()).toContain("data-[state=checked]:bg-success");
 			expect(result.root()).toContain("h-6");
 			expect(result.thumb()).toContain("size-5");
 		});

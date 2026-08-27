@@ -67,16 +67,16 @@
 		<Button onclick={() => toast('Default toast notification')}>
 			Default
 		</Button>
-		<Button color="success" onclick={() => toast.success('Operation completed successfully!')}>
+		<Button color="green" onclick={() => toast.success('Operation completed successfully!')}>
 			Success
 		</Button>
-		<Button color="danger" onclick={() => toast.error('Something went wrong!')}>
+		<Button color="red" onclick={() => toast.error('Something went wrong!')}>
 			Error
 		</Button>
-		<Button color="warning" onclick={() => toast.warning('Please review your input')}>
+		<Button color="yellow" onclick={() => toast.warning('Please review your input')}>
 			Warning
 		</Button>
-		<Button color="info" onclick={() => toast.info('Here is some information')}>
+		<Button color="blue" onclick={() => toast.info('Here is some information')}>
 			Info
 		</Button>
 	</div>
@@ -95,7 +95,7 @@
 <Story name="Success Toast">
 	{#snippet template(args: Args)}
 		<Toaster richColors />
-		<Button color="success" onclick={() => toast.success('File uploaded successfully!', {
+		<Button color="green" onclick={() => toast.success('File uploaded successfully!', {
 			description: 'Your file has been saved to the cloud.'
 		})}>
 			Show Success Toast
@@ -106,7 +106,7 @@
 <Story name="Error Toast">
 	{#snippet template(args: Args)}
 		<Toaster richColors />
-		<Button color="danger" onclick={() => toast.error('Failed to save changes', {
+		<Button color="red" onclick={() => toast.error('Failed to save changes', {
 			description: 'Please check your connection and try again.'
 		})}>
 			Show Error Toast
@@ -117,7 +117,7 @@
 <Story name="Warning Toast">
 	{#snippet template(args: Args)}
 		<Toaster richColors />
-		<Button color="warning" onclick={() => toast.warning('Low storage space', {
+		<Button color="yellow" onclick={() => toast.warning('Low storage space', {
 			description: 'You are using 95% of your available storage.'
 		})}>
 			Show Warning Toast
@@ -128,7 +128,7 @@
 <Story name="Info Toast">
 	{#snippet template(args: Args)}
 		<Toaster richColors />
-		<Button color="info" onclick={() => toast.info('New update available', {
+		<Button color="blue" onclick={() => toast.info('New update available', {
 			description: 'Version 2.0.0 is ready to install.'
 		})}>
 			Show Info Toast
@@ -170,7 +170,7 @@
 <Story name="With Action and Cancel">
 	{#snippet template(args: Args)}
 		<Toaster richColors />
-		<Button color="danger" onclick={() => toast.error('Delete this item?', {
+		<Button color="red" onclick={() => toast.error('Delete this item?', {
 			description: 'This action cannot be undone.',
 			action: {
 				label: 'Delete',
@@ -319,10 +319,10 @@
 		<Toaster variant="bordered" richColors />
 		<div class="flex flex-wrap gap-2">
 			<Button onclick={() => toast('Default bordered toast')}>Default</Button>
-			<Button color="success" onclick={() => toast.success('Success with left accent border')}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Error with left accent border')}>Error</Button>
-			<Button color="warning" onclick={() => toast.warning('Warning with left accent border')}>Warning</Button>
-			<Button color="info" onclick={() => toast.info('Info with left accent border')}>Info</Button>
+			<Button color="green" onclick={() => toast.success('Success with left accent border')}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Error with left accent border')}>Error</Button>
+			<Button color="yellow" onclick={() => toast.warning('Warning with left accent border')}>Warning</Button>
+			<Button color="blue" onclick={() => toast.info('Info with left accent border')}>Info</Button>
 		</div>
 	{/snippet}
 </Story>
@@ -332,10 +332,10 @@
 		<Toaster variant="filled" richColors />
 		<div class="flex flex-wrap gap-2">
 			<Button onclick={() => toast('Default filled toast')}>Default</Button>
-			<Button color="success" onclick={() => toast.success('Solid green background')}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Solid red background')}>Error</Button>
-			<Button color="warning" onclick={() => toast.warning('Solid yellow background')}>Warning</Button>
-			<Button color="info" onclick={() => toast.info('Solid blue background')}>Info</Button>
+			<Button color="green" onclick={() => toast.success('Solid green background')}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Solid red background')}>Error</Button>
+			<Button color="yellow" onclick={() => toast.warning('Solid yellow background')}>Warning</Button>
+			<Button color="blue" onclick={() => toast.info('Solid blue background')}>Info</Button>
 		</div>
 	{/snippet}
 </Story>
@@ -345,10 +345,10 @@
 		<Toaster variant="minimal" richColors />
 		<div class="flex flex-wrap gap-2">
 			<Button onclick={() => toast('Default minimal toast')}>Default</Button>
-			<Button color="success" onclick={() => toast.success('Ultra-clean success toast')}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Ultra-clean error toast')}>Error</Button>
-			<Button color="warning" onclick={() => toast.warning('Ultra-clean warning toast')}>Warning</Button>
-			<Button color="info" onclick={() => toast.info('Ultra-clean info toast')}>Info</Button>
+			<Button color="green" onclick={() => toast.success('Ultra-clean success toast')}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Ultra-clean error toast')}>Error</Button>
+			<Button color="yellow" onclick={() => toast.warning('Ultra-clean warning toast')}>Warning</Button>
+			<Button color="blue" onclick={() => toast.info('Ultra-clean info toast')}>Info</Button>
 		</div>
 	{/snippet}
 </Story>
@@ -359,8 +359,8 @@
 		<Toaster size="sm" richColors />
 		<div class="flex flex-wrap gap-2">
 			<Button onclick={() => toast('Small default toast')}>Default</Button>
-			<Button color="success" onclick={() => toast.success('Compact success toast', { description: 'Smaller text and padding' })}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Compact error toast')}>Error</Button>
+			<Button color="green" onclick={() => toast.success('Compact success toast', { description: 'Smaller text and padding' })}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Compact error toast')}>Error</Button>
 		</div>
 	{/snippet}
 </Story>
@@ -370,8 +370,8 @@
 		<Toaster size="lg" richColors />
 		<div class="flex flex-wrap gap-2">
 			<Button onclick={() => toast('Large default toast')}>Default</Button>
-			<Button color="success" onclick={() => toast.success('Large success toast', { description: 'Bigger text, padding, and icons' })}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Large error toast')}>Error</Button>
+			<Button color="green" onclick={() => toast.success('Large success toast', { description: 'Bigger text, padding, and icons' })}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Large error toast')}>Error</Button>
 		</div>
 	{/snippet}
 </Story>
@@ -381,9 +381,9 @@
 	{#snippet template(args: Args)}
 		<Toaster variant="filled" size="lg" richColors />
 		<div class="flex flex-wrap gap-2">
-			<Button color="success" onclick={() => toast.success('Large filled success', { description: 'Bold and attention-grabbing' })}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Large filled error', { description: 'Cannot be missed' })}>Error</Button>
-			<Button color="warning" onclick={() => toast.warning('Large filled warning')}>Warning</Button>
+			<Button color="green" onclick={() => toast.success('Large filled success', { description: 'Bold and attention-grabbing' })}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Large filled error', { description: 'Cannot be missed' })}>Error</Button>
+			<Button color="yellow" onclick={() => toast.warning('Large filled warning')}>Warning</Button>
 		</div>
 	{/snippet}
 </Story>
@@ -392,9 +392,9 @@
 	{#snippet template(args: Args)}
 		<Toaster variant="bordered" size="sm" richColors />
 		<div class="flex flex-wrap gap-2">
-			<Button color="success" onclick={() => toast.success('Small bordered success')}>Success</Button>
-			<Button color="danger" onclick={() => toast.error('Small bordered error')}>Error</Button>
-			<Button color="info" onclick={() => toast.info('Small bordered info')}>Info</Button>
+			<Button color="green" onclick={() => toast.success('Small bordered success')}>Success</Button>
+			<Button color="red" onclick={() => toast.error('Small bordered error')}>Error</Button>
+			<Button color="blue" onclick={() => toast.info('Small bordered info')}>Info</Button>
 		</div>
 	{/snippet}
 </Story>

@@ -1,0 +1,660 @@
+/*
+ * Blueprint — reprographic drafting for aether-ui.
+ * ---------------------------------------------------------------------------
+ * Two real processes, one per mode. By day the *diazo whiteprint*: blue lines
+ * on white paper, which is what a drawing office actually handed out. After
+ * dark the *cyanotype* it replaced: white lines on Prussian blue. So the two
+ * modes are a negative of each other by history rather than by inversion.
+ *
+ * Everything is drawn, nothing is filled. Hairline strokes, dashed rules,
+ * corner registration ticks, dimension labels in a technical mono, and no
+ * shadows anywhere — a drawing is flat.
+ *
+ * It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-blueprint` scope, so every component in the library inherits the
+ * look without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-blueprint">          light  ("whiteprint")
+ *   <html class="theme-blueprint dark">     dark   ("cyanotype")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/blueprint";
+ *
+ * Order matters. `.theme-blueprint` and `.dark` have equal specificity, so the
+ * whiteprint palette only beats the base dark palette by coming later in the
+ * sheet; `.theme-blueprint.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to the platform condensed and monospace stacks without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Share+Tech+Mono&display=swap">
+ *
+ * See ./THEMES.md for the token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Whiteprint — blue lines on paper
+ * -------------------------------------------------------------------------*/
+
+.theme-blueprint {
+	/* Fixed hues — the palette's identity. Declared once; the cyanotype block
+	   below overrides only the mode-reactive chrome, never these. */
+	--blueprint-prussian: #123a63;
+	--blueprint-ink: #16497e;
+	--blueprint-line: #2f6ba8;
+	--blueprint-line-soft: #7fa8d0;
+	--blueprint-paper: #eef1f6;
+	--blueprint-paper-hi: #f8fafc;
+	--blueprint-revision: #b8372a;
+	--blueprint-verdigris: #12695f;
+	--blueprint-amber: #8a6108;
+	--blueprint-violet: #5a4a94;
+
+	/* Mode-reactive chrome — the whiteprint values. Every name here is
+	   overridden in the cyanotype block; adding one without its night twin
+	   leaves paper under blue ink, which `blueprint.test.ts` fails on. */
+	--blueprint-field: #e3eaf3;
+	--blueprint-grid: #d3dfec;
+	--blueprint-tick: #90aecd;
+	--blueprint-scrim: rgb(18 58 99 / 0.55);
+
+	/* Structure — constant across modes. One stroke weight, one heavy weight
+	   for section lines, and the grid pitch. */
+	--blueprint-stroke: 1px;
+	--blueprint-stroke-heavy: 2px;
+	--blueprint-corner: 2px;
+	--blueprint-grid-pitch: 0.5rem;
+
+	--font-blueprint-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, sans-serif;
+	--font-blueprint-utility: "Share Tech Mono", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+
+	/* ---- Role tokens ---- */
+	--background: var(--blueprint-paper);
+	--foreground: var(--blueprint-prussian);
+	--card: var(--blueprint-paper-hi);
+	--card-foreground: var(--blueprint-prussian);
+	--popover: var(--blueprint-paper-hi);
+	--popover-foreground: var(--blueprint-prussian);
+	--primary: var(--blueprint-ink);
+	--primary-foreground: #f1f6fb;
+	--secondary: #dbe5f1;
+	--secondary-foreground: var(--blueprint-prussian);
+	--muted: #e2e9f2;
+	--muted-foreground: #47617f;
+	--accent: #dbe5f1;
+	--accent-foreground: var(--blueprint-prussian);
+	--destructive: var(--blueprint-revision);
+	--destructive-foreground: #fdf4f2;
+	--border: #a3bcd6;
+	--input: #6a8bad;
+	--ring: var(--blueprint-line);
+	--radius: 0.25rem;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted on the element that block matched —
+	   scope this theme to a subtree and that element sits above it, so the
+	   alias keeps the base red. Same reason for --status-danger and the
+	   --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	--warning: var(--blueprint-amber);
+	--warning-foreground: #fdfaf1;
+	--success: var(--blueprint-verdigris);
+	--success-foreground: #f0faf8;
+	--info: var(--blueprint-ink);
+	--info-foreground: #f1f6fb;
+
+	/* Layers on a drawing: line, verdigris, revision, note, section. */
+	--chart-1: var(--blueprint-line);
+	--chart-2: var(--blueprint-verdigris);
+	--chart-3: var(--blueprint-revision);
+	--chart-4: #a87a12;
+	--chart-5: var(--blueprint-violet);
+
+	--sidebar: var(--blueprint-prussian);
+	--sidebar-foreground: #e2edf7;
+	--sidebar-primary: #7fc3f2;
+	--sidebar-primary-foreground: #08243f;
+	--sidebar-accent: #1a4c7d;
+	--sidebar-accent-foreground: #e2edf7;
+	--sidebar-border: #0b2c4d;
+	--sidebar-ring: #7fc3f2;
+
+	--header: var(--blueprint-paper-hi);
+	--header-foreground: var(--blueprint-prussian);
+	--footer: #e5ecf4;
+	--footer-foreground: #47617f;
+
+	--code: #e7edf5;
+	--code-foreground: #2c4761;
+	--code-highlight: #dae5f1;
+	--code-number: #85a0b9;
+	--code-selection: #cddff1;
+	--code-border: #b6c8dd;
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue so it
+	   survives light/dark. Here the whole drawing is blue, so the accent has to
+	   move with the process or the spot art reads as a different document. */
+	--illustration-primary: var(--blueprint-line);
+	--illustration-secondary: var(--blueprint-line-soft);
+	--illustration-surface: var(--blueprint-paper-hi);
+	--illustration-outline: #c2d3e7;
+	--illustration-glow: rgb(47 107 168 / 0.2);
+	--illustration-shadow: rgb(18 58 99 / 0.28);
+
+	--status-info: var(--blueprint-line);
+	--status-info-label: #1b4f7f;
+	--status-warning: #a87a12;
+	--status-warning-label: #7a5507;
+	--status-success: #1a7c70;
+	--status-success-label: #115a51;
+	--status-danger: var(--destructive);
+	--status-danger-label: #8f2a20;
+	--status-accent: #6a5aa8;
+	--status-accent-label: #4a3d7a;
+	--status-neutral: #9db0c4;
+	--status-neutral-label: #47617f;
+}
+
+/* ---------------------------------------------------------------------------
+ * Cyanotype — white lines on Prussian blue. The process the whiteprint
+ * replaced, not an inversion of it.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-blueprint.dark,
+.dark .theme-blueprint,
+.theme-blueprint .dark {
+	--blueprint-field: #0f2b48;
+	--blueprint-grid: #1a3d61;
+	--blueprint-tick: #43708f;
+	--blueprint-scrim: rgb(3 14 26 / 0.75);
+
+	--background: #0c2440;
+	--foreground: #dceaf8;
+	--card: #12304f;
+	--card-foreground: #dceaf8;
+	--popover: #163a5e;
+	--popover-foreground: #dceaf8;
+	/* On a blue ground the ink cannot deepen — the line has to climb until it
+	   is the lighter of the two, which is exactly what a cyanotype does. */
+	--primary: #6fb3e8;
+	--primary-foreground: #05203a;
+	--secondary: #1c4166;
+	--secondary-foreground: #dceaf8;
+	--muted: #17395c;
+	--muted-foreground: #9dbcd8;
+	--accent: #1c4166;
+	--accent-foreground: #dceaf8;
+	--destructive: #f0705c;
+	--destructive-foreground: #260a06;
+	--border: #2b5480;
+	--input: #3d6d9c;
+	--ring: #7fc3f2;
+	--radius: 0.25rem;
+
+	--warning: #e0a93c;
+	--warning-foreground: #1a1204;
+	--success: #4fbcac;
+	--success-foreground: #032019;
+	--info: #6fb3e8;
+	--info-foreground: #05203a;
+
+	--chart-1: #6fb3e8;
+	--chart-2: #4fbcac;
+	--chart-3: #f0705c;
+	--chart-4: #e0a93c;
+	--chart-5: #a897e0;
+
+	--sidebar: #08192d;
+	--sidebar-foreground: #cfe0f2;
+	--sidebar-primary: #7fc3f2;
+	--sidebar-primary-foreground: #05203a;
+	--sidebar-accent: #143352;
+	--sidebar-accent-foreground: #cfe0f2;
+	--sidebar-border: #1e4067;
+	--sidebar-ring: #7fc3f2;
+
+	--header: #0e2842;
+	--header-foreground: #dceaf8;
+	--footer: #081a2e;
+	--footer-foreground: #9dbcd8;
+
+	--code: #0b2138;
+	--code-foreground: #a9c6de;
+	--code-highlight: #143352;
+	--code-number: #6a8bab;
+	--code-selection: #1e4a72;
+	--code-border: #2b5480;
+
+	--illustration-primary: #7fc3f2;
+	--illustration-secondary: #3f7bb0;
+	--illustration-surface: #12304f;
+	--illustration-outline: #2b5480;
+	--illustration-glow: rgb(127 195 242 / 0.24);
+	--illustration-shadow: rgb(0 0 0 / 0.55);
+
+	--status-info: #6fb3e8;
+	--status-info-label: #bcdcf7;
+	--status-warning: #e0a93c;
+	--status-warning-label: #f4d79c;
+	--status-success: #4fbcac;
+	--status-success-label: #a8e2d9;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f8b8ab;
+	--status-accent: #a897e0;
+	--status-accent-label: #d3c9f2;
+	--status-neutral: #456180;
+	--status-neutral-label: #9dbcd8;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *shape* — one stroke weight, no
+ * fills, no shadows, and registration ticks in the corners. It hangs off
+ * `data-slot`, the attribute every aether-ui root element already sets, so no
+ * component file changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g. `!shadow-lg`)
+ * or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+/* The annotation face carries the body copy — on a drawing every note is
+   lettered, and the condensed display face is for titles only. */
+.theme-blueprint {
+	font-family: var(--font-blueprint-utility);
+	line-height: 1.6;
+}
+
+.theme-blueprint :is(h1, h2, h3, h4, [data-slot="card-title"], [data-slot="dialog-title"], [data-slot="alert-dialog-title"], .blueprint-title) {
+	font-family: var(--font-blueprint-display);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+/* ---- Surfaces — a drawing is flat ---- */
+
+.theme-blueprint :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="tooltip-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="empty"],
+	[data-slot="chatbox"]
+) {
+	border: var(--blueprint-stroke) solid var(--border);
+	border-radius: var(--blueprint-corner);
+	box-shadow: none;
+}
+
+/* Registration ticks — the corner marks a sheet is trimmed to. */
+.theme-blueprint :is([data-slot="card"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+	position: relative;
+}
+
+.theme-blueprint :is([data-slot="card"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"])::before,
+.theme-blueprint :is([data-slot="card"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"])::after {
+	content: "";
+	position: absolute;
+	width: 0.5rem;
+	height: 0.5rem;
+	pointer-events: none;
+	border-style: solid;
+	border-color: var(--blueprint-tick);
+}
+
+.theme-blueprint :is([data-slot="card"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"])::before {
+	top: 4px;
+	left: 4px;
+	border-width: var(--blueprint-stroke) 0 0 var(--blueprint-stroke);
+}
+
+.theme-blueprint :is([data-slot="card"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"])::after {
+	right: 4px;
+	bottom: 4px;
+	border-width: 0 var(--blueprint-stroke) var(--blueprint-stroke) 0;
+}
+
+.theme-blueprint :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--blueprint-scrim);
+}
+
+/* Section lines are dashed on a drawing. */
+.theme-blueprint :is(
+	[data-slot="separator"],
+	[data-slot="dropdown-menu-separator"],
+	[data-slot="select-separator"]
+) {
+	background-color: transparent;
+	background-image: repeating-linear-gradient(
+		90deg,
+		var(--border) 0 6px,
+		transparent 6px 10px
+	);
+}
+
+/* ---- Buttons — drawn, not filled ----
+   `data-variant` is the hook; ghost and link have no outline to draw, so they
+   are excluded rather than special-cased back out. Buttons assembled from
+   `buttonVariants` without the component (alert-dialog's action/cancel) are
+   always solid, so they take the treatment unconditionally. */
+
+.theme-blueprint :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border-radius: var(--blueprint-corner);
+	font-family: var(--font-blueprint-display);
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	transition: box-shadow 100ms linear, background-color 100ms linear;
+}
+
+.theme-blueprint :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: var(--blueprint-stroke) solid currentcolor;
+	box-shadow: none;
+}
+
+/* Pressing a control ticks its outline heavier, the way a line is gone over
+   twice — there is no depth on a drawing to sink into. */
+.theme-blueprint :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):active:not(:disabled, [aria-disabled="true"]) {
+	box-shadow: inset 0 0 0 var(--blueprint-stroke) currentcolor;
+}
+
+/* ---- Fields ---- */
+
+.theme-blueprint :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	border: var(--blueprint-stroke) solid var(--input);
+	border-radius: var(--blueprint-corner);
+	background-color: var(--blueprint-field);
+	box-shadow: none;
+}
+
+.theme-blueprint :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+/* ---- Toggles ---- */
+
+.theme-blueprint :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="radio-group-item"]) {
+	border: var(--blueprint-stroke) solid var(--input);
+}
+
+.theme-blueprint [data-slot="checkbox"] {
+	border-radius: var(--blueprint-corner);
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty well behind the tick. */
+.theme-blueprint :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--blueprint-field);
+}
+
+.theme-blueprint [data-slot="switch"] {
+	border: var(--blueprint-stroke) solid var(--input);
+	border-radius: var(--blueprint-corner);
+}
+
+.theme-blueprint [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--blueprint-field);
+}
+
+.theme-blueprint [data-slot="switch-thumb"] {
+	border-radius: var(--blueprint-corner);
+}
+
+/* Outline, not border: a slider track is 6px tall and a progress bar 8px, so
+   a border on each edge leaves nothing between them to fill. */
+.theme-blueprint :is([data-slot="slider-track"], [data-slot="progress"]) {
+	border: 0;
+	outline: var(--blueprint-stroke) solid var(--input);
+	border-radius: var(--blueprint-corner);
+	background-color: var(--blueprint-field);
+}
+
+.theme-blueprint :is([data-slot="slider-range"], [data-slot="progress-indicator"]) {
+	border-radius: 0;
+}
+
+.theme-blueprint [data-slot="slider-thumb"] {
+	border: var(--blueprint-stroke-heavy) solid var(--ring);
+	border-radius: var(--blueprint-corner);
+}
+
+/* ---- Badge / avatar ---- */
+
+.theme-blueprint [data-slot="badge"] {
+	border: var(--blueprint-stroke) solid currentcolor;
+	border-radius: var(--blueprint-corner);
+	font-family: var(--font-blueprint-utility);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 0.6875rem;
+}
+
+.theme-blueprint [data-slot="avatar"] {
+	border: var(--blueprint-stroke) solid var(--border);
+	border-radius: var(--blueprint-corner);
+}
+
+.theme-blueprint :is([data-slot="avatar-image"], [data-slot="avatar-fallback"]) {
+	border-radius: 0;
+}
+
+/* ---- Alert — a revision note, flagged on the reading side ---- */
+
+.theme-blueprint [data-slot="alert"] {
+	border-width: var(--blueprint-stroke);
+	border-left-width: var(--blueprint-stroke-heavy);
+	border-radius: var(--blueprint-corner);
+	box-shadow: none;
+	background-color: var(--card);
+}
+
+/* ---- Table — a schedule block ---- */
+
+.theme-blueprint [data-slot="table"] {
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-blueprint [data-slot="table-head"] {
+	font-family: var(--font-blueprint-display);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	border-bottom: var(--blueprint-stroke-heavy) solid var(--border);
+}
+
+.theme-blueprint [data-slot="table-body"] [data-slot="table-row"] {
+	border-bottom: var(--blueprint-stroke) dashed var(--border);
+}
+
+/* ---- Tabs ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   the pill triggers are round; both opt out by their own class rather than by
+   a variant flag, which the component does not expose. */
+
+.theme-blueprint [data-slot="tabs-list"]:not(.bg-transparent) {
+	border: var(--blueprint-stroke) solid var(--border);
+	border-radius: var(--blueprint-corner);
+	background-color: transparent;
+}
+
+.theme-blueprint [data-slot="tabs-trigger"]:not(.rounded-full, .rounded-none) {
+	border-radius: var(--blueprint-corner);
+	font-family: var(--font-blueprint-display);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.theme-blueprint [data-slot="tabs-trigger"][data-state="active"]:not(.rounded-none) {
+	box-shadow: inset 0 -2px 0 var(--ring);
+}
+
+/* ---- Accordion ---- */
+
+.theme-blueprint [data-slot="accordion-item"] {
+	border-bottom: var(--blueprint-stroke) dashed var(--border);
+}
+
+/* ---- Toast ---- */
+
+.theme-blueprint [data-sonner-toast] {
+	border: var(--blueprint-stroke) solid var(--border);
+	border-radius: var(--blueprint-corner);
+	box-shadow: none;
+}
+
+/* ---- Focus — a selection box, offset off the geometry ---- */
+
+.theme-blueprint :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: var(--blueprint-stroke) solid var(--ring);
+	outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* Graph paper: a fine grid with every fifth line heavier. */
+.theme-blueprint .blueprint-grid,
+.blueprint-grid.theme-blueprint {
+	background-color: var(--background);
+	background-image:
+		linear-gradient(var(--blueprint-grid) var(--blueprint-stroke), transparent var(--blueprint-stroke)),
+		linear-gradient(90deg, var(--blueprint-grid) var(--blueprint-stroke), transparent var(--blueprint-stroke)),
+		linear-gradient(var(--blueprint-tick) var(--blueprint-stroke), transparent var(--blueprint-stroke)),
+		linear-gradient(90deg, var(--blueprint-tick) var(--blueprint-stroke), transparent var(--blueprint-stroke));
+	background-size:
+		var(--blueprint-grid-pitch) var(--blueprint-grid-pitch),
+		var(--blueprint-grid-pitch) var(--blueprint-grid-pitch),
+		calc(var(--blueprint-grid-pitch) * 5) calc(var(--blueprint-grid-pitch) * 5),
+		calc(var(--blueprint-grid-pitch) * 5) calc(var(--blueprint-grid-pitch) * 5);
+}
+
+/* A drawing sheet: trimmed border with an inner margin line. */
+.theme-blueprint .blueprint-sheet {
+	padding: 1.25rem;
+	background-color: var(--card);
+	border: var(--blueprint-stroke-heavy) solid var(--foreground);
+	border-radius: var(--blueprint-corner);
+	box-shadow: inset 0 0 0 0.5rem var(--card), inset 0 0 0 calc(0.5rem + var(--blueprint-stroke)) var(--blueprint-tick);
+}
+
+/* The title block in the corner of a sheet: ruled cells of drawing metadata. */
+.theme-blueprint .blueprint-titleblock {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+	gap: var(--blueprint-stroke);
+	background-color: var(--border);
+	border: var(--blueprint-stroke) solid var(--border);
+	font-family: var(--font-blueprint-utility);
+}
+
+.theme-blueprint .blueprint-titleblock > * {
+	padding: 0.5rem 0.625rem;
+	background-color: var(--card);
+}
+
+/* A dimension label: the measurement that sits on a witness line. */
+.theme-blueprint .blueprint-dim {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: var(--font-blueprint-utility);
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
+}
+
+.theme-blueprint .blueprint-dim::before,
+.theme-blueprint .blueprint-dim::after {
+	content: "";
+	flex: 1;
+	height: var(--blueprint-stroke);
+	background-color: var(--border);
+}
+
+/* A micro-label in the annotation face: drawing numbers, revisions, keys. */
+.theme-blueprint .blueprint-label {
+	display: block;
+	font-family: var(--font-blueprint-utility);
+	font-size: 0.625rem;
+	line-height: 1.4;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-blueprint :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"]
+	) {
+		transition: none;
+	}
+}

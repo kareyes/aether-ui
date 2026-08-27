@@ -189,7 +189,7 @@
 	{/snippet}
 </Story>
 
-<Story name="24-Hour Clock">
+<Story name="24-Hour Clock" exportName="TwentyFourHourClock">
 	{#snippet template()}
 		<TimePicker hourCycle={24} value={new Time(18, 45)} label="Departure" />
 	{/snippet}

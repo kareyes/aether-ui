@@ -1,0 +1,665 @@
+/*
+ * Sampaguita — the garland theme for aether-ui.
+ * ---------------------------------------------------------------------------
+ * Named after the jasmine strung into garlands and sold at intersections. It
+ * is a small white flower on a dark leaf, and it opens at night — which is the
+ * whole theme: a cool petal-white by day, a dark garden after dark, and the
+ * green doing the work in both.
+ *
+ * Where Ledger and Blueprint are ruled and Bundy is bolted, this one has no
+ * hard edges at all. Soft layered light instead of borders, generous corners,
+ * and one gold accent used about as often as a stamen appears in a flower.
+ * It is for the screens an employee chooses to open — self-service, onboarding,
+ * sign-in — not for a dense operations table.
+ *
+ * It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-sampaguita` scope, so every component in the library inherits the
+ * look without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-sampaguita">          light  ("petal")
+ *   <html class="theme-sampaguita dark">     dark   ("night garden")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/sampaguita";
+ *
+ * Order matters. `.theme-sampaguita` and `.dark` have equal specificity, so the
+ * petal palette only beats the base dark palette by coming later in the sheet;
+ * `.theme-sampaguita.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to the platform serif and sans stacks without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&family=Karla:wght@400;500;600;700&display=swap">
+ *
+ * See ./THEMES.md for the token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Petal — daylight
+ * -------------------------------------------------------------------------*/
+
+.theme-sampaguita {
+	/* Fixed hues — the palette's identity. Declared once; the night-garden
+	   block below overrides only the mode-reactive chrome, never these. */
+	--sampaguita-petal: #fdfefc;
+	--sampaguita-petal-2: #f3f7f2;
+	--sampaguita-leaf: #1f4d3a;
+	--sampaguita-leaf-hi: #35735a;
+	--sampaguita-stem: #54685d;
+	--sampaguita-stamen: #8f680a;
+	--sampaguita-bougainvillea: #b3324c;
+	--sampaguita-sky: #1f6382;
+	--sampaguita-earth: #7a6a58;
+	--sampaguita-gumamela: #7d5aa0;
+
+	/* Mode-reactive chrome — the petal values. Every name here is overridden in
+	   the night-garden block; adding one without its night twin leaves daylight
+	   in the garden, which `sampaguita.test.ts` fails on. */
+	--sampaguita-mist: #e9efe7;
+	--sampaguita-veil: #dbe5d9;
+	--sampaguita-inset: #f1f6f0;
+	--sampaguita-lift:
+		0 1px 2px rgb(15 40 30 / 0.06),
+		0 10px 28px -10px rgb(15 40 30 / 0.16);
+	--sampaguita-lift-hover:
+		0 2px 4px rgb(15 40 30 / 0.08),
+		0 18px 40px -14px rgb(15 40 30 / 0.22);
+	--sampaguita-halo: rgb(53 115 90 / 0.18);
+	--sampaguita-scrim: rgb(13 21 18 / 0.36);
+
+	/* Structure — constant across modes. Nothing here is square. */
+	--sampaguita-corner: 0.875rem;
+	--sampaguita-corner-sm: 0.5rem;
+	--sampaguita-hairline: 1px;
+
+	--font-sampaguita-display: "Newsreader", Georgia, "Iowan Old Style", serif;
+	--font-sampaguita-body: "Karla", ui-sans-serif, "Helvetica Neue", sans-serif;
+
+	/* ---- Role tokens ---- */
+	--background: var(--sampaguita-petal-2);
+	--foreground: #15241d;
+	--card: var(--sampaguita-petal);
+	--card-foreground: #15241d;
+	--popover: var(--sampaguita-petal);
+	--popover-foreground: #15241d;
+	--primary: var(--sampaguita-leaf);
+	--primary-foreground: #f2f8f4;
+	--secondary: #e3ede1;
+	--secondary-foreground: #1a3f30;
+	--muted: var(--sampaguita-mist);
+	--muted-foreground: var(--sampaguita-stem);
+	--accent: #e3ede1;
+	--accent-foreground: #1a3f30;
+	--destructive: var(--sampaguita-bougainvillea);
+	--destructive-foreground: #fff5f7;
+	--border: var(--sampaguita-veil);
+	--input: #c3d3c0;
+	--ring: var(--sampaguita-leaf-hi);
+	--radius: 0.875rem;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted on the element that block matched —
+	   scope this theme to a subtree and that element sits above it, so the
+	   alias keeps the base red. Same reason for --status-danger and the
+	   --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	--warning: var(--sampaguita-stamen);
+	--warning-foreground: #fffaef;
+	--success: #217a52;
+	--success-foreground: #f1faf5;
+	--info: var(--sampaguita-sky);
+	--info-foreground: #f0f8fb;
+
+	/* Leaf, stamen, bougainvillea, sky, earth. */
+	--chart-1: var(--sampaguita-leaf);
+	--chart-2: var(--sampaguita-stamen);
+	--chart-3: var(--sampaguita-bougainvillea);
+	--chart-4: var(--sampaguita-sky);
+	--chart-5: var(--sampaguita-earth);
+
+	--sidebar: #16352a;
+	--sidebar-foreground: #e7f0e9;
+	--sidebar-primary: #8fd3b0;
+	--sidebar-primary-foreground: #0a2118;
+	--sidebar-accent: #1f4a3b;
+	--sidebar-accent-foreground: #e7f0e9;
+	--sidebar-border: #0e2820;
+	--sidebar-ring: #8fd3b0;
+
+	--header: var(--sampaguita-petal);
+	--header-foreground: #15241d;
+	--footer: #eef4ec;
+	--footer-foreground: var(--sampaguita-stem);
+
+	--code: #eef4ec;
+	--code-foreground: #33473c;
+	--code-highlight: #e3ede1;
+	--code-number: #85998c;
+	--code-selection: #cfe6d8;
+	--code-border: #d5e2d2;
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue so it
+	   survives light/dark. Here the accent is the leaf — a blue spot drawing on
+	   a petal-white card reads as clip art borrowed from another product. */
+	--illustration-primary: var(--sampaguita-leaf);
+	--illustration-secondary: #8fc4a6;
+	--illustration-surface: var(--sampaguita-petal);
+	--illustration-outline: var(--sampaguita-veil);
+	--illustration-glow: rgb(31 77 58 / 0.16);
+	--illustration-shadow: rgb(15 40 30 / 0.28);
+
+	--status-info: #2b7799;
+	--status-info-label: var(--sampaguita-sky);
+	--status-warning: #c08f14;
+	--status-warning-label: #856209;
+	--status-success: #2c8f62;
+	--status-success-label: #1b6444;
+	--status-danger: var(--destructive);
+	--status-danger-label: #93283e;
+	--status-accent: var(--sampaguita-gumamela);
+	--status-accent-label: #5e4278;
+	--status-neutral: #a9bcae;
+	--status-neutral-label: var(--sampaguita-stem);
+}
+
+/* ---------------------------------------------------------------------------
+ * Night garden — when the flower actually opens. Not an inverted page: a dark
+ * ground the same green lives on.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-sampaguita.dark,
+.dark .theme-sampaguita,
+.theme-sampaguita .dark {
+	--sampaguita-mist: #1c2a24;
+	--sampaguita-veil: #253229;
+	--sampaguita-inset: #121c17;
+	--sampaguita-lift:
+		0 1px 2px rgb(0 0 0 / 0.4),
+		0 10px 28px -10px rgb(0 0 0 / 0.6);
+	--sampaguita-lift-hover:
+		0 2px 4px rgb(0 0 0 / 0.45),
+		0 18px 40px -14px rgb(0 0 0 / 0.7);
+	--sampaguita-halo: rgb(111 190 149 / 0.2);
+	--sampaguita-scrim: rgb(4 9 7 / 0.62);
+
+	--background: #0d1512;
+	--foreground: #e9f0e9;
+	--card: #141f1a;
+	--card-foreground: #e9f0e9;
+	--popover: #1a2822;
+	--popover-foreground: #e9f0e9;
+	/* The petal, not the leaf. A deep leaf green disappears into a night
+	   garden, so after dark the primary becomes the flower on top of it. */
+	--primary: #6fbe95;
+	--primary-foreground: #04170e;
+	--secondary: #22322b;
+	--secondary-foreground: #e9f0e9;
+	--muted: var(--sampaguita-mist);
+	--muted-foreground: #9bb0a4;
+	--accent: #22322b;
+	--accent-foreground: #e9f0e9;
+	--destructive: #ea7089;
+	--destructive-foreground: #26060e;
+	--border: var(--sampaguita-veil);
+	--input: #3b4f45;
+	--ring: #6fbe95;
+	--radius: 0.875rem;
+
+	--warning: #e0b654;
+	--warning-foreground: #1a1304;
+	--success: #5cbb8b;
+	--success-foreground: #03180f;
+	--info: #63b0d4;
+	--info-foreground: #02131b;
+
+	--chart-1: #6fbe95;
+	--chart-2: #e0b654;
+	--chart-3: #ea7089;
+	--chart-4: #63b0d4;
+	--chart-5: #b8a48c;
+
+	--sidebar: #0a110e;
+	--sidebar-foreground: #dae5dc;
+	--sidebar-primary: #6fbe95;
+	--sidebar-primary-foreground: #04170e;
+	--sidebar-accent: #182420;
+	--sidebar-accent-foreground: #dae5dc;
+	--sidebar-border: #243129;
+	--sidebar-ring: #6fbe95;
+
+	--header: #111c17;
+	--header-foreground: #e9f0e9;
+	--footer: #0a110e;
+	--footer-foreground: #9bb0a4;
+
+	--code: #111a16;
+	--code-foreground: #a8bdb0;
+	--code-highlight: #1a2822;
+	--code-number: #6b8175;
+	--code-selection: #22503a;
+	--code-border: #253229;
+
+	--illustration-primary: #6fbe95;
+	--illustration-secondary: #3a6b52;
+	--illustration-surface: #141f1a;
+	--illustration-outline: #253229;
+	--illustration-glow: rgb(111 190 149 / 0.2);
+	--illustration-shadow: rgb(0 0 0 / 0.5);
+
+	--status-info: #63b0d4;
+	--status-info-label: #b4dcee;
+	--status-warning: #e0b654;
+	--status-warning-label: #f2dda6;
+	--status-success: #5cbb8b;
+	--status-success-label: #a9e0c5;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f7b3c1;
+	--status-accent: #b294d4;
+	--status-accent-label: #d8cbea;
+	--status-neutral: #46564c;
+	--status-neutral-label: #9bb0a4;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *shape* — soft layered light where
+ * the other themes put a rule, and a corner radius that never goes square. It
+ * hangs off `data-slot`, the attribute every aether-ui root element already
+ * sets, so no component file changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g. `!rounded-none`)
+ * or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+.theme-sampaguita {
+	font-family: var(--font-sampaguita-body);
+	line-height: 1.6;
+}
+
+.theme-sampaguita :is(
+	h1, h2, h3, h4,
+	[data-slot="card-title"],
+	[data-slot="dialog-title"],
+	[data-slot="alert-dialog-title"],
+	.sampaguita-title
+) {
+	font-family: var(--font-sampaguita-display);
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	text-wrap: balance;
+}
+
+/* ---- Surfaces — light, not edges ---- */
+
+.theme-sampaguita :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="tooltip-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="empty"],
+	[data-slot="chatbox"]
+) {
+	border: var(--sampaguita-hairline) solid var(--border);
+	border-radius: var(--sampaguita-corner);
+	box-shadow: var(--sampaguita-lift);
+}
+
+/* The one overlay treatment in the library that softens rather than darkens. */
+.theme-sampaguita :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--sampaguita-scrim);
+	backdrop-filter: blur(3px);
+}
+
+.theme-sampaguita :is(
+	[data-slot="separator"],
+	[data-slot="dropdown-menu-separator"],
+	[data-slot="select-separator"]
+) {
+	background-color: var(--border);
+}
+
+/* ---- Buttons — they lift, they do not press ----
+   `data-variant` is the hook; ghost and link have no ground to lift, so they
+   are excluded rather than special-cased back out. Buttons assembled from
+   `buttonVariants` without the component (alert-dialog's action/cancel) are
+   always solid, so they take the treatment unconditionally. */
+
+.theme-sampaguita :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border-radius: var(--sampaguita-corner-sm);
+	font-family: var(--font-sampaguita-body);
+	font-weight: 600;
+	transition:
+		transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1),
+		box-shadow 160ms cubic-bezier(0.2, 0.8, 0.2, 1),
+		background-color 160ms linear;
+}
+
+.theme-sampaguita :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: 0;
+	box-shadow: var(--sampaguita-lift);
+}
+
+.theme-sampaguita :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):hover:not(:disabled, [aria-disabled="true"]) {
+	transform: translateY(-1px);
+	box-shadow: var(--sampaguita-lift-hover);
+}
+
+.theme-sampaguita :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):active:not(:disabled, [aria-disabled="true"]) {
+	transform: translateY(0);
+	box-shadow: var(--sampaguita-lift);
+}
+
+.theme-sampaguita :is([data-slot="button"][data-variant="outline"], [data-slot="button"][data-variant="bordered"]) {
+	border: var(--sampaguita-hairline) solid var(--border);
+	box-shadow: none;
+}
+
+.theme-sampaguita [data-slot="button"]:is(:disabled, [aria-disabled="true"]) {
+	box-shadow: none;
+	transform: none;
+}
+
+/* ---- Fields — a filled well, no outline until you touch it ---- */
+
+.theme-sampaguita :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	border: var(--sampaguita-hairline) solid transparent;
+	border-radius: var(--sampaguita-corner-sm);
+	background-color: var(--sampaguita-inset);
+	box-shadow: inset 0 0 0 var(--sampaguita-hairline) var(--border);
+	transition: box-shadow 160ms linear, background-color 160ms linear;
+}
+
+.theme-sampaguita :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="chatbox-input"]
+):focus-visible {
+	background-color: var(--card);
+	box-shadow:
+		inset 0 0 0 var(--sampaguita-hairline) var(--ring),
+		0 0 0 4px var(--sampaguita-halo);
+}
+
+.theme-sampaguita :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	box-shadow: inset 0 0 0 var(--sampaguita-hairline) var(--destructive);
+}
+
+/* ---- Toggles ---- */
+
+.theme-sampaguita :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="radio-group-item"]) {
+	border: var(--sampaguita-hairline) solid var(--input);
+}
+
+.theme-sampaguita [data-slot="checkbox"] {
+	border-radius: 0.375rem;
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty well behind the tick. */
+.theme-sampaguita :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--sampaguita-inset);
+}
+
+/* The one control that was always meant to be round. */
+.theme-sampaguita [data-slot="switch"] {
+	border: var(--sampaguita-hairline) solid transparent;
+	border-radius: 999px;
+}
+
+.theme-sampaguita [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--sampaguita-veil);
+}
+
+.theme-sampaguita [data-slot="switch-thumb"] {
+	border-radius: 999px;
+	box-shadow: 0 1px 3px rgb(15 40 30 / 0.3);
+}
+
+.theme-sampaguita :is([data-slot="slider-track"], [data-slot="progress"]) {
+	border-radius: 999px;
+	background-color: var(--sampaguita-mist);
+}
+
+.theme-sampaguita :is([data-slot="slider-range"], [data-slot="progress-indicator"]) {
+	border-radius: 999px;
+}
+
+.theme-sampaguita [data-slot="slider-thumb"] {
+	border: 2px solid var(--card);
+	box-shadow: var(--sampaguita-lift);
+}
+
+/* ---- Badge / avatar ---- */
+
+.theme-sampaguita [data-slot="badge"] {
+	border-radius: 999px;
+	border-color: transparent;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+}
+
+.theme-sampaguita [data-slot="avatar"] {
+	border-radius: 999px;
+	box-shadow: 0 0 0 var(--sampaguita-hairline) var(--border);
+}
+
+/* ---- Alert — a note left on the table, not a warning label ---- */
+
+.theme-sampaguita [data-slot="alert"] {
+	border: var(--sampaguita-hairline) solid var(--border);
+	border-radius: var(--sampaguita-corner);
+	box-shadow: var(--sampaguita-lift);
+}
+
+/* ---- Table ---- */
+
+.theme-sampaguita [data-slot="table"] {
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-sampaguita [data-slot="table-head"] {
+	font-family: var(--font-sampaguita-body);
+	font-weight: 600;
+	font-size: 0.75rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+}
+
+.theme-sampaguita [data-slot="table-body"] [data-slot="table-row"] {
+	border-bottom: var(--sampaguita-hairline) solid var(--border);
+}
+
+/* ---- Tabs ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   the pill triggers are round already; both opt out by their own class rather
+   than by a variant flag, which the component does not expose. */
+
+.theme-sampaguita [data-slot="tabs-list"]:not(.bg-transparent) {
+	border-radius: 999px;
+	background-color: var(--sampaguita-mist);
+	padding: 0.25rem;
+}
+
+.theme-sampaguita [data-slot="tabs-trigger"]:not(.rounded-none) {
+	border-radius: 999px;
+}
+
+.theme-sampaguita [data-slot="tabs-trigger"][data-state="active"]:not(.rounded-none) {
+	box-shadow: var(--sampaguita-lift);
+}
+
+/* ---- Accordion ---- */
+
+.theme-sampaguita [data-slot="accordion-item"] {
+	border-bottom: var(--sampaguita-hairline) solid var(--border);
+}
+
+/* ---- Toast ---- */
+
+.theme-sampaguita [data-sonner-toast] {
+	border: var(--sampaguita-hairline) solid var(--border);
+	border-radius: var(--sampaguita-corner);
+	box-shadow: var(--sampaguita-lift-hover);
+}
+
+/* ---- Focus — a soft halo, the shape of the thing it is on ---- */
+
+.theme-sampaguita :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: 2px solid var(--ring);
+	outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* The garland: buds threaded on a string, as a section divider. */
+.theme-sampaguita .sampaguita-garland,
+.sampaguita-garland.theme-sampaguita {
+	height: 0.75rem;
+	border: 0;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--border), var(--border)),
+		radial-gradient(circle, var(--sampaguita-petal) 0 2.5px, transparent 3px),
+		radial-gradient(circle, var(--primary) 0 1.5px, transparent 2px);
+	background-size: 100% var(--sampaguita-hairline), 1.25rem 0.75rem, 1.25rem 0.75rem;
+	background-position: left center, left center, left center;
+	background-repeat: no-repeat, repeat-x, repeat-x;
+}
+
+/* A panel with no edge at all — just the light it sits in. */
+.theme-sampaguita .sampaguita-panel {
+	padding: 1.75rem;
+	background-color: var(--card);
+	color: var(--card-foreground);
+	border-radius: var(--sampaguita-corner);
+	box-shadow: var(--sampaguita-lift);
+}
+
+/* Ambient bloom behind a hero: the flower's own glow, not a gradient banner. */
+.theme-sampaguita .sampaguita-bloom {
+	position: relative;
+	isolation: isolate;
+	background-color: var(--background);
+	background-image:
+		radial-gradient(60% 80% at 15% 0%, var(--sampaguita-halo) 0%, transparent 70%),
+		radial-gradient(50% 70% at 85% 10%, var(--illustration-glow) 0%, transparent 70%);
+}
+
+/* An eyebrow in the display italic — the one flourish the theme allows. */
+.theme-sampaguita .sampaguita-eyebrow {
+	display: block;
+	font-family: var(--font-sampaguita-display);
+	font-style: italic;
+	font-size: 0.9375rem;
+	letter-spacing: 0.01em;
+	color: var(--muted-foreground);
+}
+
+/* A micro-label for stat keys and captions. */
+.theme-sampaguita .sampaguita-label {
+	display: block;
+	font-family: var(--font-sampaguita-body);
+	font-size: 0.6875rem;
+	line-height: 1.4;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-sampaguita :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"]
+	) {
+		transition: none;
+	}
+
+	.theme-sampaguita :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"]
+	):hover {
+		transform: none;
+	}
+}

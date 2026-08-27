@@ -68,11 +68,11 @@
 		y1="90"
 		x2="120"
 		y2="108"
-		stroke="var(--danger-foreground)"
+		stroke="var(--destructive-foreground)"
 		stroke-width="6"
 		stroke-linecap="round"
 	/>
-	<circle cx="120" cy="118" r="3.5" fill="var(--danger-foreground)" />
+	<circle cx="120" cy="118" r="3.5" fill="var(--destructive-foreground)" />
 
 	<!-- Broken link -->
 	<ellipse

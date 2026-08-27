@@ -72,6 +72,10 @@
 
 	const acceptAttribute = $derived.by(() => accept || createAcceptAttribute(validation.acceptedTypes));
 
+	// `danger` is a deprecated alias with no variant of its own. Map it rather
+	// than passing it through: tailwind-variants only falls back to
+	// `defaultVariants` for `undefined`, so an unknown key silently drops the
+	// button's border and ground instead of rendering as `default`.
 	const variants = $derived.by(() => fileInputVariants({
 		variant: variant === 'danger' ? 'default' : variant,
 		size,

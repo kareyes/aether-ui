@@ -5,6 +5,19 @@
 
 import { tv, type VariantProps } from "tailwind-variants";
 
+/**
+ * The three tone variants differ only in which role token fills the checked
+ * track — the thumb is identical, so it lives here once rather than being
+ * repeated per tone. Track classes stay spelled out literally: Tailwind scans
+ * source text, so a template-built `bg-${token}` would never be generated.
+ */
+const toneThumb = [
+	"bg-background border border-border/50",
+	"data-[state=checked]:bg-white data-[state=unchecked]:bg-white",
+	"dark:data-[state=unchecked]:bg-white dark:data-[state=checked]:bg-white",
+	"data-[state=checked]:border-transparent",
+];
+
 export const switchVariants = tv({
 	slots: {
 		root: [
@@ -41,39 +54,32 @@ export const switchVariants = tv({
 			},
 			success: {
 				root: [
-					"data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-input",
-					"dark:data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-input/50",
+					"data-[state=checked]:bg-success data-[state=unchecked]:bg-input",
+					"dark:data-[state=checked]:bg-success dark:data-[state=unchecked]:bg-input/50",
 				],
-				thumb: [
-					"bg-background border border-border/50",
-					"data-[state=checked]:bg-white data-[state=unchecked]:bg-white",
-					"dark:data-[state=unchecked]:bg-white dark:data-[state=checked]:bg-white",
-					"data-[state=checked]:border-transparent",
-				],
+				thumb: toneThumb,
 			},
 			warning: {
 				root: [
-					"data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-input",
-					"dark:data-[state=checked]:bg-orange-600 dark:data-[state=unchecked]:bg-input/50",
+					"data-[state=checked]:bg-warning data-[state=unchecked]:bg-input",
+					"dark:data-[state=checked]:bg-warning dark:data-[state=unchecked]:bg-input/50",
 				],
-				thumb: [
-					"bg-background border border-border/50",
-					"data-[state=checked]:bg-white data-[state=unchecked]:bg-white",
-					"dark:data-[state=unchecked]:bg-white dark:data-[state=checked]:bg-white",
-					"data-[state=checked]:border-transparent",
-				],
+				thumb: toneThumb,
 			},
+			destructive: {
+				root: [
+					"data-[state=checked]:bg-destructive data-[state=unchecked]:bg-input",
+					"dark:data-[state=checked]:bg-destructive dark:data-[state=unchecked]:bg-input/50",
+				],
+				thumb: toneThumb,
+			},
+			/** @deprecated Use `destructive`. Removed after 0.0.21. */
 			danger: {
 				root: [
-					"data-[state=checked]:bg-red-500 data-[state=unchecked]:bg-input",
-					"dark:data-[state=checked]:bg-red-600 dark:data-[state=unchecked]:bg-input/50",
+					"data-[state=checked]:bg-destructive data-[state=unchecked]:bg-input",
+					"dark:data-[state=checked]:bg-destructive dark:data-[state=unchecked]:bg-input/50",
 				],
-				thumb: [
-					"bg-background border border-border/50",
-					"data-[state=checked]:bg-white data-[state=unchecked]:bg-white",
-					"dark:data-[state=unchecked]:bg-white dark:data-[state=checked]:bg-white",
-					"data-[state=checked]:border-transparent",
-				],
+				thumb: toneThumb,
 			},
 			ghost: {
 				root: [

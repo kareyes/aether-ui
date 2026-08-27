@@ -1,0 +1,744 @@
+/*
+ * Reticle — the heads-up theme for aether-ui.
+ * ---------------------------------------------------------------------------
+ * A reticle is the etched overlay inside an instrument — the brackets, ticks
+ * and crosshair the operator reads *through*, projected onto glass with the
+ * world still visible behind it. That is the whole theme, and it is the part
+ * of "futuristic" worth keeping: an interface that behaves like an instrument
+ * rather than a screensaver.
+ *
+ * So there are no filled boxes. A panel is marked by four corner brackets, the
+ * way a HUD marks a tracked object, and the ground shows through the middle.
+ * Labels are monospaced and tracked out because they are legends, not prose.
+ * Figures are tabular because they are readings. The measurement grid is an
+ * opt-in ground (`.reticle-grid`), not decoration bolted to every card.
+ *
+ * The signal colour is **amber phosphor**, not cyan — the colour of the CRTs
+ * these displays actually came from, and the one that does not read as every
+ * other dark-mode-with-a-glow theme. Amber is the primary; caution is pulled
+ * to a green-shifted signal yellow so the two never collide; cyan is reserved
+ * for informational data, red for warnings, green for a valid lock.
+ *
+ * Night is the display lit in a dark cockpit. Day is the same instrument read
+ * in sunlight — a pale panel with dark etching, which is what these actually
+ * look like with the lamp off. It is not a dark theme wearing a white shirt.
+ *
+ * It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-reticle` scope, so every component in the library inherits the look
+ * without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-reticle">          light  ("daylight panel")
+ *   <html class="theme-reticle dark">     dark   ("lit display")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/reticle";
+ *
+ * Order matters. `.theme-reticle` and `.dark` have equal specificity, so the
+ * daylight palette only beats the base dark palette by coming later in the
+ * sheet; `.theme-reticle.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to the platform sans and mono stacks without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&display=swap">
+ *
+ * See ./THEMES.md for the token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Daylight panel
+ * -------------------------------------------------------------------------*/
+
+.theme-reticle {
+	/* Fixed hues — the signal set. Each one carries a lit value and a daylight
+	   value, because a phosphor read in sunlight has to be deepened to stay
+	   legible while staying the same signal. These are the palette's identity;
+	   the lit-display block below overrides only the mode-reactive chrome. */
+	--reticle-phosphor: #f2a63b;
+	--reticle-phosphor-deep: #96570a;
+	--reticle-cyan: #4fd0ea;
+	--reticle-cyan-deep: #0f6379;
+	--reticle-alert: #f0605c;
+	--reticle-alert-deep: #b82b28;
+	--reticle-lock: #3fc482;
+	--reticle-lock-deep: #17714a;
+	--reticle-caution: #d9d040;
+	--reticle-caution-deep: #6f5d00;
+	--reticle-violet: #a98ae8;
+
+	/* Mode-reactive chrome — the daylight values. Every name here is overridden
+	   in the lit-display block; adding one without its night twin leaves
+	   daylight on an unlit panel, which `reticle.test.ts` fails on. */
+	--reticle-glass: #f3f5f2;
+	--reticle-well: #dde1dc;
+	--reticle-etch: #c8cec6;
+	--reticle-tick: #6d7a73;
+	--reticle-grid-line: rgb(20 24 26 / 0.06);
+	--reticle-glow: rgb(150 87 10 / 0.18);
+	--reticle-scrim: rgb(16 20 18 / 0.44);
+
+	/* Structure — constant across modes. The bracket length is the theme's one
+	   real dimension: shorter and it reads as a rounding artefact, longer and
+	   it closes into a border. */
+	--reticle-corner: 2px;
+	--reticle-bracket: 10px;
+	--reticle-stroke: 1px;
+	--reticle-grid: 32px;
+	--reticle-snap: 90ms;
+
+	--font-reticle-display: "Chakra Petch", "Eurostile", ui-sans-serif, sans-serif;
+	--font-reticle-utility: "Martian Mono", ui-monospace, "SFMono-Regular", monospace;
+
+	/* ---- Role tokens ---- */
+	--background: #e6e9e5;
+	--foreground: #14181a;
+	--card: var(--reticle-glass);
+	--card-foreground: #14181a;
+	--popover: #fbfcfa;
+	--popover-foreground: #14181a;
+	--primary: var(--reticle-phosphor-deep);
+	--primary-foreground: #fff8ec;
+	--secondary: #d9ddd7;
+	--secondary-foreground: #1c2124;
+	--muted: var(--reticle-well);
+	--muted-foreground: #4e5652;
+	--accent: #d9ddd7;
+	--accent-foreground: #1c2124;
+	--destructive: var(--reticle-alert-deep);
+	--destructive-foreground: #fff1f0;
+	--border: var(--reticle-etch);
+	--input: #aeb6ac;
+	--ring: var(--reticle-phosphor-deep);
+	--radius: 2px;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted on the element that block matched —
+	   scope this theme to a subtree and that element sits above it, so the
+	   alias keeps the base red. Same reason for --status-danger and the
+	   --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	/* Caution is deliberately not the phosphor. Amber is the primary here, so a
+	   second amber for warnings would put two identical signals on one panel. */
+	--warning: var(--reticle-caution-deep);
+	--warning-foreground: #fffce8;
+	--success: var(--reticle-lock-deep);
+	--success-foreground: #effaf3;
+	--info: var(--reticle-cyan-deep);
+	--info-foreground: #eefafd;
+
+	/* The signal set, in the order an operator scans it. */
+	--chart-1: var(--reticle-phosphor-deep);
+	--chart-2: var(--reticle-cyan-deep);
+	--chart-3: var(--reticle-alert-deep);
+	--chart-4: var(--reticle-lock-deep);
+	--chart-5: #6a4fb0;
+
+	/* The instrument bay — unlit in both modes, so the panel above it always
+	   reads as the lit surface. */
+	--sidebar: #12171a;
+	--sidebar-foreground: #d7e0dd;
+	--sidebar-primary: var(--reticle-phosphor);
+	--sidebar-primary-foreground: #1a0f01;
+	--sidebar-accent: #1c2327;
+	--sidebar-accent-foreground: #d7e0dd;
+	--sidebar-border: #232b30;
+	--sidebar-ring: var(--reticle-phosphor);
+
+	--header: var(--reticle-glass);
+	--header-foreground: #14181a;
+	--footer: #dfe3dd;
+	--footer-foreground: #4e5652;
+
+	--code: #edf0ec;
+	--code-foreground: #333b37;
+	--code-highlight: var(--reticle-well);
+	--code-number: #7d8781;
+	--code-selection: #f0dcb8;
+	--code-border: var(--reticle-etch);
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue. Here
+	   it is the phosphor — an instrument has one lit colour, and a stock blue
+	   beside it looks like a decal from another aircraft. */
+	--illustration-primary: var(--reticle-phosphor-deep);
+	--illustration-secondary: #e0a95e;
+	--illustration-surface: var(--reticle-glass);
+	--illustration-outline: var(--reticle-etch);
+	--illustration-glow: rgb(242 166 59 / 0.24);
+	--illustration-shadow: rgb(10 14 12 / 0.3);
+
+	--status-info: #1f7f99;
+	--status-info-label: #115a6d;
+	--status-warning: #8a7300;
+	--status-warning-label: #665400;
+	--status-success: #1f8256;
+	--status-success-label: #145c3d;
+	--status-danger: var(--destructive);
+	--status-danger-label: #93211e;
+	--status-accent: #7a5ec2;
+	--status-accent-label: #54408c;
+	--status-neutral: #9ba69f;
+	--status-neutral-label: #4e5652;
+}
+
+/* ---------------------------------------------------------------------------
+ * Lit display — the panel with the lamp on. Not an inverted page: the etching
+ * stops being ink and starts being light, so every signal climbs to its
+ * phosphor value and the ground drops away to nothing.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-reticle.dark,
+.dark .theme-reticle,
+.theme-reticle .dark {
+	--reticle-glass: #0c1114;
+	--reticle-well: #10161a;
+	--reticle-etch: #202a2e;
+	--reticle-tick: #55666a;
+	--reticle-grid-line: rgb(223 233 230 / 0.05);
+	--reticle-glow: rgb(242 166 59 / 0.3);
+	--reticle-scrim: rgb(1 3 4 / 0.7);
+
+	--background: #06090b;
+	--foreground: #dfe9e6;
+	--card: var(--reticle-glass);
+	--card-foreground: #dfe9e6;
+	--popover: #101619;
+	--popover-foreground: #dfe9e6;
+	/* The phosphor itself. #96570a is a deepened print value that vanishes on
+	   an unlit panel, so after dark the primary returns to the lit amber. */
+	--primary: var(--reticle-phosphor);
+	--primary-foreground: #160c00;
+	--secondary: #161d21;
+	--secondary-foreground: #dfe9e6;
+	--muted: var(--reticle-well);
+	--muted-foreground: #8fa39d;
+	--accent: #1a2226;
+	--accent-foreground: #dfe9e6;
+	--destructive: var(--reticle-alert);
+	--destructive-foreground: #200302;
+	--border: var(--reticle-etch);
+	--input: #2c3a3f;
+	--ring: var(--reticle-phosphor);
+	--radius: 2px;
+
+	--warning: var(--reticle-caution);
+	--warning-foreground: #191701;
+	--success: var(--reticle-lock);
+	--success-foreground: #021a0f;
+	--info: var(--reticle-cyan);
+	--info-foreground: #011a20;
+
+	--chart-1: #f2a63b;
+	--chart-2: #4fd0ea;
+	--chart-3: #f0605c;
+	--chart-4: #3fc482;
+	--chart-5: var(--reticle-violet);
+
+	--sidebar: #040708;
+	--sidebar-foreground: #cddad6;
+	--sidebar-primary: #f2a63b;
+	--sidebar-primary-foreground: #160c00;
+	--sidebar-accent: #0e1518;
+	--sidebar-accent-foreground: #cddad6;
+	--sidebar-border: #1a2226;
+	--sidebar-ring: #f2a63b;
+
+	--header: #090e11;
+	--header-foreground: #dfe9e6;
+	--footer: #040708;
+	--footer-foreground: #8fa39d;
+
+	--code: #090f12;
+	--code-foreground: #9db3ad;
+	--code-highlight: #152023;
+	--code-number: #647873;
+	--code-selection: #4a3a12;
+	--code-border: #202a2e;
+
+	--illustration-primary: #f2a63b;
+	--illustration-secondary: #8a5c14;
+	--illustration-surface: #0c1114;
+	--illustration-outline: #202a2e;
+	--illustration-glow: rgb(242 166 59 / 0.28);
+	--illustration-shadow: rgb(0 0 0 / 0.6);
+
+	--status-info: #4fd0ea;
+	--status-info-label: #b3ecf7;
+	--status-warning: #d9d040;
+	--status-warning-label: #eee89b;
+	--status-success: #3fc482;
+	--status-success-label: #a4e8c4;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f9b4b2;
+	--status-accent: var(--reticle-violet);
+	--status-accent-label: #d6c9f5;
+	--status-neutral: #46534f;
+	--status-neutral-label: #8fa39d;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *overlay* — corner brackets where
+ * another theme would draw a box, monospaced legends, and square everything.
+ * It hangs off `data-slot`, the attribute every aether-ui root element already
+ * sets, so no component file changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g.
+ * `!rounded-lg`) or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+.theme-reticle {
+	font-family: var(--font-reticle-display);
+	line-height: 1.55;
+}
+
+.theme-reticle :is(
+	h1, h2, h3, h4,
+	[data-slot="card-title"],
+	[data-slot="dialog-title"],
+	[data-slot="alert-dialog-title"],
+	.reticle-title
+) {
+	font-family: var(--font-reticle-display);
+	font-weight: 600;
+	letter-spacing: 0.005em;
+	text-wrap: balance;
+}
+
+/* ---- Tracked objects — four corner brackets, no box ----
+   Eight background layers: two per corner, each an L drawn from a solid
+   gradient. Cheaper than a pseudo-element and it survives the component
+   setting its own `position`. */
+
+.theme-reticle :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="empty"],
+	[data-slot="chatbox"]
+) {
+	border: var(--reticle-stroke) solid var(--border);
+	border-radius: var(--reticle-corner);
+	background-image:
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick));
+	background-repeat: no-repeat;
+	background-size:
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket),
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket),
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket),
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket);
+	background-position:
+		left top, left top,
+		right top, right top,
+		left bottom, left bottom,
+		right bottom, right bottom;
+}
+
+/* Small surfaces get the square and the etch but not the brackets — at tooltip
+   size four corner marks are just noise on the edge. */
+.theme-reticle :is(
+	[data-slot="tooltip-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="alert"]
+) {
+	border: var(--reticle-stroke) solid var(--border);
+	border-radius: var(--reticle-corner);
+}
+
+.theme-reticle :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--reticle-scrim);
+}
+
+.theme-reticle :is(
+	[data-slot="separator"],
+	[data-slot="dropdown-menu-separator"],
+	[data-slot="select-separator"]
+) {
+	background-color: var(--border);
+}
+
+/* ---- Controls — a legend you can press ----
+   Monospaced, tracked out, square. The lit variants gain a glow on hover the
+   way a selected target brightens; nothing moves, because an instrument does
+   not bounce. */
+
+.theme-reticle :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border-radius: var(--reticle-corner);
+	font-family: var(--font-reticle-utility);
+	font-size: 0.8125em;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	transition:
+		box-shadow var(--reticle-snap) linear,
+		background-color var(--reticle-snap) linear,
+		border-color var(--reticle-snap) linear;
+}
+
+.theme-reticle :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: var(--reticle-stroke) solid transparent;
+}
+
+.theme-reticle :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="alert-dialog-action"]
+):hover:not(:disabled, [aria-disabled="true"]) {
+	box-shadow: 0 0 0 1px var(--reticle-glow), 0 0 14px -2px var(--reticle-glow);
+}
+
+/* The outline variants are the theme's native button: an etched legend with the
+   panel showing through. */
+.theme-reticle :is(
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"]
+) {
+	border: var(--reticle-stroke) solid var(--border);
+}
+
+.theme-reticle :is(
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"]
+):hover:not(:disabled, [aria-disabled="true"]) {
+	border-color: var(--ring);
+	box-shadow: inset 0 0 0 1px var(--reticle-glow);
+}
+
+.theme-reticle [data-slot="button"]:is(:disabled, [aria-disabled="true"]) {
+	box-shadow: none;
+}
+
+/* ---- Fields — a data well with a lit rule under it ----
+   The underline is the caret bar on an instrument entry field: it is the only
+   part that lights up, and it lights up on focus. */
+
+.theme-reticle :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	border: var(--reticle-stroke) solid var(--border);
+	border-radius: var(--reticle-corner);
+	background-color: var(--reticle-well);
+	font-family: var(--font-reticle-utility);
+	font-variant-numeric: tabular-nums;
+	transition: box-shadow var(--reticle-snap) linear, border-color var(--reticle-snap) linear;
+}
+
+.theme-reticle :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="chatbox-input"]
+):focus-visible {
+	border-color: var(--ring);
+	box-shadow:
+		inset 0 -2px 0 var(--ring),
+		0 0 12px -2px var(--reticle-glow);
+}
+
+.theme-reticle :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	border-color: var(--destructive);
+	box-shadow: inset 0 -2px 0 var(--destructive);
+}
+
+/* ---- Toggles — square, because a switch on a panel is a switch ---- */
+
+.theme-reticle :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="radio-group-item"]) {
+	border: var(--reticle-stroke) solid var(--input);
+}
+
+.theme-reticle [data-slot="checkbox"] {
+	border-radius: 0;
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty well behind the tick. */
+.theme-reticle :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--reticle-well);
+}
+
+/* The switch becomes a two-position toggle: square track, square thumb. The
+   radio is left alone — round is the one control shape that carries meaning
+   the theme has no business overriding. */
+.theme-reticle [data-slot="switch"] {
+	border: var(--reticle-stroke) solid var(--border);
+	border-radius: var(--reticle-corner);
+}
+
+.theme-reticle [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--reticle-well);
+}
+
+.theme-reticle [data-slot="switch-thumb"] {
+	border-radius: 0;
+}
+
+.theme-reticle :is([data-slot="slider-track"], [data-slot="progress"]) {
+	border-radius: 0;
+	background-color: var(--reticle-well);
+	box-shadow: inset 0 0 0 var(--reticle-stroke) var(--border);
+}
+
+.theme-reticle :is([data-slot="slider-range"], [data-slot="progress-indicator"]) {
+	border-radius: 0;
+}
+
+.theme-reticle [data-slot="slider-thumb"] {
+	border-radius: 0;
+	border: var(--reticle-stroke) solid var(--background);
+	box-shadow: 0 0 10px -1px var(--reticle-glow);
+}
+
+/* ---- Badge / avatar — a target tag ---- */
+
+.theme-reticle [data-slot="badge"] {
+	border-radius: 0;
+	border-color: transparent;
+	font-family: var(--font-reticle-utility);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.theme-reticle [data-slot="avatar"] {
+	border-radius: var(--reticle-corner);
+	box-shadow: 0 0 0 var(--reticle-stroke) var(--border);
+}
+
+/* ---- Table — a readout ---- */
+
+.theme-reticle [data-slot="table"] {
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-reticle [data-slot="table-head"] {
+	font-family: var(--font-reticle-utility);
+	font-weight: 500;
+	font-size: 0.625rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+}
+
+.theme-reticle [data-slot="table-cell"] {
+	font-family: var(--font-reticle-utility);
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-reticle [data-slot="table-body"] [data-slot="table-row"] {
+	border-bottom: var(--reticle-stroke) solid var(--border);
+}
+
+/* ---- Tabs — a mode selector ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   opts out by its own class, which the component does not expose as a flag. */
+
+.theme-reticle [data-slot="tabs-list"]:not(.bg-transparent) {
+	border-radius: var(--reticle-corner);
+	border: var(--reticle-stroke) solid var(--border);
+	background-color: var(--reticle-well);
+	padding: 0.125rem;
+}
+
+.theme-reticle [data-slot="tabs-trigger"] {
+	font-family: var(--font-reticle-utility);
+	font-size: 0.75rem;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+}
+
+.theme-reticle [data-slot="tabs-trigger"]:not(.rounded-none) {
+	border-radius: var(--reticle-corner);
+}
+
+/* ---- Accordion / stepper / timeline ---- */
+
+.theme-reticle [data-slot="accordion-item"] {
+	border-bottom: var(--reticle-stroke) solid var(--border);
+}
+
+.theme-reticle :is([data-slot="timeline-marker"], [data-slot="stepper-step"]) {
+	border-radius: var(--reticle-corner);
+}
+
+/* ---- Toast ---- */
+
+.theme-reticle [data-sonner-toast] {
+	border: var(--reticle-stroke) solid var(--border);
+	border-radius: var(--reticle-corner);
+	box-shadow: 0 0 20px -6px var(--reticle-glow);
+}
+
+/* ---- Focus — a bracket, offset ---- */
+
+.theme-reticle :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: var(--reticle-stroke) solid var(--ring);
+	outline-offset: 3px;
+	box-shadow: 0 0 12px -2px var(--reticle-glow);
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* The measurement grid. This is a ground, not a card treatment: every panel
+   drawing its own grid is wallpaper, one grid behind all of them is an
+   instrument. */
+.theme-reticle .reticle-grid {
+	background-color: var(--background);
+	background-image:
+		linear-gradient(var(--reticle-grid-line) var(--reticle-stroke), transparent var(--reticle-stroke)),
+		linear-gradient(90deg, var(--reticle-grid-line) var(--reticle-stroke), transparent var(--reticle-stroke));
+	background-size: 100% var(--reticle-grid), var(--reticle-grid) 100%;
+}
+
+/* A tracked panel outside the component set — same brackets, no border. */
+.theme-reticle .reticle-track {
+	padding: 1.5rem;
+	color: var(--card-foreground);
+	background-color: var(--card);
+	background-image:
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick));
+	background-repeat: no-repeat;
+	background-size:
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket),
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket),
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket),
+		var(--reticle-bracket) var(--reticle-stroke),
+		var(--reticle-stroke) var(--reticle-bracket);
+	background-position:
+		left top, left top,
+		right top, right top,
+		left bottom, left bottom,
+		right bottom, right bottom;
+}
+
+/* A legend: the etched caption beside a gauge. */
+.theme-reticle .reticle-legend {
+	display: block;
+	font-family: var(--font-reticle-utility);
+	font-size: 0.625rem;
+	line-height: 1.4;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.16em;
+	color: var(--muted-foreground);
+}
+
+/* A reading — the lit figure the legend labels. */
+.theme-reticle .reticle-readout {
+	font-family: var(--font-reticle-utility);
+	font-variant-numeric: tabular-nums;
+	font-weight: 500;
+	letter-spacing: -0.03em;
+	color: var(--primary);
+}
+
+/* A rule with a tick at each end, for sectioning a panel. */
+.theme-reticle .reticle-rule {
+	height: 7px;
+	border: 0;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--border), var(--border)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick)),
+		linear-gradient(var(--reticle-tick), var(--reticle-tick));
+	background-size:
+		100% var(--reticle-stroke),
+		var(--reticle-stroke) 7px,
+		var(--reticle-stroke) 7px;
+	background-position: left center, left center, right center;
+	background-repeat: no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-reticle :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"],
+		[data-slot="input"],
+		[data-slot="textarea"],
+		[data-slot="select-trigger"]
+	) {
+		transition: none;
+	}
+}

@@ -62,20 +62,20 @@ describe("alertDialogVariants", () => {
 
 		it("should apply success variant", () => {
 			const result = alertDialogVariants({ variant: "success" });
-			expect(result.content()).toContain("border-green-500/50");
-			expect(result.title()).toContain("text-green-600");
+			expect(result.content()).toContain("border-success/50");
+			expect(result.title()).toContain("text-success");
 		});
 
 		it("should apply warning variant", () => {
 			const result = alertDialogVariants({ variant: "warning" });
-			expect(result.content()).toContain("border-yellow-500/50");
-			expect(result.title()).toContain("text-yellow-600");
+			expect(result.content()).toContain("border-warning/50");
+			expect(result.title()).toContain("text-warning");
 		});
 
 		it("should apply info variant", () => {
 			const result = alertDialogVariants({ variant: "info" });
-			expect(result.content()).toContain("border-blue-500/50");
-			expect(result.title()).toContain("text-blue-600");
+			expect(result.content()).toContain("border-info/50");
+			expect(result.title()).toContain("text-info");
 		});
 	});
 

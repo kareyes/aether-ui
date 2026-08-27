@@ -238,7 +238,7 @@
 	{#snippet template()}
 		<AlertDialogProvider>
 			{#snippet children(dialog)}
-				<Button color="success" onclick={() => showSuccessAlert(dialog)}>
+				<Button color="green" onclick={() => showSuccessAlert(dialog)}>
 					Show Success
 				</Button>
 			{/snippet}
@@ -250,7 +250,7 @@
 	{#snippet template()}
 		<AlertDialogProvider>
 			{#snippet children(dialog)}
-				<Button color="warning" onclick={() => showWarningAlert(dialog)}>
+				<Button color="yellow" onclick={() => showWarningAlert(dialog)}>
 					Show Warning
 				</Button>
 			{/snippet}
@@ -262,7 +262,7 @@
 	{#snippet template()}
 		<AlertDialogProvider>
 			{#snippet children(dialog)}
-				<Button color="info" onclick={() => showInfoAlert(dialog)}>
+				<Button color="blue" onclick={() => showInfoAlert(dialog)}>
 					Show Info
 				</Button>
 			{/snippet}
@@ -393,7 +393,7 @@
 	{#snippet template()}
 		<AlertDialogProvider>
 			{#snippet children(dialog)}
-				<Button color="success" onclick={() => showPaymentSuccessDialog(dialog)}>
+				<Button color="green" onclick={() => showPaymentSuccessDialog(dialog)}>
 					Payment Success
 				</Button>
 			{/snippet}
@@ -414,13 +414,13 @@
 							<Button variant="destructive" onclick={() => showDestructiveAlert(dialog)}>
 								Destructive
 							</Button>
-							<Button color="success" onclick={() => showSuccessAlert(dialog)}>
+							<Button color="green" onclick={() => showSuccessAlert(dialog)}>
 								Success
 							</Button>
-							<Button color="warning" onclick={() => showWarningAlert(dialog)}>
+							<Button color="yellow" onclick={() => showWarningAlert(dialog)}>
 								Warning
 							</Button>
-							<Button color="info" onclick={() => showInfoAlert(dialog)}>Info</Button>
+							<Button color="blue" onclick={() => showInfoAlert(dialog)}>Info</Button>
 						</div>
 					</div>
 
@@ -448,7 +448,7 @@
 						<div class="flex flex-wrap gap-2">
 							<Button onclick={() => showDeleteFileDialog(dialog)}>Delete File</Button>
 							<Button variant="outline" onclick={() => showSavePromptDialog(dialog)}>Save Prompt</Button>
-							<Button color="success" onclick={() => showPaymentSuccessDialog(dialog)}>Payment Success</Button>
+							<Button color="green" onclick={() => showPaymentSuccessDialog(dialog)}>Payment Success</Button>
 						</div>
 					</div>
 

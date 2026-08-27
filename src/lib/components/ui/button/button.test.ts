@@ -28,6 +28,7 @@ describe("buttonVariants", () => {
 		it("should apply destructive variant styles", () => {
 			const result = buttonVariants({ variant: "destructive" });
 			expect(result).toContain("bg-destructive");
+			expect(result).toContain("text-destructive-foreground");
 		});
 
 		it("should apply outline variant styles", () => {
@@ -102,35 +103,48 @@ describe("buttonVariants", () => {
 	});
 
 	describe("color styles", () => {
-		it("should apply success color with default variant", () => {
-			const result = buttonVariants({ variant: "default", color: "success" });
-			expect(result).toContain("bg-green-600");
+		it("should apply green color with default variant", () => {
+			const result = buttonVariants({ variant: "default", color: "green" });
+			expect(result).toContain("bg-success");
 		});
 
-		it("should apply warning color with default variant", () => {
-			const result = buttonVariants({ variant: "default", color: "warning" });
-			expect(result).toContain("bg-yellow-600");
+		it("should apply yellow color with default variant", () => {
+			const result = buttonVariants({ variant: "default", color: "yellow" });
+			expect(result).toContain("bg-warning");
 		});
 
-		it("should apply danger color with default variant", () => {
-			const result = buttonVariants({ variant: "default", color: "danger" });
-			expect(result).toContain("bg-red-600");
+		it("should apply red color with default variant", () => {
+			const result = buttonVariants({ variant: "default", color: "red" });
+			expect(result).toContain("bg-destructive");
 		});
 
-		it("should apply info color with default variant", () => {
-			const result = buttonVariants({ variant: "default", color: "info" });
-			expect(result).toContain("bg-blue-600");
+		it("should apply blue color with default variant", () => {
+			const result = buttonVariants({ variant: "default", color: "blue" });
+			expect(result).toContain("bg-info");
 		});
 
-		it("should apply success color with outline variant", () => {
-			const result = buttonVariants({ variant: "outline", color: "success" });
-			expect(result).toContain("border-green-600");
-			expect(result).toContain("text-green-600");
+		it("should render deprecated semantic aliases identically to their hue", () => {
+			for (const [hue, alias] of [
+				["red", "danger"],
+				["green", "success"],
+				["yellow", "warning"],
+				["blue", "info"],
+			] as const) {
+				expect(buttonVariants({ variant: "default", color: hue })).toBe(
+					buttonVariants({ variant: "default", color: alias }),
+				);
+			}
 		});
 
-		it("should apply success color with ghost variant", () => {
-			const result = buttonVariants({ variant: "ghost", color: "success" });
-			expect(result).toContain("text-green-600");
+		it("should apply green color with outline variant", () => {
+			const result = buttonVariants({ variant: "outline", color: "green" });
+			expect(result).toContain("border-success");
+			expect(result).toContain("text-success");
+		});
+
+		it("should apply green color with ghost variant", () => {
+			const result = buttonVariants({ variant: "ghost", color: "green" });
+			expect(result).toContain("text-success");
 		});
 	});
 
@@ -157,10 +171,10 @@ describe("buttonVariants", () => {
 			const result = buttonVariants({
 				variant: "flat",
 				size: "sm",
-				color: "success",
+				color: "green",
 			});
 			expect(result).toContain("h-8");
-			expect(result).toContain("bg-green-600/10");
+			expect(result).toContain("bg-success/10");
 		});
 	});
 });

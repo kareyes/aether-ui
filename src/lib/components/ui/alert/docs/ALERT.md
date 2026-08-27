@@ -66,7 +66,7 @@ pnpm add aether-ui
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"default" \| "destructive" \| "info" \| "success" \| "warning" \| "error"` | `"default"` | Visual style variant |
+| `variant` | `"default" \| "info" \| "success" \| "warning" \| "error"` | `"default"` | Visual style variant |
 | `title` | `string` | `undefined` | Alert title text |
 | `description` | `string` | `undefined` | Alert description text |
 | `icon` | `Snippet` | `undefined` | Custom icon snippet (overrides default) |
@@ -110,14 +110,6 @@ Neutral gray styling for general information:
 <Alert variant="default" title="Default Alert" description="General information message." />
 ```
 
-### Destructive
-
-Red styling for destructive or critical actions:
-
-```svelte
-<Alert variant="destructive" title="Destructive Action" description="This action is permanent." />
-```
-
 ### Info
 
 Blue styling for informational messages:
@@ -144,10 +136,12 @@ Yellow/orange styling for warnings:
 
 ### Error
 
-Red styling for error messages:
+Red styling for failures and critical states. Alert reports a state rather than
+performing one, so its red variant is `error` — not `destructive`, which is the
+spelling used on components you act on. Both resolve to `--destructive`.
 
 ```svelte
-<Alert variant="error" title="Error" description="An error occurred during processing." />
+<Alert variant="error" title="Upload failed" description="The file could not be saved." />
 ```
 
 ## Icon System
@@ -159,7 +153,6 @@ Each variant has an automatic icon:
 | Variant | Icon |
 |---------|------|
 | `default` | CircleAlert |
-| `destructive` | CircleX |
 | `info` | Info |
 | `success` | CircleCheck |
 | `warning` | TriangleAlert |

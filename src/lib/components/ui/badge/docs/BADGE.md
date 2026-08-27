@@ -84,23 +84,24 @@ and text + border on `outline` / `dashed`.
 
 ### Badge Variants
 
+Badge separates *shape* from *hue*: `variant` picks the treatment, `color`
+picks the tone. There is no `destructive` / `success` / `warning` / `info`
+variant — reach for `color="red"` etc. below.
+
 | Variant | Description |
 |---------|-------------|
-| `default` | Primary badge with solid background |
-| `secondary` | Secondary badge with muted background |
-| `destructive` | Red badge for errors and dangerous actions |
-| `outline` | Badge with border, transparent background |
-| `ghost` | Minimal badge with no background |
-| `success` | Green badge for positive states |
-| `warning` | Yellow badge for caution states |
-| `info` | Blue badge for informational content |
+| `default` | Solid background in the chosen colour |
+| `secondary` | Muted tint of the chosen colour |
+| `flat` | Lighter tint, no border |
+| `outline` | Bordered, transparent background |
+| `dashed` | Dashed border, transparent background |
 
 ### Badge Colors
 
 | Color | Use Case |
 |-------|----------|
 | `primary` | Brand emphasis — follows the active theme, unlike the fixed hues below |
-| `red` | Errors, urgent |
+| `red` | Errors, destructive actions, urgent |
 | `orange` | Warnings, attention |
 | `yellow` | Caution, pending |
 | `green` | Success, positive |

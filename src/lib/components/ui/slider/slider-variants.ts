@@ -62,16 +62,14 @@ export const sliderVariants = tv({
 				thumb: "border-secondary-foreground bg-background ring-secondary/50",
 			},
 			success: {
-				track: "bg-green-100 dark:bg-green-900/20",
-				range: "bg-green-600 dark:bg-green-500",
-				thumb:
-					"border-green-600 bg-background ring-green-500/50 dark:border-green-500",
+				track: "bg-success/20",
+				range: "bg-success",
+				thumb: "border-success bg-background ring-success/50",
 			},
 			warning: {
-				track: "bg-yellow-100 dark:bg-yellow-900/20",
-				range: "bg-yellow-600 dark:bg-yellow-500",
-				thumb:
-					"border-yellow-600 bg-background ring-yellow-500/50 dark:border-yellow-500",
+				track: "bg-warning/20",
+				range: "bg-warning",
+				thumb: "border-warning bg-background ring-warning/50",
 			},
 			destructive: {
 				track: "bg-destructive/20",

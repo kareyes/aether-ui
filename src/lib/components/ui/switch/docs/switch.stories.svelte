@@ -10,7 +10,7 @@
 		argTypes: {
 			variant: {
 				control: { type: 'select' },
-				options: ['default', 'success', 'warning', 'danger', 'ghost'],
+				options: ['default', 'success', 'warning', 'destructive', 'ghost'],
 				description: 'Visual variant of the switch',
 				table: {
 					type: { summary: 'string' },
@@ -135,7 +135,7 @@
 <Story name="Warning Variant" args={{ variant: 'warning' }} />
 
 
-<Story name="Danger Variant" args={{ variant: 'danger' }} />
+<Story name="Destructive Variant" args={{ variant: 'destructive' }} />
 
 
 <Story name="Ghost Variant" args={{ variant: 'ghost' }} />
@@ -222,7 +222,7 @@
 		<div class="flex items-center justify-between">
 			<span class="text-sm font-medium">Delete on Exit</span>
 			<div class="flex items-center space-x-2">
-				<Switch variant="danger" size="default" checked={false} />
+				<Switch variant="destructive" size="default" checked={false} />
 				<span class="text-xs text-muted-foreground">Off</span>
 			</div>
 		</div>

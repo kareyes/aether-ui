@@ -1,0 +1,683 @@
+/*
+ * Bundy — the wall clock for aether-ui.
+ * ---------------------------------------------------------------------------
+ * Named after the bundy clock: the enamelled steel box bolted beside the door
+ * that stamped your card on the way in. Everything here is sized for that —
+ * a tablet on a wall, hit with a thumb, read from two metres away, in whatever
+ * light the corridor happens to have.
+ *
+ * So it is deliberately *large*. Controls carry a 52px minimum hit target,
+ * edges are 3px, type is heavy, and every state is carried by shape as well as
+ * colour. That makes it the right theme for an attendance kiosk and the wrong
+ * one for a dense admin table — reach for Ledger or Blueprint there.
+ *
+ * It is a *theme*, not a fork: it re-declares the token layer inside a
+ * `.theme-bundy` scope, so every component in the library inherits the look
+ * without a single component file changing.
+ *
+ * Usage — put the class on <html>, next to mode-watcher's `.dark`:
+ *
+ *   <html class="theme-bundy">          light  ("corridor")
+ *   <html class="theme-bundy dark">     dark   ("night shift")
+ *
+ * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
+ * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
+ * subtree still works for everything that renders in place.
+ *
+ * In your app CSS, import it *after* the base tokens:
+ *
+ *   @import "tailwindcss";
+ *   @import "aether-ui/styles";
+ *   @import "aether-ui/styles/bundy";
+ *
+ * Order matters. `.theme-bundy` and `.dark` have equal specificity, so the
+ * corridor palette only beats the base dark palette by coming later in the
+ * sheet; `.theme-bundy.dark` (two classes) then beats both.
+ *
+ * Fonts are not bundled — a package stylesheet should not force a request to
+ * fonts.googleapis.com. Add this to your app shell to get the real faces; the
+ * theme degrades to the platform sans and monospace stacks without it:
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Azeret+Mono:wght@400;500;700&display=swap">
+ *
+ * See ./THEMES.md for the token table and the opt-in helper classes.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Corridor — the machine in daylight
+ * -------------------------------------------------------------------------*/
+
+.theme-bundy {
+	/* Fixed hues — the palette's identity. Declared once; the night-shift block
+	   below overrides only the mode-reactive chrome, never these. */
+	--bundy-ink: #10171a;
+	--bundy-case: #2f3a40;
+	--bundy-case-hi: #46545c;
+	--bundy-enamel: #e8ebe9;
+	--bundy-enamel-hi: #f6f8f7;
+	--bundy-punch: #b04305;
+	--bundy-red: #b3231c;
+	--bundy-green: #1a6b3a;
+	--bundy-amber: #8a5c06;
+	--bundy-blue: #1a5680;
+	/* The readout is a lamp behind smoked glass — dark ground, bright filament,
+	   the same at noon and at midnight. Hence both are mode-invariant. */
+	--bundy-readout-ground: #0b0f10;
+	--bundy-lamp: #ff8a2b;
+
+	/* Mode-reactive chrome — the corridor values. Every name here is overridden
+	   in the night-shift block; adding one without its night twin leaves a lit
+	   faceplate in the dark, which `bundy.test.ts` fails on. */
+	--bundy-face: #dde2e0;
+	--bundy-groove: #c3cbc8;
+	--bundy-inset: #f2f4f3;
+	--bundy-bevel-top: inset 0 2px 0 rgb(255 255 255 / 0.7);
+	--bundy-bevel-bottom: inset 0 -2px 0 rgb(16 23 26 / 0.25);
+	--bundy-drop: 4px 4px 0 rgb(16 23 26 / 0.3);
+	--bundy-scrim: rgb(16 23 26 / 0.65);
+
+	/* Structure — constant across modes. `--bundy-touch` is the floor for
+	   anything you press; it is what makes this theme a kiosk theme. */
+	--bundy-edge: 3px;
+	--bundy-corner: 2px;
+	--bundy-press: 3px;
+	--bundy-touch: 3.25rem;
+
+	--font-bundy-display: "Archivo Black", ui-sans-serif, "Helvetica Neue", sans-serif;
+	--font-bundy-utility: "Azeret Mono", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+
+	/* ---- Role tokens ---- */
+	--background: var(--bundy-enamel);
+	--foreground: var(--bundy-ink);
+	--card: var(--bundy-enamel-hi);
+	--card-foreground: var(--bundy-ink);
+	--popover: var(--bundy-enamel-hi);
+	--popover-foreground: var(--bundy-ink);
+	--primary: var(--bundy-punch);
+	--primary-foreground: #fff6ef;
+	--secondary: #ccd4d1;
+	--secondary-foreground: var(--bundy-ink);
+	--muted: #d5dcd9;
+	--muted-foreground: #3d4b47;
+	--accent: #ccd4d1;
+	--accent-foreground: var(--bundy-ink);
+	--destructive: var(--bundy-red);
+	--destructive-foreground: #fff5f4;
+	--border: #8b9894;
+	--input: #596763;
+	--ring: var(--bundy-punch);
+	--radius: 0.25rem;
+
+	/* DEPRECATED alias, re-declared on purpose. `--danger: var(--destructive)`
+	   in the base `:root` is substituted on the element that block matched —
+	   scope this theme to a subtree and that element sits above it, so the
+	   alias keeps the base red. Same reason for --status-danger and the
+	   --aether-* accents below. */
+	--danger: var(--destructive);
+	--danger-foreground: var(--destructive-foreground);
+
+	--warning: var(--bundy-amber);
+	--warning-foreground: #fffaf0;
+	--success: var(--bundy-green);
+	--success-foreground: #f2fbf5;
+	--info: var(--bundy-blue);
+	--info-foreground: #f1f7fb;
+
+	/* Shift states: in, out, late, break, absent. */
+	--chart-1: var(--bundy-punch);
+	--chart-2: var(--bundy-blue);
+	--chart-3: var(--bundy-green);
+	--chart-4: var(--bundy-amber);
+	--chart-5: #6b7a76;
+
+	--sidebar: var(--bundy-case);
+	--sidebar-foreground: #e5eae8;
+	--sidebar-primary: #f08c3a;
+	--sidebar-primary-foreground: #1c0e04;
+	--sidebar-accent: var(--bundy-case-hi);
+	--sidebar-accent-foreground: #e5eae8;
+	--sidebar-border: var(--bundy-ink);
+	--sidebar-ring: #f08c3a;
+
+	--header: var(--bundy-case);
+	--header-foreground: #e5eae8;
+	--footer: #263035;
+	--footer-foreground: #c3cdc9;
+
+	--code: #dde2e0;
+	--code-foreground: #2a3934;
+	--code-highlight: #ccd4d1;
+	--code-number: #788a85;
+	--code-selection: #f3c9a8;
+	--code-border: #8b9894;
+
+	--aether-success: var(--success);
+	--aether-warning: var(--warning);
+	--aether-danger: var(--destructive);
+
+	/* The base theme pins the illustration accent to a fixed brand blue so it
+	   survives light/dark. On a machine faceplate the accent is the lamp, not
+	   a brand blue — a blue spot drawing reads as a sticker on the case. */
+	--illustration-primary: var(--bundy-punch);
+	--illustration-secondary: #ec9a5f;
+	--illustration-surface: var(--bundy-enamel-hi);
+	--illustration-outline: #c3cbc8;
+	--illustration-glow: rgb(176 67 5 / 0.22);
+	--illustration-shadow: rgb(16 23 26 / 0.35);
+
+	--status-info: #2c6f9e;
+	--status-info-label: var(--bundy-blue);
+	--status-warning: #b07a10;
+	--status-warning-label: #7a5205;
+	--status-success: #22824a;
+	--status-success-label: #145e2f;
+	--status-danger: var(--destructive);
+	--status-danger-label: #8d1a14;
+	--status-accent: var(--bundy-punch);
+	--status-accent-label: #93380a;
+	--status-neutral: #97a29e;
+	--status-neutral-label: #3d4b47;
+}
+
+/* ---------------------------------------------------------------------------
+ * Night shift — the corridor light is off and the readout is the only thing
+ * still lit.
+ * Three selectors so the theme works whichever element carries which class.
+ * -------------------------------------------------------------------------*/
+
+.theme-bundy.dark,
+.dark .theme-bundy,
+.theme-bundy .dark {
+	--bundy-face: #1a2225;
+	--bundy-groove: #0a0e10;
+	--bundy-inset: #131a1c;
+	--bundy-bevel-top: inset 0 2px 0 rgb(255 255 255 / 0.1);
+	--bundy-bevel-bottom: inset 0 -2px 0 rgb(0 0 0 / 0.5);
+	--bundy-drop: 4px 4px 0 rgb(0 0 0 / 0.55);
+	--bundy-scrim: rgb(4 7 8 / 0.78);
+
+	--background: #0e1214;
+	--foreground: #e6ecea;
+	--card: #171e21;
+	--card-foreground: #e6ecea;
+	--popover: #1d262a;
+	--popover-foreground: #e6ecea;
+	/* The lamp, not the paint. Enamel orange goes muddy on a dark case, so
+	   after dark the primary becomes the lit filament instead. */
+	--primary: #f07b2a;
+	--primary-foreground: #190b02;
+	--secondary: #26312f;
+	--secondary-foreground: #e6ecea;
+	--muted: #202a2d;
+	--muted-foreground: #9aaaa5;
+	--accent: #26312f;
+	--accent-foreground: #e6ecea;
+	--destructive: #e8625a;
+	--destructive-foreground: #1e0706;
+	--border: #33403d;
+	--input: #465552;
+	--ring: #f07b2a;
+	--radius: 0.25rem;
+
+	--warning: #dfa63c;
+	--warning-foreground: #191104;
+	--success: #4fb173;
+	--success-foreground: #03160a;
+	--info: #5fa5d8;
+	--info-foreground: #02111b;
+
+	--chart-1: #f07b2a;
+	--chart-2: #5fa5d8;
+	--chart-3: #4fb173;
+	--chart-4: #dfa63c;
+	--chart-5: #8b9894;
+
+	--sidebar: #080b0c;
+	--sidebar-foreground: #d8e0dd;
+	--sidebar-primary: #f07b2a;
+	--sidebar-primary-foreground: #190b02;
+	--sidebar-accent: #1b2427;
+	--sidebar-accent-foreground: #d8e0dd;
+	--sidebar-border: #2b3634;
+	--sidebar-ring: #f07b2a;
+
+	--header: #121a1c;
+	--header-foreground: #e6ecea;
+	--footer: #080b0c;
+	--footer-foreground: #9aaaa5;
+
+	--code: #111719;
+	--code-foreground: #a6b5b0;
+	--code-highlight: #1b2427;
+	--code-number: #6b7a75;
+	--code-selection: #4a2a10;
+	--code-border: #33403d;
+
+	--illustration-primary: #f07b2a;
+	--illustration-secondary: #8a4a18;
+	--illustration-surface: #171e21;
+	--illustration-outline: #33403d;
+	--illustration-glow: rgb(240 123 42 / 0.25);
+	--illustration-shadow: rgb(0 0 0 / 0.55);
+
+	--status-info: #5fa5d8;
+	--status-info-label: #b3d6ef;
+	--status-warning: #dfa63c;
+	--status-warning-label: #f2d59b;
+	--status-success: #4fb173;
+	--status-success-label: #a6dcbb;
+	--status-danger: var(--destructive);
+	--status-danger-label: #f5aca6;
+	--status-accent: #f07b2a;
+	--status-accent-label: #f8c39a;
+	--status-neutral: #47534f;
+	--status-neutral-label: #9aaaa5;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chrome
+ *
+ * Tokens carry the colour; this carries the *shape* — thick edges, pressed
+ * enamel keys, and hit targets you can find without looking. It hangs off
+ * `data-slot`, the attribute every aether-ui root element already sets, so no
+ * component file changes to support it.
+ *
+ * These rules are two classes deep, so they beat the Tailwind utilities baked
+ * into the components (single class). A caller's own `class` prop is also a
+ * single class and will *lose* to them — override with `!` (e.g. `!min-h-0`)
+ * or drop the theme scope on that subtree.
+ * -------------------------------------------------------------------------*/
+
+.theme-bundy {
+	font-family: var(--font-bundy-utility);
+}
+
+.theme-bundy :is(
+	h1, h2, h3, h4,
+	[data-slot="card-title"],
+	[data-slot="dialog-title"],
+	[data-slot="alert-dialog-title"],
+	.bundy-title
+) {
+	font-family: var(--font-bundy-display);
+	letter-spacing: -0.01em;
+	text-transform: uppercase;
+}
+
+/* ---- Surfaces — a bolted steel box ---- */
+
+.theme-bundy :is(
+	[data-slot="card"],
+	[data-slot="popover-content"],
+	[data-slot="dropdown-menu-content"],
+	[data-slot="dropdown-menu-sub-content"],
+	[data-slot="select-content"],
+	[data-slot="dialog-content"],
+	[data-slot="alert-dialog-content"],
+	[data-slot="sheet-content"],
+	[data-slot="command"],
+	[data-slot="table-container"],
+	[data-slot="tooltip-content"],
+	[data-slot="navigation-menu-viewport"],
+	[data-slot="empty"],
+	[data-slot="chatbox"]
+) {
+	border: var(--bundy-edge) solid var(--border);
+	border-radius: var(--bundy-corner);
+	box-shadow: var(--bundy-bevel-top), var(--bundy-drop);
+}
+
+.theme-bundy :is(
+	[data-slot="dialog-overlay"],
+	[data-slot="alert-dialog-overlay"],
+	[data-slot="sheet-overlay"]
+) {
+	background-color: var(--bundy-scrim);
+}
+
+.theme-bundy :is(
+	[data-slot="separator"],
+	[data-slot="dropdown-menu-separator"],
+	[data-slot="select-separator"]
+) {
+	background-color: var(--border);
+}
+
+/* ---- Buttons — enamel keys ----
+   `data-variant` is the hook; ghost and link have no ground to bevel, so they
+   keep the hit target but skip the edge. Buttons assembled from
+   `buttonVariants` without the component (alert-dialog's action/cancel) are
+   always solid, so they take the treatment unconditionally. */
+
+.theme-bundy :is(
+	[data-slot="button"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	min-height: var(--bundy-touch);
+	padding-inline: 1.25rem;
+	border-radius: var(--bundy-corner);
+	font-family: var(--font-bundy-display);
+	font-size: 0.9375rem;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	transition:
+		transform 60ms linear,
+		box-shadow 60ms linear,
+		background-color 100ms linear;
+}
+
+.theme-bundy :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+) {
+	border: var(--bundy-edge) solid var(--bundy-ink);
+	box-shadow:
+		var(--bundy-bevel-top),
+		var(--bundy-bevel-bottom),
+		0 var(--bundy-press) 0 var(--bundy-ink);
+}
+
+.theme-bundy :is(
+	[data-slot="button"][data-variant="default"],
+	[data-slot="button"][data-variant="secondary"],
+	[data-slot="button"][data-variant="destructive"],
+	[data-slot="button"][data-variant="outline"],
+	[data-slot="button"][data-variant="bordered"],
+	[data-slot="button"][data-variant="flat"],
+	[data-slot="alert-dialog-action"],
+	[data-slot="alert-dialog-cancel"]
+):active:not(:disabled, [aria-disabled="true"]) {
+	transform: translateY(var(--bundy-press));
+	box-shadow: var(--bundy-bevel-bottom), 0 0 0 var(--bundy-ink);
+}
+
+.theme-bundy [data-slot="button"]:is(:disabled, [aria-disabled="true"]) {
+	box-shadow: none;
+	transform: none;
+}
+
+/* ---- Fields — recessed slots ---- */
+
+.theme-bundy :is(
+	[data-slot="input"],
+	[data-slot="textarea"],
+	[data-slot="select-trigger"],
+	[data-slot="command-input"],
+	[data-slot="time-field-input"],
+	[data-slot="input-otp-slot"],
+	[data-slot="chatbox-input"],
+	[data-slot="sidebar-input"]
+) {
+	min-height: var(--bundy-touch);
+	border: var(--bundy-edge) solid var(--input);
+	border-radius: var(--bundy-corner);
+	background-color: var(--bundy-inset);
+	box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.14);
+	font-size: 1rem;
+}
+
+.theme-bundy :is([data-slot="input"], [data-slot="textarea"])[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+/* ---- Toggles — sized for a thumb ---- */
+
+.theme-bundy :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="radio-group-item"]) {
+	width: 1.75rem;
+	height: 1.75rem;
+	border: var(--bundy-edge) solid var(--bundy-ink);
+	box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.14);
+}
+
+.theme-bundy [data-slot="checkbox"] {
+	border-radius: var(--bundy-corner);
+}
+
+/* Scoped to the empty state on purpose: these rules are two classes deep and
+   would otherwise beat the component's own `data-[state=checked]:bg-primary`,
+   leaving a ticked checkbox with an empty well behind the tick. */
+.theme-bundy :is(
+	[data-slot="checkbox"],
+	[data-slot="radio"],
+	[data-slot="radio-group-item"]
+)[data-state="unchecked"] {
+	background-color: var(--bundy-groove);
+}
+
+/* A toggle on the case, thrown one way or the other. */
+.theme-bundy [data-slot="switch"] {
+	border: 2px solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.2);
+}
+
+.theme-bundy [data-slot="switch"][data-state="unchecked"] {
+	background-color: var(--bundy-groove);
+}
+
+.theme-bundy [data-slot="switch-thumb"] {
+	border: 2px solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	box-shadow: var(--bundy-bevel-top);
+}
+
+/* Outline, not border: a slider track is 6px tall and a progress bar 8px, so
+   a 3px border on each edge would leave nothing between them to fill. */
+.theme-bundy :is([data-slot="slider-track"], [data-slot="progress"]) {
+	border: 0;
+	outline: 2px solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	background-color: var(--bundy-groove);
+	box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.2);
+}
+
+.theme-bundy :is([data-slot="slider-range"], [data-slot="progress-indicator"]) {
+	border-radius: 0;
+}
+
+.theme-bundy [data-slot="slider-thumb"] {
+	width: 1.5rem;
+	height: 1.5rem;
+	border: var(--bundy-edge) solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	box-shadow: var(--bundy-bevel-top);
+}
+
+/* ---- Badge / avatar — stamped plates ---- */
+
+.theme-bundy [data-slot="badge"] {
+	border: 2px solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	font-family: var(--font-bundy-display);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-size: 0.6875rem;
+}
+
+.theme-bundy [data-slot="avatar"] {
+	border: var(--bundy-edge) solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+}
+
+.theme-bundy :is([data-slot="avatar-image"], [data-slot="avatar-fallback"]) {
+	border-radius: 0;
+}
+
+/* ---- Alert — a plate riveted to the case ---- */
+
+.theme-bundy [data-slot="alert"] {
+	border-width: var(--bundy-edge);
+	border-left-width: 10px;
+	border-radius: var(--bundy-corner);
+	box-shadow: var(--bundy-drop);
+	/* The variants tint with `bg-<role>/10`, which reads as whatever is behind
+	   the plate. A riveted plate is opaque; the state colour stays in the edge
+	   and the icon. */
+	background-color: var(--card);
+}
+
+/* ---- Table ---- */
+
+.theme-bundy [data-slot="table"] {
+	font-variant-numeric: tabular-nums;
+}
+
+.theme-bundy [data-slot="table-header"] {
+	background-color: var(--bundy-case);
+}
+
+.theme-bundy [data-slot="table-head"] {
+	color: #e5eae8;
+	font-family: var(--font-bundy-display);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	border-bottom: var(--bundy-edge) solid var(--bundy-ink);
+}
+
+/* ---- Tabs ----
+   The `underline` variant is deliberately flat (`bg-transparent`, `p-0`) and
+   the pill triggers are round; both opt out by their own class rather than by
+   a variant flag, which the component does not expose. */
+
+.theme-bundy [data-slot="tabs-list"]:not(.bg-transparent) {
+	border: var(--bundy-edge) solid var(--border);
+	border-radius: var(--bundy-corner);
+	background-color: var(--bundy-face);
+}
+
+.theme-bundy [data-slot="tabs-trigger"]:not(.rounded-full, .rounded-none) {
+	min-height: 2.75rem;
+	border-radius: var(--bundy-corner);
+	font-family: var(--font-bundy-display);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.theme-bundy [data-slot="tabs-trigger"][data-state="active"]:not(.rounded-none) {
+	box-shadow: var(--bundy-bevel-top), 0 2px 0 rgb(0 0 0 / 0.25);
+}
+
+/* ---- Accordion ---- */
+
+.theme-bundy [data-slot="accordion-item"] {
+	border-bottom: var(--bundy-edge) solid var(--border);
+}
+
+/* ---- Toast ---- */
+
+.theme-bundy [data-sonner-toast] {
+	border: var(--bundy-edge) solid var(--border);
+	border-radius: var(--bundy-corner);
+	box-shadow: var(--bundy-bevel-top), var(--bundy-drop);
+}
+
+/* ---- Focus — a thick square ring you can see across the room ---- */
+
+.theme-bundy :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: var(--bundy-edge) solid var(--ring);
+	outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Opt-in compositions — the pieces that are a *layout* decision rather than a
+ * component, so they cannot be inferred from a data-slot. Use them on the page
+ * shell.
+ * -------------------------------------------------------------------------*/
+
+/* The lamp behind smoked glass: the clock, the shift total, the last punch.
+   Dark ground in both modes, because that is what a readout is. */
+.theme-bundy .bundy-readout,
+.bundy-readout.theme-bundy {
+	display: block;
+	padding: 0.75rem 1rem;
+	background-color: var(--bundy-readout-ground);
+	color: var(--bundy-lamp);
+	border: var(--bundy-edge) solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	box-shadow: inset 0 3px 0 rgb(255 255 255 / 0.06);
+	font-family: var(--font-bundy-utility);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.08em;
+	text-shadow: 0 0 0.75rem currentcolor;
+}
+
+/* The enamel faceplate, with four bolts holding it to the case. */
+.theme-bundy .bundy-plate {
+	position: relative;
+	padding: 1.5rem;
+	background-color: var(--bundy-face);
+	color: var(--foreground);
+	border: var(--bundy-edge) solid var(--bundy-ink);
+	border-radius: var(--bundy-corner);
+	box-shadow: var(--bundy-bevel-top), var(--bundy-bevel-bottom), var(--bundy-drop);
+}
+
+.theme-bundy .bundy-plate::after {
+	content: "";
+	position: absolute;
+	inset: 0.625rem;
+	pointer-events: none;
+	background-image:
+		radial-gradient(circle, var(--bundy-groove) 0 3px, transparent 4px),
+		radial-gradient(circle, var(--bundy-groove) 0 3px, transparent 4px),
+		radial-gradient(circle, var(--bundy-groove) 0 3px, transparent 4px),
+		radial-gradient(circle, var(--bundy-groove) 0 3px, transparent 4px);
+	background-size: 8px 8px;
+	background-repeat: no-repeat;
+	background-position: 0 0, 100% 0, 0 100%, 100% 100%;
+}
+
+/* The card itself: manila stock with the corner clipped, ruled into columns. */
+.theme-bundy .bundy-punchcard {
+	padding: 1rem 1.25rem;
+	background-color: #efe3cd;
+	color: var(--bundy-ink);
+	border: 2px solid var(--bundy-ink);
+	clip-path: polygon(0 0, calc(100% - 1.25rem) 0, 100% 1.25rem, 100% 100%, 0 100%);
+	background-image: repeating-linear-gradient(
+		90deg,
+		transparent 0 calc(100% / 12 - 1px),
+		rgb(16 23 26 / 0.12) calc(100% / 12 - 1px) calc(100% / 12)
+	);
+	font-family: var(--font-bundy-utility);
+	font-variant-numeric: tabular-nums;
+}
+
+/* A stencilled label: the words painted on the case, not printed on paper. */
+.theme-bundy .bundy-label {
+	display: block;
+	font-family: var(--font-bundy-display);
+	font-size: 0.6875rem;
+	line-height: 1.4;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-bundy :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"]
+	) {
+		transition: none;
+	}
+
+	.theme-bundy :is(
+		[data-slot="button"],
+		[data-slot="alert-dialog-action"],
+		[data-slot="alert-dialog-cancel"]
+	):active {
+		transform: none;
+	}
+}

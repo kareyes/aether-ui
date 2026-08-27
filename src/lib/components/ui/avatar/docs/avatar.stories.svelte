@@ -250,10 +250,10 @@
 		<AvatarEnhanced color="default" fallback="DF" />
 		<AvatarEnhanced color="primary" fallback="PR" />
 		<AvatarEnhanced color="secondary" fallback="SE" />
-		<AvatarEnhanced color="success" fallback="SU" />
-		<AvatarEnhanced color="warning" fallback="WA" />
-		<AvatarEnhanced color="danger" fallback="DA" />
-		<AvatarEnhanced color="info" fallback="IN" />
+		<AvatarEnhanced color="green" fallback="SU" />
+		<AvatarEnhanced color="yellow" fallback="WA" />
+		<AvatarEnhanced color="red" fallback="DA" />
+		<AvatarEnhanced color="blue" fallback="IN" />
 		<AvatarEnhanced color="purple" fallback="PU" />
 		<AvatarEnhanced color="pink" fallback="PI" />
 		<AvatarEnhanced color="gradient" fallback="GR" />
@@ -330,9 +330,9 @@
 <Story name="Avatar Group With Colors">
 	<AvatarGroup>
 		<AvatarEnhanced fallback="AB" color="primary" variant="bordered" />
-		<AvatarEnhanced fallback="CD" color="success" variant="bordered" />
-		<AvatarEnhanced fallback="EF" color="warning" variant="bordered" />
-		<AvatarEnhanced fallback="GH" color="danger" variant="bordered" />
+		<AvatarEnhanced fallback="CD" color="green" variant="bordered" />
+		<AvatarEnhanced fallback="EF" color="yellow" variant="bordered" />
+		<AvatarEnhanced fallback="GH" color="red" variant="bordered" />
 		<AvatarEnhanced fallback="IJ" color="purple" variant="bordered" />
 	</AvatarGroup>
 </Story> -->
