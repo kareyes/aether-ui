@@ -30,7 +30,7 @@
       },
       color: {
         control: { type: 'select' },
-        options: ['default', 'primary', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'],
+        options: ['default', 'primary', 'success', 'danger', 'warning', 'info', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray'],
         description: 'Color theme of the badge',
         table: {
           type: { summary: 'string' },
@@ -125,6 +125,51 @@
   });
 </script>
 
+<!-- The four role colours across every variant. These and `primary` follow the
+     active theme; the named hues do not, so this is the story to check a new
+     theme against. -->
+<Story name="Role Colors" >
+    {#snippet template()}
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-muted-foreground w-20 text-xs">default</span>
+            <Badge text="Success" variant="default" color="success" />
+            <Badge text="Danger" variant="default" color="danger" />
+            <Badge text="Warning" variant="default" color="warning" />
+            <Badge text="Info" variant="default" color="info" />
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-muted-foreground w-20 text-xs">secondary</span>
+            <Badge text="Success" variant="secondary" color="success" />
+            <Badge text="Danger" variant="secondary" color="danger" />
+            <Badge text="Warning" variant="secondary" color="warning" />
+            <Badge text="Info" variant="secondary" color="info" />
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-muted-foreground w-20 text-xs">flat</span>
+            <Badge text="Success" variant="flat" color="success" />
+            <Badge text="Danger" variant="flat" color="danger" />
+            <Badge text="Warning" variant="flat" color="warning" />
+            <Badge text="Info" variant="flat" color="info" />
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-muted-foreground w-20 text-xs">outline</span>
+            <Badge text="Success" variant="outline" color="success" />
+            <Badge text="Danger" variant="outline" color="danger" />
+            <Badge text="Warning" variant="outline" color="warning" />
+            <Badge text="Info" variant="outline" color="info" />
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-muted-foreground w-20 text-xs">dashed</span>
+            <Badge text="Success" variant="dashed" color="success" />
+            <Badge text="Danger" variant="dashed" color="danger" />
+            <Badge text="Warning" variant="dashed" color="warning" />
+            <Badge text="Info" variant="dashed" color="info" />
+          </div>
+        </div>
+    {/snippet}
+</Story>
+
 <!-- Basic Variants -->
 <Story name="Default" args={{ text: "Default" }} />
 
@@ -133,6 +178,10 @@
 				<div class="flex flex-wrap gap-2">
 					<Badge text="Default" variant="default" />
 					<Badge text="Primary" variant="default" color="primary" />
+					<Badge text="Success" variant="default" color="success" />
+					<Badge text="Danger" variant="default" color="danger" />
+					<Badge text="Warning" variant="default" color="warning" />
+					<Badge text="Info" variant="default" color="info" />
 					<Badge text="Red" variant="default" color="red" />
 					<Badge text="Orange" variant="default" color="orange" />
           <Badge text="Yellow" variant="default" color="yellow" />
@@ -151,6 +200,10 @@
 				<div class="flex flex-wrap gap-2">
 					<Badge text="Default" variant="secondary" />
 					<Badge text="Primary" variant="secondary" color="primary" />
+					<Badge text="Success" variant="secondary" color="success" />
+					<Badge text="Danger" variant="secondary" color="danger" />
+					<Badge text="Warning" variant="secondary" color="warning" />
+					<Badge text="Info" variant="secondary" color="info" />
 					<Badge text="Red" variant="secondary" color="red" />
 					<Badge text="Orange" variant="secondary" color="orange" />
           <Badge text="Yellow" variant="secondary" color="yellow" />
@@ -168,6 +221,10 @@
 				<div class="flex flex-wrap gap-2">
 					<Badge text="Default" variant="flat" />
 					<Badge text="Primary" variant="flat" color="primary" />
+					<Badge text="Success" variant="flat" color="success" />
+					<Badge text="Danger" variant="flat" color="danger" />
+					<Badge text="Warning" variant="flat" color="warning" />
+					<Badge text="Info" variant="flat" color="info" />
 					<Badge text="Red" variant="flat" color="red" />
 					<Badge text="Orange" variant="flat" color="orange" />
 					<Badge text="Yellow" variant="flat" color="yellow" />
@@ -186,6 +243,10 @@
         <div class="flex flex-wrap gap-2">
           <Badge text="Default" variant="outline" />
           <Badge text="Primary" variant="outline" color="primary" />
+          <Badge text="Success" variant="outline" color="success" />
+          <Badge text="Danger" variant="outline" color="danger" />
+          <Badge text="Warning" variant="outline" color="warning" />
+          <Badge text="Info" variant="outline" color="info" />
           <Badge text="Red" variant="outline" color="red" />
           <Badge text="Orange" variant="outline" color="orange" />
           <Badge text="Yellow" variant="outline" color="yellow" />
@@ -202,6 +263,10 @@
         <div class="flex flex-wrap gap-2">
           <Badge text="Default" variant="dashed" />
           <Badge text="Primary" variant="dashed" color="primary" />
+          <Badge text="Success" variant="dashed" color="success" />
+          <Badge text="Danger" variant="dashed" color="danger" />
+          <Badge text="Warning" variant="dashed" color="warning" />
+          <Badge text="Info" variant="dashed" color="info" />
           <Badge text="Red" variant="dashed" color="red" />
           <Badge text="Orange" variant="dashed" color="orange" />
           <Badge text="Yellow" variant="dashed" color="yellow" />

@@ -423,6 +423,7 @@
 
 .theme-sampaguita :is(
 	[data-slot="input"],
+	[data-slot="input-group"],
 	[data-slot="textarea"],
 	[data-slot="select-trigger"],
 	[data-slot="command-input"],
@@ -508,9 +509,19 @@
 
 .theme-sampaguita [data-slot="badge"] {
 	border-radius: 999px;
-	border-color: transparent;
 	font-weight: 600;
 	letter-spacing: 0.01em;
+}
+
+/* Only the filled variants have no rim. `outline` and `dashed` carry a
+   per-colour border — `border-success/40`, `border-red-300` — and blanking it
+   on the slot left both of them indistinguishable from `flat`. */
+.theme-sampaguita [data-slot="badge"]:is(
+	[data-variant="default"],
+	[data-variant="secondary"],
+	[data-variant="flat"]
+) {
+	border-color: transparent;
 }
 
 .theme-sampaguita [data-slot="avatar"] {

@@ -12,6 +12,7 @@
 
 <span
 	bind:this={ref}
+	data-slot="input-group-text"
 	class={cn(
 		"text-muted-foreground flex items-center gap-2 text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
 		className

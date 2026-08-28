@@ -410,6 +410,7 @@
 
 .theme-bundy :is(
 	[data-slot="input"],
+	[data-slot="input-group"],
 	[data-slot="textarea"],
 	[data-slot="select-trigger"],
 	[data-slot="command-input"],
@@ -496,12 +497,26 @@
 /* ---- Badge / avatar — stamped plates ---- */
 
 .theme-bundy [data-slot="badge"] {
-	border: 2px solid var(--bundy-ink);
+	border-width: 2px;
 	border-radius: var(--bundy-corner);
 	font-family: var(--font-bundy-display);
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 	font-size: 0.6875rem;
+}
+
+/* The width is the theme's; the colour and the style are not. `outline` and
+   `dashed` carry a per-colour border — `border-success/40`, `border-red-300`
+   — that a colour here would flatten to one hue, and `dashed` carries a
+   `border-style` a `border:` shorthand here would reset to solid. So the rim
+   colour is set only for the three filled variants, whose own class asks for
+   `border-transparent` and has no hue of its own to keep. */
+.theme-bundy [data-slot="badge"]:is(
+	[data-variant="default"],
+	[data-variant="secondary"],
+	[data-variant="flat"]
+) {
+	border-color: var(--bundy-ink);
 }
 
 .theme-bundy [data-slot="avatar"] {

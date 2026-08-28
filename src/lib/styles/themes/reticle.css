@@ -469,6 +469,7 @@
 
 .theme-reticle :is(
 	[data-slot="input"],
+	[data-slot="input-group"],
 	[data-slot="textarea"],
 	[data-slot="select-trigger"],
 	[data-slot="command-input"],
@@ -559,12 +560,22 @@
 
 .theme-reticle [data-slot="badge"] {
 	border-radius: 0;
-	border-color: transparent;
 	font-family: var(--font-reticle-utility);
 	font-size: 0.6875rem;
 	font-weight: 500;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
+}
+
+/* Only the filled variants have no rim. `outline` and `dashed` carry a
+   per-colour border — `border-success/40`, `border-red-300` — and blanking it
+   on the slot left both of them indistinguishable from `flat`. */
+.theme-reticle [data-slot="badge"]:is(
+	[data-variant="default"],
+	[data-variant="secondary"],
+	[data-variant="flat"]
+) {
+	border-color: transparent;
 }
 
 .theme-reticle [data-slot="avatar"] {

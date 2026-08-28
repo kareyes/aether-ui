@@ -14,7 +14,10 @@
 			variant?: "bg" | "ghost" | string;
 	} = $props();
 
-	const variantBase = $derived(() => {
+	// `$derived.by`, not `$derived(() => …)`. The latter makes `variantBase` the
+	// closure itself, and `cn` drops a function without complaining — the label
+	// rendered as bare text with none of its ground, padding or border.
+	const variantBase = $derived.by(() => {
 		switch (variant) {
 			case "ghost":
 				return "bg-transparent shadow-none flex items-center gap-2 rounded-md px-3 text-sm font-medium";
@@ -26,6 +29,7 @@
 
 	const mergedProps = $derived({
 		...restProps,
+		"data-slot": "button-group-text",
 		class: cn(variantBase, className),
 	});
 </script>

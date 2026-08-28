@@ -451,6 +451,7 @@
 
 .theme-alloy :is(
 	[data-slot="input"],
+	[data-slot="input-group"],
 	[data-slot="textarea"],
 	[data-slot="select-trigger"],
 	[data-slot="command-input"],
@@ -553,12 +554,22 @@
 
 .theme-alloy [data-slot="badge"] {
 	border-radius: var(--alloy-corner-sm);
-	border-color: transparent;
 	font-family: var(--font-alloy-utility);
 	font-size: 0.6875rem;
 	font-weight: 500;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
+}
+
+/* Only the filled variants have no rim. `outline` and `dashed` carry a
+   per-colour border — `border-success/40`, `border-red-300` — and blanking it
+   on the slot left both of them indistinguishable from `flat`. */
+.theme-alloy [data-slot="badge"]:is(
+	[data-variant="default"],
+	[data-variant="secondary"],
+	[data-variant="flat"]
+) {
+	border-color: transparent;
 }
 
 .theme-alloy [data-slot="avatar"] {

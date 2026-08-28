@@ -34,6 +34,15 @@ import {
 
 type Rule = { readonly selector: string; readonly body: string };
 
+/**
+ * A declaration that paints a border — one that carries a colour or a style, as
+ * opposed to `border-width` / `border-radius`, which carry neither. Covers the
+ * shorthand, the four physical edges, the logical edges, and the bare
+ * `-color` / `-style` longhands.
+ */
+const BORDER_PAINT =
+	/(?:^|[;{\s])border(?:-(?:top|right|bottom|left|inline|block)(?:-(?:start|end))?)?(?:-color|-style)?\s*:/;
+
 const stripComments = (css: string): string =>
 	css.replace(/\/\*[\s\S]*?\*\//g, "");
 
@@ -275,6 +284,41 @@ export const describeThemeContract = async (
 				}
 			}
 			expect(failures).toEqual([]);
+		});
+
+		it("leaves the badge's rim colour and style to the variant drawing one", () => {
+			// Badge's rim belongs to two of its five variants. `outline` and `dashed`
+			// carry a per-colour border — `border-success/40`, `border-red-300` — and
+			// `dashed` carries a `border-style`; the other three ask for
+			// `border-transparent`. A theme naming `border` / `border-color` /
+			// `border-style` on the bare slot therefore breaks one side or the other:
+			// it flattens every hue and renders `dashed` solid, or it paints a rim
+			// onto the filled variants. Width and radius are the theme's to set —
+			// colour and style go on a `data-variant` scope. The per-edge and
+			// logical shorthands count: `border-left` and `border-inline` carry a
+			// colour and a style the same way `border` does.
+			const offenders = rules
+				.filter(
+					(rule) =>
+						rule.selector.includes('[data-slot="badge"]') &&
+						!rule.selector.includes("data-variant") &&
+						BORDER_PAINT.test(rule.body),
+				)
+				.map((rule) => rule.selector.replace(/\s+/g, " "));
+			expect(offenders).toEqual([]);
+		});
+
+		it("gives the input-group shell the field chrome, not just the input", () => {
+			// `input-group` is a shell wearing the field's chrome around a control
+			// that has been stripped bare — see the grouped-controls block in
+			// `theme.css`. A theme that lists only `[data-slot="input"]` themes the
+			// control it just stripped and leaves the shell on the base border, so
+			// every composed field (icons, prefixes, addon buttons) reads as an
+			// unthemed box while every bare input beside it is themed.
+			const fields = rules.find((rule) =>
+				rule.selector.includes('[data-slot="sidebar-input"]'),
+			);
+			expect(fields?.selector).toContain('[data-slot="input-group"]');
 		});
 
 		it("carries the dark palette on all three scope selectors", () => {

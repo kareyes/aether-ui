@@ -407,6 +407,7 @@
 
 .theme-pelican :is(
 	[data-slot="input"],
+	[data-slot="input-group"],
 	[data-slot="textarea"],
 	[data-slot="select-trigger"],
 	[data-slot="command-input"],
@@ -516,9 +517,23 @@
 /* ---- Badge / avatar ---- */
 
 .theme-pelican [data-slot="badge"] {
-	border: 2px solid var(--border);
+	border-width: 2px;
 	border-radius: var(--pelican-corner);
 	box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.45);
+}
+
+/* The width is the theme's; the colour and the style are not. `outline` and
+   `dashed` carry a per-colour border — `border-success/40`, `border-red-300`
+   — that a colour here would flatten to one hue, and `dashed` carries a
+   `border-style` a `border:` shorthand here would reset to solid. So the rim
+   colour is set only for the three filled variants, whose own class asks for
+   `border-transparent` and has no hue of its own to keep. */
+.theme-pelican [data-slot="badge"]:is(
+	[data-variant="default"],
+	[data-variant="secondary"],
+	[data-variant="flat"]
+) {
+	border-color: var(--border);
 }
 
 /* A portrait in a frame — square, like every face in the game's menus. */

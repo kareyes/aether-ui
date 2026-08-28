@@ -12,9 +12,21 @@
  *                 timeline, button). A Tailwind palette name, not a role.
  *
  * `danger` is retired as a role token and as a component variant name. It
- * survives in exactly two places, both deliberate: the `--status-*` scale and
- * the `--aether-*` illustration accents, where its siblings are `info` /
- * `warning` / `success` and "destructive" — an action word — would read wrong.
+ * survives in three places, all deliberate: the `--status-*` scale, the
+ * `--aether-*` illustration accents, and a component `color` axis whose other
+ * members are `info` / `warning` / `success` — badge's role colours. The reason
+ * is the same in all three: the siblings are *states*, and "destructive" is an
+ * action word that would read wrong beside them. The value still resolves to
+ * `--destructive` in every case; only the name differs, which is what the
+ * `-danger` utility and `var(--danger)` guards below keep true.
+ *
+ * Each surviving declaration has to say which case it is, in the comment block
+ * immediately above it — `DEPRECATED` for the aliases on their way out,
+ * `STATES AXIS` for badge's. Deliberately not inferred from the siblings a file
+ * happens to declare: `alert`, `sonner`, `alert-dialog` and `button` all list
+ * `success` / `warning` / `info` somewhere, so a file-shaped test hands a free
+ * pass to the four components the `error` rule was written for, and lets
+ * `button`'s deprecated alias outlive its own DEPRECATED note.
  */
 
 import { Glob } from "bun";
@@ -54,18 +66,21 @@ describe("colour vocabulary", () => {
 		expect(hits(/var\(--danger[\w-]*\)/)).toEqual([]);
 	});
 
-	it("no component declares an undeprecated `danger` variant or colour key", () => {
-		// The survivors are switch's and button's aliases, each carrying a
-		// DEPRECATED note in the comment block immediately above it.
-		const DEPRECATION_WINDOW = 6;
+	it("no component declares an unannotated `danger` variant or colour key", () => {
+		// One escape hatch, and it has to be written down: a note in the comment
+		// block immediately above the key saying which survivor this is.
+		// `DEPRECATED` covers switch's and button's aliases, `STATES AXIS` covers
+		// badge's `color` axis. No note, no pass.
+		const ANNOTATION_WINDOW = 6;
+		const ANNOTATED = /@deprecated|DEPRECATED|STATES AXIS/;
 		const declarations = sources.flatMap(([path, text]) => {
 			const lines = text.split("\n");
 			return lines
 				.map((line, i) => [i, line] as const)
 				.filter(([i, line]) => {
 					if (!/^\s*danger:/.test(line)) return false;
-					const preceding = lines.slice(Math.max(0, i - DEPRECATION_WINDOW), i);
-					return !preceding.some((l) => /@deprecated|DEPRECATED/.test(l));
+					const preceding = lines.slice(Math.max(0, i - ANNOTATION_WINDOW), i);
+					return !preceding.some((l) => ANNOTATED.test(l));
 				})
 				.map(([i, line]) => `${path}:${i + 1}: ${line.trim()}`);
 		});

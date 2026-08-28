@@ -102,6 +102,16 @@ result is a theme shipping two different reds.
 2. Hang structural chrome off `data-slot`, not off component edits. Where a
    variant must opt out — ghost buttons have no ground to bevel — use the
    `data-variant` hook rather than matching class strings from CSS.
+   List `[data-slot="input-group"]` in the field block beside
+   `[data-slot="input"]`: an input-group is a shell wearing the field's chrome
+   around a control stripped bare (see the grouped-controls block in
+   `theme.css`), so a theme that names only the input themes the part it just
+   stripped and leaves the shell on the base border.
+   `theme-contract.ts` asserts it.
+   Set only `border-width` and `border-radius` on `[data-slot="badge"]` — its
+   rim colour and style belong to two of its five variants, so scope those to
+   `[data-variant="outline"]` / `[data-variant="dashed"]` (or to the three
+   filled variants, which have no hue of their own). Asserted too.
 3. Add `<name>.test.ts` beside it. It is about fifteen lines: call
    `describeThemeContract` from [`theme-contract.ts`](./theme-contract.ts) with
    the theme's name and its mode-invariant token list, then assert whatever is
@@ -118,6 +128,39 @@ both blocks (the light palette outranks `.dark` on source order, so a
 light-only literal survives into dark mode), pairing every role token with its
 foreground, re-pointing the derived reds, and referencing no token the theme
 does not declare.
+
+## Grouped controls
+
+`input-group` and `button-group` are compositions, and a theme's `data-slot`
+chrome does not know that. The components neutralise their inner parts with
+Tailwind utilities — `rounded-none border-0 bg-transparent` on an input-group's
+control, `rounded-l-none border-l-0` on every button-group segment after the
+first — and utilities live in the `utilities` cascade layer, which loses to an
+unlayered theme rule whatever the specificity. Every part therefore went back to
+being a whole bordered, rounded, beveled control, and the group rendered as
+separate boxes crammed together.
+
+The fix is in the base sheet, not in the themes: `theme.css` restates that
+geometry unlayered and three selectors deep, above the themes' two-deep
+`.theme-x [data-slot="…"]` chrome, and moves the input-group's focus and invalid
+states onto the shell (they read `--ring` / `--destructive`, so they still follow
+the theme). Themes supply one thing: the shell's resting chrome, via the field
+block. Nothing else here needs a per-theme rule.
+
+### The badge's rim
+
+Badge is the one component whose border belongs to some of its variants and not
+others: `outline` and `dashed` carry a per-colour border (`border-success/40`,
+`border-red-300`, …) and `dashed` carries a `border-style`, while `default`,
+`secondary` and `flat` ask for `border-transparent`. A theme naming `border` /
+`border-color` / `border-style` on the bare slot therefore lands on the wrong
+side of that split whichever value it picks — every palette hue flattens to one
+colour and `dashed` renders solid, or the three filled variants gain a rim they
+asked not to have. Both shipped: four themes blanked the rim for all five
+variants, four forced a solid one.
+
+Width and radius are the theme's. Colour and style go on a `data-variant` scope,
+which badge exposes the way button does.
 
 ## Contrast
 

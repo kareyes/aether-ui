@@ -26,6 +26,18 @@ export const badgeVariants = tv({
 			// The theme's primary token, as opposed to a fixed palette hue — it
 			// follows the active theme where `blue` etc. do not.
 			primary: "",
+			// The four semantic role tokens, likewise theme-following. Reach for
+			// these when the badge means a *state* — a run succeeded, a payslip is
+			// late — and for the fixed hues below when it only means a category.
+			// `danger` rather than `destructive` because the siblings here are
+			// states and the action word reads wrong beside them; it resolves to
+			// `--destructive`, the single red role token, never to the deprecated
+			// `--danger` alias.
+			// STATES AXIS — the marker `styles/vocabulary.test.ts` reads.
+			success: "",
+			danger: "",
+			warning: "",
+			info: "",
 			red: "",
 			orange: "",
 			yellow: "",
@@ -56,6 +68,26 @@ export const badgeVariants = tv({
 			variant: "default",
 			color: "primary",
 			class: "bg-primary text-primary-foreground",
+		},
+		{
+			variant: "default",
+			color: "success",
+			class: "bg-success text-success-foreground",
+		},
+		{
+			variant: "default",
+			color: "danger",
+			class: "bg-destructive text-destructive-foreground",
+		},
+		{
+			variant: "default",
+			color: "warning",
+			class: "bg-warning text-warning-foreground",
+		},
+		{
+			variant: "default",
+			color: "info",
+			class: "bg-info text-info-foreground",
 		},
 		{
 			variant: "default",
@@ -109,6 +141,29 @@ export const badgeVariants = tv({
 			color: "primary",
 			class:
 				"bg-primary/20 text-primary dark:text-primary-light dark:bg-primary/25",
+		},
+		// The role tokens are lit after dark rather than deepened, and every
+		// theme asserts them at AA as text on --background / --card, so the tint
+		// only has to lift off the ground — no --*-light companion needed.
+		{
+			variant: "secondary",
+			color: "success",
+			class: "bg-success/20 text-success dark:bg-success/25",
+		},
+		{
+			variant: "secondary",
+			color: "danger",
+			class: "bg-destructive/20 text-destructive dark:bg-destructive/25",
+		},
+		{
+			variant: "secondary",
+			color: "warning",
+			class: "bg-warning/20 text-warning dark:bg-warning/25",
+		},
+		{
+			variant: "secondary",
+			color: "info",
+			class: "bg-info/20 text-info dark:bg-info/25",
 		},
 		{
 			variant: "secondary",
@@ -169,6 +224,26 @@ export const badgeVariants = tv({
 		},
 		{
 			variant: "flat",
+			color: "success",
+			class: "bg-success/10 text-success dark:bg-success/20",
+		},
+		{
+			variant: "flat",
+			color: "danger",
+			class: "bg-destructive/10 text-destructive dark:bg-destructive/20",
+		},
+		{
+			variant: "flat",
+			color: "warning",
+			class: "bg-warning/10 text-warning dark:bg-warning/20",
+		},
+		{
+			variant: "flat",
+			color: "info",
+			class: "bg-info/10 text-info dark:bg-info/20",
+		},
+		{
+			variant: "flat",
 			color: "red",
 			class: "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400",
 		},
@@ -222,6 +297,27 @@ export const badgeVariants = tv({
 			variant: "outline",
 			color: "primary",
 			class: "text-primary border-primary/40 dark:border-primary/60",
+		},
+		{
+			variant: "outline",
+			color: "success",
+			class: "text-success border-success/40 dark:border-success/60",
+		},
+		{
+			variant: "outline",
+			color: "danger",
+			class:
+				"text-destructive border-destructive/40 dark:border-destructive/60",
+		},
+		{
+			variant: "outline",
+			color: "warning",
+			class: "text-warning border-warning/40 dark:border-warning/60",
+		},
+		{
+			variant: "outline",
+			color: "info",
+			class: "text-info border-info/40 dark:border-info/60",
 		},
 		{
 			variant: "outline",
@@ -285,6 +381,27 @@ export const badgeVariants = tv({
 		},
 		{
 			variant: "dashed",
+			color: "success",
+			class: "text-success border-success/40 dark:border-success/60",
+		},
+		{
+			variant: "dashed",
+			color: "danger",
+			class:
+				"text-destructive border-destructive/40 dark:border-destructive/60",
+		},
+		{
+			variant: "dashed",
+			color: "warning",
+			class: "text-warning border-warning/40 dark:border-warning/60",
+		},
+		{
+			variant: "dashed",
+			color: "info",
+			class: "text-info border-info/40 dark:border-info/60",
+		},
+		{
+			variant: "dashed",
 			color: "red",
 			class:
 				"text-red-600 border-red-300 dark:text-red-400 dark:border-red-700",
@@ -344,6 +461,30 @@ export const badgeVariants = tv({
 			clickable: true,
 			color: "primary",
 			class: "hover:bg-primary/90",
+		},
+		{
+			variant: "default",
+			clickable: true,
+			color: "success",
+			class: "hover:bg-success/90",
+		},
+		{
+			variant: "default",
+			clickable: true,
+			color: "danger",
+			class: "hover:bg-destructive/90",
+		},
+		{
+			variant: "default",
+			clickable: true,
+			color: "warning",
+			class: "hover:bg-warning/90",
+		},
+		{
+			variant: "default",
+			clickable: true,
+			color: "info",
+			class: "hover:bg-info/90",
 		},
 		{
 			variant: "default",

@@ -110,3 +110,78 @@ describe("theme.css token contract", () => {
 		expect(root.get("--aether-warning")).toBe("var(--warning)");
 	});
 });
+
+describe("theme.css grouped-controls block", () => {
+	// `input-group` and `button-group` are compositions whose parts give up
+	// their own chrome, and the components say that with Tailwind utilities —
+	// which lose to every unlayered rule in `styles/themes/*.css` whatever the
+	// specificity. The block restates them unlayered; these guard the two
+	// properties that make it work.
+	const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
+
+	it("strips the input-group control with a selector a theme cannot outrank", () => {
+		// Two attributes on the control plus one on the shell puts the rule at
+		// three, above a theme's two-deep `.theme-x [data-slot="input"]` field
+		// rule. Collapse the repeat as a tidy-up and every theme paints a whole
+		// bordered field inside the group again.
+		expect(stripped).toContain(
+			'[data-slot="input-group-control"][data-slot="input-group-control"]',
+		);
+	});
+
+	it("moves focus and invalid onto the input-group shell", () => {
+		// The control has no border left to show either state on.
+		expect(stripped).toContain(
+			'[data-slot="input-group"]:has([data-slot="input-group-control"]:focus-visible)',
+		);
+		expect(stripped).toMatch(
+			/\[data-slot="input-group"\]:has\(\s*\[data-slot="input-group-control"\]\[aria-invalid="true"\]\s*\)/,
+		);
+	});
+
+	it("collapses both seams of a button group in both orientations", () => {
+		// The declarations, not the selector text: a seam can be selected several
+		// correct ways — the trailing one has to skip the hidden form shim a
+		// Select leaves behind — and a guard pinned to one spelling fails the
+		// next correct rewrite instead of the next regression.
+		const seamRules = (orientation: string): string[] =>
+			[
+				...stripped.matchAll(
+					new RegExp(
+						`\\[data-slot="button-group"\\]\\[data-orientation="${orientation}"\\]([^{]*)\\{([^}]*)\\}`,
+						"g",
+					),
+				),
+			].map(([, , body]) => body);
+
+		for (const [orientation, leading, trailing] of [
+			["horizontal", "border-left-width", "border-top-right-radius"],
+			["vertical", "border-top-width", "border-bottom-right-radius"],
+		] as const) {
+			const bodies = seamRules(orientation);
+			expect(bodies.length).toBeGreaterThan(0);
+			// One rule sheds the shared edge, another the trailing radii.
+			expect(bodies.some((body) => body.includes(`${leading}: 0`))).toBe(true);
+			expect(bodies.some((body) => body.includes(`${trailing}: 0`))).toBe(true);
+		}
+	});
+
+	it("skips the hidden form shim when squaring the trailing seam", () => {
+		// bits-ui leaves an `<input aria-hidden="true">` after a Select's trigger,
+		// so the last child of a group is not always its last segment. Selecting
+		// on `:not(:last-child)` squared the visible trigger's outer corner.
+		// `border-bottom-right-radius` is the one declaration unique to the two
+		// trailing rules: the vertical *leading* seam also sheds a top-right
+		// radius, and the horizontal one a bottom-left.
+		const trailing = [
+			...stripped.matchAll(
+				/\[data-slot="button-group"\]\[data-orientation="\w+"\]([^{]*)\{([^}]*border-bottom-right-radius[^}]*)\}/g,
+			),
+		].map(([, selector]) => selector.replace(/\s+/g, " ").trim());
+		expect(trailing.length).toBe(2);
+		for (const selector of trailing) {
+			expect(selector).toContain('aria-hidden="true"');
+			expect(selector).not.toContain(":last-child");
+		}
+	});
+});

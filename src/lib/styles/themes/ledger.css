@@ -396,6 +396,7 @@
 
 .theme-ledger :is(
 	[data-slot="input"],
+	[data-slot="input-group"],
 	[data-slot="textarea"],
 	[data-slot="select-trigger"],
 	[data-slot="command-input"],
@@ -484,11 +485,25 @@
 /* ---- Badge / avatar — square, like every field on a form ---- */
 
 .theme-ledger [data-slot="badge"] {
-	border: var(--ledger-rule-width) solid currentcolor;
+	border-width: var(--ledger-rule-width);
 	border-radius: var(--ledger-corner);
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
 	font-size: 0.6875rem;
+}
+
+/* The width is the theme's; the colour and the style are not. `outline` and
+   `dashed` carry a per-colour border — `border-success/40`, `border-red-300`
+   — that a colour here would flatten to one hue, and `dashed` carries a
+   `border-style` a `border:` shorthand here would reset to solid. So the rim
+   colour is set only for the three filled variants, whose own class asks for
+   `border-transparent` and has no hue of its own to keep. */
+.theme-ledger [data-slot="badge"]:is(
+	[data-variant="default"],
+	[data-variant="secondary"],
+	[data-variant="flat"]
+) {
+	border-color: currentcolor;
 }
 
 .theme-ledger [data-slot="avatar"] {

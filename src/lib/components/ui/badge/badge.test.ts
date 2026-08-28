@@ -204,4 +204,70 @@ describe("badgeVariants", () => {
 			expect(result).not.toContain("cursor-pointer");
 		});
 	});
+
+	describe("role colors", () => {
+		// These four follow the active theme the way `primary` does; the fixed hues
+		// (`red`, `green`, …) do not. `danger` reads `--destructive`, the single red
+		// role token — `--danger` is a deprecated alias.
+		const roles = [
+			["success", "success"],
+			["danger", "destructive"],
+			["warning", "warning"],
+			["info", "info"],
+		] as const;
+
+		roles.forEach(([color, token]) => {
+			it(`should fill with the ${token} token on the default variant`, () => {
+				const result = badgeVariants({ variant: "default", color });
+				expect(result).toContain(`bg-${token}`);
+				expect(result).toContain(`text-${token}-foreground`);
+			});
+
+			it(`should tint ${color} on the secondary variant`, () => {
+				const result = badgeVariants({ variant: "secondary", color });
+				expect(result).toContain(`bg-${token}/20`);
+				expect(result).toContain(`text-${token}`);
+			});
+
+			it(`should tint ${color} more lightly on the flat variant`, () => {
+				const result = badgeVariants({ variant: "flat", color });
+				expect(result).toContain(`bg-${token}/10`);
+				expect(result).toContain(`text-${token}`);
+			});
+
+			it(`should color the text and border for ${color} on outline and dashed`, () => {
+				for (const variant of ["outline", "dashed"] as const) {
+					const result = badgeVariants({ variant, color });
+					expect(result).toContain(`text-${token}`);
+					expect(result).toContain(`border-${token}/40`);
+				}
+			});
+
+			it(`should dim ${color} on hover when clickable`, () => {
+				const result = badgeVariants({
+					variant: "default",
+					color,
+					clickable: true,
+				});
+				expect(result).toContain(`hover:bg-${token}/90`);
+			});
+		});
+
+		it("resolves its red to --destructive, never the deprecated alias", () => {
+			// The alias is substituted on the element `:root` matched, so a `.dark`
+			// scoped to a subtree keeps the light red inside it. The key is named
+			// `danger` for its info / warning / success siblings; what it emits is
+			// the one red role token.
+			for (const variant of [
+				"default",
+				"secondary",
+				"flat",
+				"outline",
+				"dashed",
+			] as const)
+				expect(badgeVariants({ variant, color: "danger" })).not.toContain(
+					"danger",
+				);
+		});
+	});
 });

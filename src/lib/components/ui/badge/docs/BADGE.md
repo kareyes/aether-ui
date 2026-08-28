@@ -43,27 +43,36 @@ pnpm add aether-ui
 
 ### With Variants
 
+`variant` is the treatment, not the tone — pair it with a `color`.
+
 ```svelte
-<Badge text="Success" variant="success" />
-<Badge text="Warning" variant="warning" />
-<Badge text="Error" variant="destructive" />
-<Badge text="Info" variant="info" />
+<Badge text="Solid" variant="default" color="success" />
+<Badge text="Tinted" variant="secondary" color="warning" />
+<Badge text="Outlined" variant="outline" color="info" />
 ```
 
 ### With Colors
 
 ```svelte
 <Badge text="Primary" color="primary" />
+<Badge text="Success" color="success" />
+<Badge text="Danger" color="danger" />
+<Badge text="Warning" color="warning" />
+<Badge text="Info" color="info" />
 <Badge text="Red" color="red" />
 <Badge text="Blue" color="blue" />
-<Badge text="Green" color="green" />
-<Badge text="Purple" color="purple" />
 ```
 
-`primary` resolves to the theme's `--primary` token, so it re-colors with the
-active theme; the named hues (`red`, `blue`, …) are fixed palette values. It
-works across every variant: solid on `default`, tinted on `secondary` / `flat`,
-and text + border on `outline` / `dashed`.
+`primary` and the four role colours resolve to theme tokens (`--primary`,
+`--success`, `--destructive`, `--warning`, `--info`), so they re-colour with the
+active theme; the named hues (`red`, `blue`, …) are fixed palette values. Every
+one of them works across every variant: solid on `default`, tinted on
+`secondary` / `flat`, and text + border on `outline` / `dashed`.
+
+Reach for a role colour when the badge means a **state** — a run succeeded, a
+payslip is late — and a named hue when it only means a **category**. A themed
+screen wants the former: `color="red"` stays the same red under all eight
+themes, where `color="danger"` moves with the palette.
 
 ## Props Reference
 
@@ -86,7 +95,7 @@ and text + border on `outline` / `dashed`.
 
 Badge separates *shape* from *hue*: `variant` picks the treatment, `color`
 picks the tone. There is no `destructive` / `success` / `warning` / `info`
-variant — reach for `color="red"` etc. below.
+*variant* — those are colours, below.
 
 | Variant | Description |
 |---------|-------------|
@@ -98,9 +107,23 @@ variant — reach for `color="red"` etc. below.
 
 ### Badge Colors
 
+Two families. The first five read theme tokens and move with the active theme;
+the rest are fixed Tailwind hues.
+
+| Color | Token | Use Case |
+|-------|-------|----------|
+| `primary` | `--primary` | Brand emphasis |
+| `success` | `--success` | Completed, passing, healthy |
+| `danger` | `--destructive` | Failed, rejected, overdue |
+| `warning` | `--warning` | Needs attention, expiring |
+| `info` | `--info` | Neutral notice, in progress |
+
+`danger` rather than `destructive` because its siblings here are states, not
+actions — the same reason `--status-danger` keeps the word. It resolves to
+`--destructive`; the deprecated `--danger` alias is not involved.
+
 | Color | Use Case |
 |-------|----------|
-| `primary` | Brand emphasis — follows the active theme, unlike the fixed hues below |
 | `red` | Errors, destructive actions, urgent |
 | `orange` | Warnings, attention |
 | `yellow` | Caution, pending |

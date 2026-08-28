@@ -308,6 +308,121 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Grouped controls — `input-group` and `button-group`.
+ *
+ * Both are compositions rather than controls. The shell carries the chrome and
+ * the parts inside it give theirs up, so the whole reads as one field or one
+ * segmented control. The components say that with Tailwind utilities:
+ * `rounded-none border-0 bg-transparent shadow-none` on an input-group's
+ * control, `rounded-l-none border-l-0` on every button-group segment after the
+ * first.
+ *
+ * Utilities live in the `utilities` cascade layer. Every rule in
+ * `styles/themes/*.css` is unlayered, and an unlayered declaration beats a
+ * layered one whatever the specificity — so under a theme each part went back
+ * to being a whole bordered, rounded, beveled control, and the group came out
+ * as separate boxes crammed together with doubled edges.
+ *
+ * Restated here unlayered, and three simple selectors deep so they also clear
+ * the themes' two-deep `.theme-x [data-slot="…"]` chrome. Geometry and ground
+ * only — the radius scale, weights and colours stay the theme's to set. The
+ * shell's own resting chrome is likewise the theme's: every theme lists
+ * `[data-slot="input-group"]` beside `[data-slot="input"]` in its field block,
+ * which `themes/theme-contract.ts` asserts.
+ * -------------------------------------------------------------------------*/
+
+/* The control inside an input-group is not a field of its own — the shell is
+   the field. The attribute is repeated to take the selector to three, above a
+   theme's `[data-slot="input"]` / `[data-slot="textarea"]` field rule. */
+[data-slot="input-group"]
+  [data-slot="input-group-control"][data-slot="input-group-control"] {
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* And it does not draw its own focus ring either, because the shell draws one
+   now. Themes outline every focusable element, not only the ones they style as
+   fields, so without this a focused group shows two rings — one inside the
+   other. Four selectors deep: a theme's blanket focus rule is three, and lands
+   later in the sheet.
+
+   Gated on `:has()`, which is what draws the replacement below. Ungated, an
+   engine without `:has()` suppresses the control's ring and never renders the
+   shell's, leaving a focused field with no focus indicator at all. */
+@supports selector(:has(*)) {
+  [data-slot="input-group"]
+    [data-slot="input-group-control"][data-slot="input-group-control"]:focus-visible {
+    outline: none;
+  }
+}
+
+/* Focus and error have to move to the shell with it. Themes hang both on
+   `[data-slot="input"]:focus-visible` / `[aria-invalid="true"]`, and the
+   control no longer has an outline to show them on. Both read `--ring` /
+   `--destructive`, so they follow the theme without the theme naming the group.
+   `outline`, not `box-shadow`: half the themes carry their field's groove or
+   its whole rim in `box-shadow`, and a ring written there would replace it —
+   the field would lose its inset for as long as it was focused. */
+[data-slot="input-group"]:has([data-slot="input-group-control"]:focus-visible) {
+  border-color: var(--ring);
+  outline: 3px solid color-mix(in oklch, var(--ring) 50%, transparent);
+  outline-offset: 0;
+}
+
+[data-slot="input-group"]:has(
+    [data-slot="input-group-control"][aria-invalid="true"]
+  ) {
+  border-color: var(--destructive);
+  outline: 3px solid color-mix(in oklch, var(--destructive) 20%, transparent);
+  outline-offset: 0;
+}
+
+.dark
+  [data-slot="input-group"]:has(
+    [data-slot="input-group-control"][aria-invalid="true"]
+  ) {
+  outline-color: color-mix(in oklch, var(--destructive) 40%, transparent);
+}
+
+/* Button-group segments butt together, so each seam sheds one radius and one
+   border. `> *` rather than `> [data-slot="button"]`: a group takes inputs,
+   select triggers, separators and nested groups too, and every one of them has
+   a themed edge to give up at the seam. */
+[data-slot="button-group"][data-orientation="horizontal"] > *:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}
+
+/* The trailing seam asks "does a *visible* sibling follow?", not "is this the
+   last child?". A Select inside a group leaves a hidden form shim after its
+   trigger — bits-ui emits `<input aria-hidden="true">` — so the last child is
+   not the last segment, and `:not(:last-child)` squared the trigger's right
+   corner off. The component's own `has-[select[aria-hidden=true]:last-child]`
+   restore cannot help: it looks for a `<select>`, and it is a layered utility
+   that these unlayered rules outrank anyway. Shims only ever trail, so the
+   leading seam above stays `:not(:first-child)`. */
+[data-slot="button-group"][data-orientation="horizontal"]
+  > *:has(~ *:not([aria-hidden="true"])) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+[data-slot="button-group"][data-orientation="vertical"] > *:not(:first-child) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top-width: 0;
+}
+
+[data-slot="button-group"][data-orientation="vertical"]
+  > *:has(~ *:not([aria-hidden="true"])) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ---------------------------------------------------------------------------
  * Sonner — the rules the Toaster cannot express as classes.
  *
  * The component passes `unstyled`, which drops svelte-sonner's

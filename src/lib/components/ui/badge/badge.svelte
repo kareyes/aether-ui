@@ -52,10 +52,19 @@
 	const isClickable = $derived(clickable || !!onclick || !!href);
 </script>
 
+<!-- `data-variant` / `data-color` mirror the resolved variants onto the DOM, the
+     same hook button, select-trigger and radio-group-item expose. `data-variant`
+     is the one a theme needs: badge's rim belongs to two of its five variants, so
+     a rule on the bare slot either flattens the per-colour border `outline` and
+     `dashed` carry, or paints one onto the three filled variants that ask for
+     `border-transparent`. `data-color` is parity with button, and the axis a
+     theme is most likely to reach for next. -->
 <svelte:element
 	this={elementType()}
 	bind:this={ref}
 	data-slot="badge"
+	data-variant={variant}
+	data-color={color}
 	{href}
 	class={cn(
 		badgeVariants({ 
