@@ -8,7 +8,7 @@ A beautiful, customizable toast notification system built on top of svelte-sonne
 - **4 Visual Variants**: default, bordered, filled, minimal
 - **3 Size Options**: sm, default, lg
 - **Promise Toasts**: Automatic loading → success/error states
-- **Rich Colors**: Beautiful color-coded toasts for each type
+- **Rich Colors**: Type-coded toasts drawn from the role tokens, so they follow the theme
 - **Custom Icons**: Replace default icons with custom Svelte components
 - **Action Buttons**: Add action and cancel buttons to toasts
 - **Customizable Position**: 6 different positions on screen
@@ -182,7 +182,7 @@ Add the `Toaster` component to your root layout (e.g., `+layout.svelte`):
 | `size` | `"sm" \| "default" \| "lg"` | `"default"` | Toast size (affects padding, text, icons) |
 | `position` | `"top-left" \| "top-center" \| "top-right" \| "bottom-left" \| "bottom-center" \| "bottom-right"` | `"bottom-right"` | Position of toasts on screen |
 | `expand` | `boolean` | `false` | Expand toasts on hover |
-| `richColors` | `boolean` | `true` | Enable variant-specific colors |
+| `richColors` | `boolean` | `true` | Colour toasts by type from the role tokens; `false` gives every type one neutral surface |
 | `closeButton` | `boolean` | `false` | Show close button on toasts |
 | `duration` | `number` | `4000` | Auto-dismiss duration in ms |
 | `gap` | `number` | `14` | Gap between toasts in pixels |
@@ -430,10 +430,88 @@ toast.success("All done!", { id });
 
 ## Styling
 
-The toaster uses Tailwind CSS classes that integrate with your theme:
+The toaster is styled the way `alert` is styled, and a theme reaches it the same way.
 
-- `--normal-bg`: Background color for default toasts
-- `--normal-text`: Text color for default toasts
-- `--normal-border`: Border color for default toasts
+`Toaster` passes `unstyled` to svelte-sonner, which drops that library's own
+`[data-sonner-toast][data-styled='true']` rule block. Everything visible then comes
+from ordinary Tailwind classes on the toast element — no `!important` anywhere.
+The maps live in `sonner-variants.ts` (importable without the Svelte compiler, so
+`sonner-variants.test.ts` can assert them) and split in two, because sonner puts
+`classes.toast` *and* `classes[type]` on the same element and joins them with a
+bare `filter(Boolean).join(' ')` — no tailwind-merge. Anything both strings set
+would be settled by Tailwind's emission order rather than by the source, so:
 
-Rich color variants use semantic colors (green for success, red for error, etc.) with automatic dark mode adjustments.
+- `toastFrameClasses` carries radius, shadow and border **width**, per variant.
+- `toastSurfaceClasses` carries background, text and border **colour**, per
+  variant × type. `default`'s row is `alertVariants` verbatim:
+
+| Type | Classes |
+|------|---------|
+| default | `bg-card text-card-foreground border-border` |
+| success | `bg-success/10 text-success border-success dark:border-success/80` |
+| error | `bg-destructive/10 text-destructive border-destructive/30 dark:border-destructive/80` |
+| warning | `bg-warning/10 text-warning border-warning dark:border-warning/80` |
+| info | `bg-info/10 text-info border-info/30 dark:border-info/80` |
+
+Keep those two groups disjoint. `default` is a real key, not a fallback —
+svelte-sonner dispatches a bare `toast()` as `type: "default"`.
+
+### How a theme wins
+
+Not by specificity. A theme's rules are **unlayered** and these classes are
+utilities in `@layer utilities`, and an unlayered declaration beats a layered one
+whatever the selectors look like. So a theme wins every property it names, and a
+variant that owns a property has to opt out rather than out-specify it. The hook
+is `data-toast-variant` on the toaster — `bordered` keeps its accent edge,
+`minimal` its bare bottom rule and square corners, and `filled` its solid role
+ground:
+
+```css
+.theme-ledger
+	[data-sonner-toaster]:not([data-toast-variant="bordered"]):not([data-toast-variant="minimal"])
+	[data-sonner-toast] {
+	border-width: var(--ledger-rule-width);
+}
+
+.theme-ledger
+	[data-sonner-toaster]:not([data-toast-variant="minimal"])
+	[data-sonner-toast] {
+	border-radius: var(--ledger-corner);
+	box-shadow: 2px 2px 0 var(--foreground);
+}
+
+/* `filled` and `minimal` lay down their own ground. */
+.theme-ledger
+	[data-sonner-toaster]:not([data-toast-variant="filled"]):not([data-toast-variant="minimal"])
+	[data-sonner-toast] {
+	background-color: var(--card);
+}
+```
+
+Note `border-width`, not the `border` shorthand — the shorthand resets border
+*colour* on all four sides, which would take the variant's role colour with it.
+This is the same split each theme's `[data-slot="alert"]` rule already uses.
+
+### The rules a class cannot reach
+
+Some svelte-sonner rules are **not** gated on `data-styled`, so they survive
+`unstyled` and out-specify anything the wrapper can put in a class attribute.
+Three are handled outside the class maps:
+
+- **Toaster font** and **stacked-toast hiding** were gated, and are behaviour
+  rather than style, so `styles/theme.css` restores them: the toaster inherits
+  the page font instead of hard-coding a system sans stack, and toasts stacked
+  behind the front one still hide their contents until the stack expands.
+- **Dark-mode description colour** (`[data-sonner-theme='dark'] [data-description]`,
+  three deep) would paint the description near-white on every theme. One rule in
+  `styles/theme.css`, four attributes deep, puts `color: inherit` back so the
+  description tracks the toast's role colour and is dimmed only by `opacity-90`.
+- **Dark-mode close-button colours** read `--normal-bg` / `--normal-text` /
+  `--normal-border` and cannot be out-specified at all. `Toaster` points those
+  custom properties at the token layer via its `style` attribute; without it the
+  close button is a hard-coded `#000` on all eight themes.
+
+`richColors` no longer reaches svelte-sonner — its rich-colour rules are three
+selectors deep and would beat the token classes with a hard-coded green. The prop
+now chooses between the role-token palette above and one neutral surface for
+every type.

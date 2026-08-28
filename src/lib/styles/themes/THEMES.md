@@ -38,9 +38,10 @@ Put the class on `<html>`, next to mode-watcher's `.dark`:
 <html class="theme-ledger dark">   <!-- dark  -->
 ```
 
-`<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
-toasts portal to `<body>` — a nested scope leaves every overlay un-themed.
-Scoping to a subtree still works for everything that renders in place.
+`<html>` rather than a wrapper div, because dialogs, popovers and dropdowns
+portal to `<body>` — a nested scope leaves those un-themed. Scoping to a subtree
+still works for everything that renders in place, toasts included: svelte-sonner
+renders its `<section>` where the `Toaster` sits, it does not portal.
 
 Import the theme **after** the base tokens:
 

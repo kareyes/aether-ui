@@ -24,10 +24,12 @@ carry.
 <html class="theme-pelican dark"> <!-- night, alongside mode-watcher -->
 ```
 
-**Put the class on `<html>`.** Dialogs, sheets, selects, dropdowns, tooltips and
-toasts portal to `<body>`; a scope nested inside the app shell leaves every
-overlay un-themed. Scoping to a subtree is supported and works for everything
-that renders in place — useful for a preview pane, not for an app.
+**Put the class on `<html>`.** Dialogs, sheets, selects, dropdowns and tooltips
+portal to `<body>`; a scope nested inside the app shell leaves every overlay
+un-themed. Scoping to a subtree is supported and works for everything that
+renders in place — toasts included, since svelte-sonner renders its `<section>`
+where the `Toaster` sits rather than portalling. Useful for a preview pane, not
+for an app.
 
 **Import order matters.** `.theme-pelican` and `.dark` are both one class deep,
 so the day palette only outranks the base dark palette by coming later in the

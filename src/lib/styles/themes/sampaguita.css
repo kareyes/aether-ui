@@ -21,9 +21,10 @@
  *   <html class="theme-sampaguita">          light  ("petal")
  *   <html class="theme-sampaguita dark">     dark   ("night garden")
  *
- * `<html>` rather than a wrapper div, because dialogs, popovers, dropdowns and
- * toasts portal to <body> — a nested scope leaves them un-themed. Scoping to a
- * subtree still works for everything that renders in place.
+ * `<html>` rather than a wrapper div, because dialogs, popovers and dropdowns
+ * portal to <body> — a nested scope leaves them un-themed. Scoping to a subtree
+ * still works for everything that renders in place, toasts included: sonner
+ * renders its <section> where the Toaster sits, it does not portal.
  *
  * In your app CSS, import it *after* the base tokens:
  *
@@ -569,10 +570,27 @@
 	border-bottom: var(--sampaguita-hairline) solid var(--border);
 }
 
-/* ---- Toast ---- */
+/* ---- Toast ----
+ * Geometry from the theme, ground and colour from the variant — the split the
+ * alert rule above already uses. These rules are unlayered and the toast's own
+ * classes are Tailwind utilities in `@layer utilities`, so the theme wins every
+ * property it names; a variant that owns a property opts out here rather than
+ * trying to out-specify it. The hook is `data-toast-variant` on the toaster,
+ * per the `data-variant` rule above — never a class match.
+ *
+ * `bordered` keeps its accent edge, `minimal` its bare bottom rule and square
+ * corners, and `filled` its solid role ground. Without the opt-outs all four
+ * variants collapse into `default`. */
 
-.theme-sampaguita [data-sonner-toast] {
+.theme-sampaguita
+	[data-sonner-toaster]:not([data-toast-variant="bordered"]):not([data-toast-variant="minimal"])
+	[data-sonner-toast] {
 	border: var(--sampaguita-hairline) solid var(--border);
+}
+
+.theme-sampaguita
+	[data-sonner-toaster]:not([data-toast-variant="minimal"])
+	[data-sonner-toast] {
 	border-radius: var(--sampaguita-corner);
 	box-shadow: var(--sampaguita-lift-hover);
 }

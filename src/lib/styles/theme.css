@@ -306,3 +306,39 @@
     transform: translateX(100%);
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Sonner — the rules the Toaster cannot express as classes.
+ *
+ * The component passes `unstyled`, which drops svelte-sonner's
+ * `[data-sonner-toast][data-styled='true']` block so a theme's
+ * `[data-sonner-toast]` rule wins the way its `[data-slot="alert"]` rule does.
+ * Two declarations in that block were not styling, and have to come back; a
+ * third rule undoes a sonner declaration that was never gated on `data-styled`
+ * in the first place, and so cannot be reached from a class.
+ * -------------------------------------------------------------------------*/
+
+/* The toaster hard-codes a system sans stack, so a theme's font stopped at the
+   toast edge while reaching every other surface by inheritance. The attribute
+   is repeated to take the selector to two, because sonner's own rule is one
+   deep and its sheet is injected after this one — a plain single-attribute
+   rule ties and loses on source order. */
+[data-sonner-toaster][data-sonner-toaster] {
+  font-family: inherit;
+}
+
+/* Toasts stacked behind the front one hide their contents until the stack is
+   expanded. Sonner gates this on `data-styled`, and it is stacking, not style. */
+[data-sonner-toast][data-expanded="false"][data-front="false"] > * {
+  opacity: 0;
+}
+
+/* Sonner colours the description directly in dark mode, and that rule is *not*
+   gated on `data-styled` — it survives `unstyled` and beats the wrapper's
+   utilities, so the description came out near-white on every theme instead of
+   tracking the toast's role colour. Four attributes to sonner's three, so this
+   wins on specificity regardless of which sheet lands last. The wrapper dims
+   with `opacity-90` and inherits the colour, the way `alert-description` does. */
+[data-sonner-toaster] [data-sonner-toast][data-styled="false"] [data-description] {
+  color: inherit;
+}
